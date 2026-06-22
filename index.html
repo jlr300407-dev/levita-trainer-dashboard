@@ -257,9 +257,39 @@
       .grid-2, .kpi-grid, .analysis-grid, .grid-3 { grid-template-columns: 1fr; }
       .nav-tab { padding: 7px 10px; font-size: 12px; }
     }
+  /* ── LOGIN SCREEN ── */
+  #loginScreen {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--brand-dark);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-card {
+    background: var(--brand-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 36px;
+    width: 100%; max-width: 400px;
+  }
+  .login-logo { font-family: 'DM Serif Display', serif; font-size: 26px; margin-bottom: 6px; }
+  .login-logo span { color: var(--accent-green); }
+  .login-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; }
   </style>
 </head>
 <body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">Le<span>VITA</span> Trainer-Dashboard</div>
+    <div class="login-sub">Nur für autorisierte Mitarbeiter</div>
+    <label>E-Mail</label>
+    <input type="text" id="loginEmail" placeholder="info@le-vita.com" />
+    <label>Passwort</label>
+    <input type="password" id="loginPassword" placeholder="••••••••" />
+    <button onclick="doLogin()">Einloggen →</button>
+    <div id="loginStatus" class="hidden" style="margin-top:10px;"></div>
+  </div>
+</div>
 
 <header>
   <div>
@@ -273,6 +303,7 @@
       <button class="nav-tab" onclick="switchTab('analysis', this)" id="analysisTabBtn" style="display:none;">Analyse</button>
     </div>
     <div class="header-badge">Intern</div>
+    <button class="btn-secondary btn-small" onclick="doLogout()" style="margin-left:8px;">Ausloggen</button>
   </div>
 </header>
 
@@ -1134,8 +1165,47 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     renderMemberList(filtered);
   }
 
+  // ── AUTH ──
+  async function doLogin() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    const statusEl = document.getElementById("loginStatus");
+    if (!email || !password) {
+      statusEl.textContent = "Bitte E-Mail und Passwort eingeben.";
+      statusEl.className = "status status-error"; statusEl.classList.remove("hidden"); return;
+    }
+    statusEl.textContent = "Einloggen …";
+    statusEl.className = "status status-info"; statusEl.classList.remove("hidden");
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) {
+      statusEl.textContent = "Login fehlgeschlagen: " + error.message;
+      statusEl.className = "status status-error"; return;
+    }
+    document.getElementById("loginScreen").style.display = "none";
+    loadStudioOverview();
+  }
+
+  async function doLogout() {
+    await supabaseClient.auth.signOut();
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("loginEmail").value = "";
+    document.getElementById("loginPassword").value = "";
+    document.getElementById("loginStatus").classList.add("hidden");
+  }
+
+  async function checkAuth() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      document.getElementById("loginScreen").style.display = "none";
+      loadStudioOverview();
+    }
+  }
+
+  checkAuth();
+
   // ── KEYBOARD ──
   document.addEventListener("keydown", e => {
+    if (e.key === "Enter" && document.activeElement.id === "loginPassword") doLogin();
     if (e.key === "Enter" && document.activeElement.id === "projectCode") loadSingleAnalysis();
     if (e.key === "Enter" && document.activeElement.id === "nameSearch") searchByName();
   });
