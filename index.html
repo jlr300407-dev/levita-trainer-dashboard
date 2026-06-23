@@ -826,11 +826,12 @@
       document.getElementById("bioAgeCard").style.display = "none";
     }
 
-    // Ergebnis-Link
+    // Ergebnis-Link — DOM-Elemente nur setzen wenn vorhanden
     if (submission.public_code) {
-      const link = `${VITAL_CHECK_URL}?code=${submission.public_code}`;
-      document.getElementById("memberLink").textContent = link;
-      document.getElementById("memberLinkWrap").style.display = "block";
+      const linkEl = document.getElementById("memberLink");
+      const wrapEl = document.getElementById("memberLinkWrap");
+      if (linkEl) linkEl.textContent = `${VITAL_CHECK_URL}?code=${submission.public_code}`;
+      if (wrapEl) wrapEl.style.display = "block";
     }
 
     // Charts + Content
