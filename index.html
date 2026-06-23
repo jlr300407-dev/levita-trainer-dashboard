@@ -709,7 +709,7 @@
 
       renderAnalysis(submission, score, contact, answers || []);
       hideStatus("singleStatus");
-      showAnalysisTab();
+      // showAnalysisTab() wird in renderAnalysis() aufgerufen
 
     } catch (err) {
       showStatus("singleStatus", err.message, "error");
@@ -809,7 +809,11 @@
 
     // Score-Ring
     document.getElementById("scoreLabel").textContent = score.score_label || getScoreLabel(total);
-    setTimeout(() => animateDashRing(total), 100);
+    // Tab erst wechseln, dann Ring animieren — DOM muss bereit sein
+    showAnalysisTab();
+    setTimeout(() => {
+      if (document.getElementById("totalScore")) animateDashRing(total);
+    }, 150);
 
     // Vitalitäts-Alter
     if (bioAge) {
