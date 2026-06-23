@@ -807,13 +807,8 @@
     const storedStatus = getLocalStatus(submission.public_code);
     updateStatusButtons(storedStatus);
 
-    // Score-Ring
+    // Score-Ring Label
     document.getElementById("scoreLabel").textContent = score.score_label || getScoreLabel(total);
-    // Tab erst wechseln, dann Ring animieren — DOM muss bereit sein
-    showAnalysisTab();
-    setTimeout(() => {
-      if (document.getElementById("totalScore")) animateDashRing(total);
-    }, 150);
 
     // Vitalitäts-Alter
     if (bioAge) {
@@ -853,6 +848,12 @@
     // Antworten-Panel reset
     document.getElementById("answersPanel").style.display = "none";
     document.getElementById("answersToggleBtn").textContent = "Einblenden";
+
+    // Tab ZULETZT wechseln — erst wenn alles gerendert ist
+    showAnalysisTab();
+    setTimeout(() => {
+      if (document.getElementById("totalScore")) animateDashRing(total);
+    }, 100);
   }
 
   // ── RADAR mit Kurznamen ──
