@@ -617,12 +617,15 @@
     let current = 0;
     const dur = 1200, start = performance.now();
     function step(now) {
+      const el = document.getElementById("totalScore");
+      const r = document.getElementById("dashRingFill");
+      if (!el || !r) return;
       const prog = Math.min((now - start) / dur, 1);
       const ease = 1 - Math.pow(1 - prog, 3);
       current = Math.round(score * ease);
-      numEl.textContent = current;
-      numEl.style.color = getScoreColor(current);
-      ring.style.strokeDashoffset = C - (current / 100) * C;
+      el.textContent = current;
+      el.style.color = getScoreColor(current);
+      r.style.strokeDashoffset = C - (current / 100) * C;
       if (prog < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
