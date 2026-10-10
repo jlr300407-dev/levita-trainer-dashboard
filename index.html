@@ -124,7 +124,7 @@
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 
     /* ── INPUTS ── */
-    input[type="text"], input[type="date"], textarea, select {
+    input[type="text"], input[type="date"], input[type="number"], textarea, select {
       width: 100%; padding: 11px 14px; border-radius: var(--radius-sm);
       border: 1px solid var(--border); background: rgba(255,255,255,0.04);
       color: var(--text-primary); font-family: 'DM Sans', sans-serif;
@@ -257,6 +257,70 @@
       .grid-2, .kpi-grid, .analysis-grid, .grid-3 { grid-template-columns: 1fr; }
       .nav-tab { padding: 7px 10px; font-size: 12px; }
     }
+
+    /* ── STUDIO-ANFRAGEN (v2.1.0, 10.10.2026) ── */
+    .req-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; margin-left: 4px; border-radius: 10px; background: var(--accent-amber); color: #0a1628; font-size: 11px; font-weight: 800; }
+    .req-badge.hidden { display: none; }
+    .req-select, .req-note { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: inherit; font-size: 13px; padding: 6px 8px; }
+    .req-note { width: 100%; min-width: 160px; }
+    .req-overdue { color: #ff5c5c; font-weight: 700; }
+    .req-tel { color: var(--accent-green); font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .req-yes { color: var(--accent-green); font-weight: 700; }
+    .req-no { color: var(--text-secondary); }
+    /* ── TRAINER-ASSISTENT (v2.0.0, 06.10.2026) ── */
+    .ta-label { display:block; font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+    .ta-mini { font-size:11.5px; color:var(--text-muted); line-height:1.5; }
+    .ta-note { font-size:13px; color:var(--text-secondary); line-height:1.55; padding:7px 10px; border-radius:8px; background:rgba(255,255,255,0.03); margin-bottom:6px; }
+    .ta-flag { color:var(--accent-red); font-weight:700; }
+    .ta-quote { font-family:'DM Serif Display', serif; font-size:17px; line-height:1.45; color:var(--text-primary); }
+    .ta-brief { background:linear-gradient(135deg, rgba(34,201,122,0.08), rgba(59,158,255,0.06)); border-color:rgba(34,201,122,0.22); }
+    .ta-brief-head { font-size:15px; color:var(--text-secondary); margin-bottom:14px; }
+    .ta-brief-head strong { color:var(--text-primary); font-size:17px; }
+    .ta-brief-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+    .ta-brief-list { padding-left:18px; color:var(--text-secondary); font-size:13.5px; line-height:1.9; }
+    .ta-safety { border-color:rgba(245,166,35,0.35); }
+    .ta-safety-red { border-color:rgba(255,92,92,0.45); box-shadow:0 0 0 1px rgba(255,92,92,0.15) inset; }
+    .ta-strength-row { display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+    .ta-strength { display:flex; gap:12px; align-items:flex-start; background:var(--accent-green-dim); border:1px solid rgba(34,201,122,0.2); border-radius:var(--radius-sm); padding:12px 14px; }
+    .ta-strength-val { font-family:'DM Serif Display', serif; font-size:28px; color:var(--accent-green); line-height:1; }
+    .ta-strength-title { font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+    .ta-strength-say { font-size:12.5px; color:var(--text-secondary); line-height:1.45; }
+    .ta-lever { background:var(--brand-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:10px; }
+    .ta-lever-head { display:flex; gap:12px; align-items:center; margin-bottom:10px; }
+    .ta-lever-num { width:28px; height:28px; border-radius:50%; background:var(--accent-green); color:#0a1628; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; }
+    .ta-lever-title { font-size:15px; font-weight:700; }
+    .ta-trainer, .ta-say, .ta-why { font-size:13px; line-height:1.55; color:var(--text-secondary); margin-bottom:9px; }
+    .ta-say { color:var(--text-primary); font-style:italic; }
+    .ta-lever-foot { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+    .ta-src { display:inline-block; font-size:11.5px; font-weight:600; color:var(--accent-blue); text-decoration:none; padding:3px 9px; border-radius:20px; background:var(--accent-blue-dim); border:1px solid rgba(59,158,255,0.2); }
+    .ta-src:hover { border-color:rgba(59,158,255,0.5); }
+    .ta-more { margin-top:6px; }
+    .ta-more summary, details.card > summary { cursor:pointer; font-size:13px; font-weight:700; color:var(--text-secondary); margin-bottom:10px; }
+    .ta-sim-grid { display:grid; grid-template-columns:1.4fr 1fr; gap:18px; }
+    .ta-sim-opt { display:flex; gap:10px; align-items:center; padding:10px 12px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--brand-card2); margin-bottom:6px; cursor:pointer; text-transform:none; letter-spacing:0; font-size:13px; font-weight:400; color:var(--text-secondary); }
+    .ta-sim-opt.on { border-color:rgba(59,158,255,0.45); background:var(--accent-blue-dim); }
+    .ta-sim-opt input, .ta-check input { width:auto; margin:0; accent-color:#22c97a; }
+    .ta-sim-opt > span:nth-child(2) { flex:1; display:flex; flex-direction:column; gap:2px; color:var(--text-primary); }
+    .ta-sim-gain { font-weight:800; color:var(--accent-blue); white-space:nowrap; }
+    .ta-sim-result { background:var(--brand-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+    .ta-sim-big { font-family:'DM Serif Display', serif; font-size:40px; line-height:1.1; color:var(--text-secondary); }
+    .ta-sim-big span { font-size:24px; color:var(--text-muted); }
+    .ta-sim-big strong { color:var(--accent-green); font-weight:400; }
+    .ta-check { display:flex; gap:10px; align-items:center; font-size:13.5px; font-weight:500; text-transform:none; letter-spacing:0; color:var(--text-primary); padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+    .ta-dev-good { color:var(--accent-green) !important; font-weight:700; }
+    .ta-dev-bad { color:var(--accent-amber) !important; font-weight:700; }
+    .ta-dev-neutral { color:var(--text-muted) !important; }
+    .ta-dev tr:hover td { background:none; cursor:default; }
+    .dash-foot { text-align:center; font-size:11px; color:var(--text-muted); padding:18px 0 30px; }
+    body.talk-mode .trainer-only, body.talk-mode header .nav-tabs, body.talk-mode header .header-badge, body.talk-mode #logoutBtn { display:none !important; }
+    body.talk-mode .ta-say { font-size:15px; }
+    @media (max-width: 900px) {
+      .ta-brief-grid, .ta-sim-grid, .ta-strength-row { grid-template-columns:1fr; }
+      header { flex-wrap:wrap; gap:10px; padding:12px 16px; }
+      .header-right { flex-wrap:wrap; max-width:100%; }
+      .nav-tabs { flex-wrap:wrap; }
+      .wrap { padding:16px; }
+    }
   /* ── LOGIN SCREEN ── */
   #loginScreen {
     position: fixed; inset: 0; z-index: 1000;
@@ -299,11 +363,15 @@
   <div class="header-right">
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('overview', this)">Übersicht</button>
+      <button class="nav-tab" onclick="switchTab('anfragen', this); loadRequests();" id="requestsTabBtn">Studio-Anfragen <span id="reqBadge" class="req-badge hidden"></span></button>
       <button class="nav-tab" onclick="switchTab('search', this)">Mitglied suchen</button>
       <button class="nav-tab" onclick="switchTab('analysis', this)" id="analysisTabBtn" style="display:none;">Analyse</button>
+      <button class="nav-tab" onclick="switchTab('wissen', this); taRenderLibrary();">Wissen</button>
+      <button class="nav-tab" onclick="switchTab('newsletter', this); loadMarketing();" id="newsletterTabBtn" style="display:none;">Newsletter</button>
+      <button class="nav-tab" onclick="switchTab('bilanz', this); loadBilanz();" id="bilanzTabBtn" style="display:none;">Bilanz</button>
     </div>
     <div class="header-badge">Intern</div>
-    <button class="btn-secondary btn-small" onclick="doLogout()" style="margin-left:8px;">Ausloggen</button>
+    <button class="btn-secondary btn-small" id="logoutBtn" onclick="doLogout()" style="margin-left:8px;">Ausloggen</button>
   </div>
 </header>
 
@@ -356,6 +424,50 @@
   <!-- ════════════════════════════════
        TAB 2 — SUCHE
   ════════════════════════════════ -->
+  <!-- ════════════════════════════════
+       TAB — STUDIO-ANFRAGEN (v2.1.0, 10.10.2026)
+       Anfragen aus Stufe 3 des Vital-Checks (Ergebnisgespräch oder
+       Vital-Analyse Plus). Liest studio_requests (RLS: is_trainer()).
+       Ergebnisse sind nur bei Trainer-Einwilligung im Dashboard sichtbar;
+       sonst im Gespräch über Pilot-ID und PIN des Mitglieds.
+  ════════════════════════════════ -->
+  <div class="tab-content" id="tab-anfragen">
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2>Studio-Anfragen</h2>
+          <p class="muted">Gesprächswünsche aus dem Vital-Check — zuletzt aktualisiert: <span id="reqLastUpdate">–</span></p>
+        </div>
+        <button class="btn-inline btn-secondary" onclick="loadRequests()">Aktualisieren</button>
+      </div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi"><span>Offen</span><strong id="reqOpen" style="color:var(--accent-amber);">–</strong></div>
+        <div class="kpi"><span>Überfällig</span><strong id="reqOverdue" style="color:var(--accent-red, #ff5c5c);">–</strong></div>
+        <div class="kpi"><span>Kontaktiert</span><strong id="reqContacted" style="color:var(--accent-blue);">–</strong></div>
+        <div class="kpi"><span>Termin vereinbart</span><strong id="reqBooked" style="color:var(--accent-green);">–</strong></div>
+      </div>
+      <p class="muted" style="margin-top:12px;">Bitte <strong>innerhalb eines Werktags</strong> anrufen, zum gewünschten Zeitfenster. „Ergebnis ansehen“ gibt es nur, wenn das Mitglied der Trainer-Einsicht zugestimmt hat — sonst schaut ihr das Ergebnis im Gespräch gemeinsam über Pilot-ID und PIN an. Telefonnummern nur für die Terminabsprache nutzen.</p>
+      <div id="reqStatus" class="hidden"></div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Status:</span>
+      <button class="filter-btn active" onclick="setReqFilter('offen', this)">Offen</button>
+      <button class="filter-btn" onclick="setReqFilter('kontaktiert', this)">Kontaktiert</button>
+      <button class="filter-btn" onclick="setReqFilter('termin', this)">Termin</button>
+      <button class="filter-btn" onclick="setReqFilter('erledigt', this)">Erledigt</button>
+      <button class="filter-btn" onclick="setReqFilter('abgesagt', this)">Abgesagt</button>
+      <button class="filter-btn" onclick="setReqFilter('alle', this)">Alle</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Eingang</th><th>Rückruf bis</th><th>Vorname</th><th>Telefon</th><th>Passt</th><th>Wunsch</th><th>Einsicht</th><th>Zuständig</th><th>Status</th><th>Termin</th><th>Bearbeitet</th><th>Notiz</th><th></th></tr></thead>
+          <tbody id="reqTable"><tr><td colspan="13" class="empty-state">Klicke „Aktualisieren“.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <div class="tab-content" id="tab-search">
     <div class="grid-2">
       <div class="card">
@@ -384,8 +496,12 @@
         <div class="hint-box hint-blue" style="margin-top:14px;">
           <strong style="color:var(--accent-blue);">Datenschutz:</strong> Alle angezeigten Daten wurden mit ausdrücklicher Nutzereinwilligung erfasst und dürfen nur im Rahmen der Beratung verwendet werden.
         </div>
+        <!-- 03.10.2026 — gehört zu trainer_einwilligung.sql -->
         <div class="hint-box hint-amber" style="margin-top:8px;">
-          <strong style="color:var(--accent-amber);">⚠ Security Phase 2 ausstehend:</strong> Login-Schutz via Supabase Auth wird in der nächsten Session implementiert.
+          <strong style="color:var(--accent-amber);">Nicht jeder Check erscheint hier:</strong> Seit dem 03.10.2026 fragt der Vital-Check freiwillig, ob die Trainerinnen und Trainer das Ergebnis einsehen dürfen. Wer das ablehnt oder später widerruft, taucht in dieser Übersicht nicht auf — auch nicht in der Namenssuche. Diese Checks sind nicht verschwunden; das Mitglied kann sie im Gespräch selbst mit Pilot-ID und PIN zeigen. Checks aus der Zeit vor der Frage bleiben wie bisher sichtbar.
+        </div>
+        <div class="hint-box hint-green" style="margin-top:8px;">
+          <strong style="color:var(--accent-green);">✓ Zugriffsschutz aktiv:</strong> Login via Supabase Auth, Registrierung deaktiviert — nur autorisierte Konten haben Zugriff (Stand 17.07.2026).
         </div>
       </div>
     </div>
@@ -403,14 +519,15 @@
           <p id="analysisSubtitle" class="muted" style="margin-top:3px;"></p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-          <div id="focusBadge"></div>
-          <div id="aiMailBadge"></div>
+          <button class="btn-inline" id="taTalkBtn" onclick="taToggleTalk()">🗣 Gesprächsmodus</button>
+          <div id="focusBadge" class="trainer-only"></div>
+          <div id="aiMailBadge" class="trainer-only"></div>
         </div>
       </div>
-      <div id="personInfo" class="info-row" style="margin-top:12px;"></div>
+      <div id="personInfo" class="info-row trainer-only" style="margin-top:12px;"></div>
 
       <!-- Status-Tracking -->
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+      <div class="trainer-only" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin-bottom:8px;">Gesprächs-Status</div>
         <div class="status-track">
           <button class="status-track-btn active-offen" id="stBtn-offen" onclick="setConversationStatus('offen')">📋 Offen</button>
@@ -418,9 +535,22 @@
           <button class="status-track-btn" id="stBtn-termin" onclick="setConversationStatus('termin')">📅 Termin vereinbart</button>
           <button class="status-track-btn" id="stBtn-abgeschlossen" onclick="setConversationStatus('abgeschlossen')">✓ Abgeschlossen</button>
         </div>
-        <div id="statusSaveNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;">Status wird lokal gespeichert — Supabase-Persistenz folgt in Security Phase 2.</div>
+        <div id="statusSaveNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;">Status wird lokal in diesem Browser gespeichert — zentrale Speicherung in Supabase ist geplant (Kleinfix 5.3).</div>
       </div>
     </div>
+
+    <!-- ── TRAINER-ASSISTENT (v2.0.0): 1 Briefing · 2 Stärken · 3 Hebel · 4 Simulation · 5 Vereinbarung ── -->
+    <div id="taSafety"></div>
+
+    <div class="card ta-brief trainer-only" id="taBriefCard">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <h3 style="margin:0;">🎯 Gesprächsvorbereitung — 60 Sekunden</h3>
+        <span class="ta-mini">Vor dem Gespräch lesen · nicht für die Kundenansicht</span>
+      </div>
+      <div id="taBrief"></div>
+    </div>
+
+    <div id="taDevelopment"></div>
 
     <div class="analysis-grid">
 
@@ -461,54 +591,89 @@
       </div>
     </div>
 
-    <!-- Bereichs-Scores -->
     <div class="card">
-      <h3>Bereichs-Scores im Detail</h3>
-      <div id="areaBars"></div>
+      <h3>💚 Das läuft gut</h3>
+      <div id="taStrengths"></div>
     </div>
 
-    <div class="analysis-grid">
-      <div class="card">
-        <h3>Top-Prioritäten</h3>
-        <ul id="topPriorities" style="padding-left:18px;color:var(--text-secondary);font-size:13px;line-height:1.9;"></ul>
-      </div>
-      <div class="card">
-        <h3>Beratungsimpulse</h3>
-        <div id="consultingHints"></div>
-      </div>
+    <div class="card">
+      <h3>🚀 Die größten Hebel</h3>
+      <p class="muted trainer-only" style="margin:-8px 0 14px;">Höchstens drei, ausgewählt nach Wirkung im Index, Ziel des Mitglieds und Gewicht des Bereichs. Jede Empfehlung mit Begründung und Quelle aus der Wissensbibliothek.</p>
+      <div id="taLevers"></div>
     </div>
 
-    <!-- Trainer-Gesprächsleitfaden -->
-    <div class="card">
-      <h3>Trainer-Gesprächsleitfaden</h3>
-      <div id="trainerGuide"></div>
+    <div class="card" id="taSimCard">
+      <h3>🔮 Was würde eine Veränderung bringen?</h3>
+      <div id="taSim"></div>
     </div>
 
-    <!-- Notiz + Re-Check -->
-    <div class="card">
-      <h3>Gesprächsnotiz & Re-Check</h3>
-      <p class="muted" style="margin-bottom:14px;">Wird lokal gespeichert und in die Trainer-Notiz übernommen. Supabase-Persistenz folgt in Security Phase 2.</p>
+    <div class="card" id="taAgreeCard">
+      <h3>🤝 Das vereinbaren wir</h3>
       <div class="grid-2">
         <div>
-          <label>Vereinbarte nächste Maßnahme</label>
-          <textarea id="nextAction" placeholder="z.B. 2x Krafttraining/Woche, Schlafroutine besprechen, Trockenbluttest anfragen …"></textarea>
+          <label>Ein bis zwei Maßnahmen auswählen</label>
+          <div id="taAgree" style="margin-bottom:10px;"></div>
+          <label style="margin-top:8px;">Eigenes Ziel</label>
+          <input type="text" id="taOwnGoal" placeholder="z. B. Treppe statt Aufzug im Büro" oninput="taComposeAction()" />
         </div>
         <div>
-          <label>Empfohlener Re-Check Termin</label>
+          <label>Vereinbarte nächste Maßnahme</label>
+          <textarea id="nextAction" placeholder="Wird aus der Auswahl links gefüllt — frei ergänzbar"></textarea>
+          <label style="margin-top:8px;">Re-Check-Termin (8–12 Wochen)</label>
           <input id="recheckDate" type="date" />
-          <label style="margin-top:8px;">Interne Notiz (nur für Trainer)</label>
-          <textarea id="trainerNote" placeholder="Weitere Beobachtungen, Besonderheiten …" style="min-height:60px;"></textarea>
+          <div class="trainer-only">
+            <label style="margin-top:8px;">Interne Notiz (nur für Trainer)</label>
+            <textarea id="trainerNote" placeholder="Weitere Beobachtungen, Besonderheiten …" style="min-height:60px;"></textarea>
+          </div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:4px;">
-        <button class="btn-inline" onclick="copyTrainerNote()">Notiz kopieren</button>
-        <button class="btn-secondary btn-inline" onclick="saveLocalNote()">Lokal speichern</button>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
+        <button class="btn-inline" onclick="taPrintSummary()">🖨 Zusammenfassung für das Mitglied</button>
+        <button class="btn-secondary btn-inline trainer-only" onclick="copyTrainerNote()">Trainer-Notiz kopieren</button>
+        <button class="btn-secondary btn-inline trainer-only" onclick="saveLocalNote()">Speichern</button>
       </div>
+      <p class="ta-mini trainer-only" style="margin-top:8px;">Vereinbarung, Status und Notiz werden zentral gespeichert – jeder Trainer sieht beim nächsten Gespräch und beim Re-Check, was vereinbart wurde.</p>
       <div id="copyStatus" class="hidden" style="margin-top:8px;"></div>
     </div>
 
+    <!-- Studio-Erfassung (20.09.2026): Tanita-Kernwerte, betreut von, Mitgliedschaft -->
+    <div class="card trainer-only" id="studioIntakeCard" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+        <h3 style="margin:0;">🏋️ Studio-Erfassung <span id="siKind" class="pill pill-gray" style="margin-left:6px;"></span></h3>
+        <span id="siMeta" class="muted" style="font-size:12px;"></span>
+      </div>
+      <div class="grid-3" style="gap:12px;">
+        <div><label>Betreut von</label><select id="siStaff"></select></div>
+        <div><label>Messdatum</label><input type="date" id="siMeasured" /></div>
+        <div id="siMemberWrap"><label>Mitglied seit (Vertrag)</label><input type="date" id="siMember" /></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted);margin:14px 0 8px;">Tanita-Messung</div>
+      <div class="grid-3" style="gap:12px;">
+        <div><label>Gewicht (kg)</label><input type="number" step="0.1" id="siWeight" /></div>
+        <div><label>Körperfett (%)</label><input type="number" step="0.1" id="siFat" /></div>
+        <div><label>Muskelmasse (kg)</label><input type="number" step="0.1" id="siMuscle" /></div>
+        <div><label>Körperwasser (%)</label><input type="number" step="0.1" id="siWater" /></div>
+        <div><label>Viszerales Fett (Stufe)</label><input type="number" step="0.5" id="siVisceral" /></div>
+        <div><label>Grundumsatz (kcal)</label><input type="number" step="1" id="siBmr" /></div>
+      </div>
+      <div id="siCompare" class="muted" style="margin-top:10px;font-size:12px;"></div>
+      <div style="margin-top:12px;"><label>Notiz</label><textarea id="siNotes" rows="2" placeholder="z. B. Besonderheiten bei der Messung"></textarea></div>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn-inline" onclick="saveStudioIntake()">Speichern</button>
+        <span id="siStatus" class="muted" style="font-size:12px;"></span>
+      </div>
+    </div>
+
+    <details class="card trainer-only">
+      <summary>🔎 Detailansicht: Bereichs-Scores und Top-Prioritäten</summary>
+      <div class="analysis-grid" style="margin-top:6px;">
+        <div><h3>Bereichs-Scores</h3><div id="areaBars"></div></div>
+        <div><h3>Top-Prioritäten (Scoring)</h3><ul id="topPriorities" style="padding-left:18px;color:var(--text-secondary);font-size:13px;line-height:1.9;"></ul></div>
+      </div>
+    </details>
+
     <!-- Antworten-Übersicht -->
-    <div class="card">
+    <div class="card trainer-only">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;cursor:pointer;" onclick="toggleAnswers()">
         <h3 style="margin:0;">📋 Antworten-Übersicht</h3>
         <button class="btn-secondary btn-small" id="answersToggleBtn">Einblenden</button>
@@ -525,6 +690,127 @@
 
   </div>
 
+  <!-- ════════════════════════════════
+       TAB — WISSENSBIBLIOTHEK (06.10.2026)
+  ════════════════════════════════ -->
+  <div class="tab-content" id="tab-wissen">
+    <div class="card">
+      <h2>LogiVita Wissensbibliothek</h2>
+      <p class="muted">Jede Empfehlung im Trainer-Assistenten stammt aus dieser kuratierten Regelbasis: Auslöser → Maßnahme → Begründung → Quelle. Die KI formuliert die Auswertungs-Mail — die fachliche Grundlage der Trainerberatung liegt hier und ist reproduzierbar. Quellen zuletzt geprüft: <strong id="libStand"></strong>.</p>
+    </div>
+    <div class="card">
+      <h3>Empfehlungsregeln</h3>
+      <div class="table-wrap"><table><thead><tr><th>Bereich</th><th>Empfehlung · Auslöser</th><th>Begründung</th><th>Quelle</th></tr></thead><tbody id="libRules"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h3>Safety-Grenzen — hier endet die Trainerberatung</h3>
+      <p class="muted" style="margin-bottom:12px;">Bei diesen Signalen nennt das Dashboard die Beobachtung, nicht die Ursache, und gibt aus dem betroffenen Bereich keine Empfehlung.</p>
+      <div class="table-wrap"><table><thead><tr><th>Stufe</th><th>Auslöser</th><th>Vorgehen</th><th>Keine Empfehlung aus</th></tr></thead><tbody id="libSafety"></tbody></table></div>
+    </div>
+    <div class="card">
+      <h3>Quellen</h3>
+      <div class="table-wrap"><table><thead><tr><th>Herausgeber</th><th>Titel</th><th>Jahr</th></tr></thead><tbody id="libSources"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TAB — BETREUUNGSBILANZ (20.09.2026)
+       Nur für Admins (is_studio_admin()). Punkte statt Beträge:
+       Erstbetreuung mit Mitgliedschaft = 2, Re-Check binnen 16 Wochen = 1.
+  ════════════════════════════════ -->
+  <div class="tab-content" id="tab-bilanz">
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2>Betreuungsbilanz</h2>
+          <p class="muted">Erstbetreuung mit Mitgliedschaft: 2 Punkte (im Monat des Vertrags) · Re-Check binnen 16 Wochen: 1 Punkt (im Monat des Re-Checks)</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="month" id="bzMonth" style="width:auto;" onchange="renderBilanz()" />
+          <button class="btn-inline btn-secondary" onclick="loadBilanz()">Aktualisieren</button>
+          <button class="btn-inline" onclick="exportBilanzCsv()">Export (CSV)</button>
+        </div>
+      </div>
+      <div id="bzStatus" class="hidden"></div>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <h3>Punkte im gewählten Monat</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Betreut von</th><th>Erstbetreuungen</th><th>Re-Checks</th><th>Punkte</th></tr></thead>
+        <tbody id="bzStaffTable"><tr><td colspan="4" class="empty-state">Klicke „Aktualisieren“.</td></tr></tbody>
+      </table></div>
+    </div>
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h3>Messungen im gewählten Monat</h3>
+          <p class="muted">Jede erfasste Messung zählt hier mit — auch ohne Mitgliedschaft. Stichtag ist das Messdatum, bei den Punkten oben dagegen das Vertrags- bzw. Re-Check-Datum.</p>
+        </div>
+        <button class="btn-inline btn-secondary" onclick="exportMessungenCsv()">Messungen (CSV)</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Betreut von</th><th>Messungen</th><th>Erstchecks</th><th>Re-Checks</th><th>davon mit Mitgliedschaft</th></tr></thead>
+        <tbody id="bzMeasTable"><tr><td colspan="5" class="empty-state">Klicke „Aktualisieren“.</td></tr></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h3>Einzelnachweis im gewählten Monat</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Datum</th><th>Pilot-ID</th><th>Person</th><th>Art</th><th>Betreut von</th><th>Punkte</th></tr></thead>
+        <tbody id="bzDetailTable"></tbody>
+      </table></div>
+      <h3 style="margin-top:18px;">Offene Re-Checks (Mitglieder)</h3>
+      <p class="muted">Mitglieder mit Erstbetreuung, deren Re-Check noch aussteht — mit Frist (16 Wochen nach dem Check).</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Pilot-ID</th><th>Person</th><th>Check am</th><th>Frist</th><th>Betreut von</th></tr></thead>
+        <tbody id="bzOpenTable"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TAB — NEWSLETTER-ANMELDUNGEN (20.09.2026)
+       Nur sichtbar für Konten in marketing_admins (is_marketing_admin()).
+       Liest marketing_consents ohne Token-Spalten (Spalten-Grant).
+  ════════════════════════════════ -->
+  <div class="tab-content" id="tab-newsletter">
+    <div class="card" style="margin-bottom:18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <h2>Newsletter-Anmeldungen</h2>
+          <p class="muted">Einwilligungen aus dem LeVITA Vital-Check mit Double-Opt-in — zuletzt aktualisiert: <span id="mkLastUpdate">–</span></p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-inline btn-secondary" onclick="loadMarketing()">Aktualisieren</button>
+          <button class="btn-inline" onclick="exportMarketingCsv()">Export bestätigte (CSV)</button>
+        </div>
+      </div>
+      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi"><span>Bestätigt</span><strong id="mkConfirmed" style="color:var(--accent-green);">–</strong></div>
+        <div class="kpi"><span>Offen (unbestätigt)</span><strong id="mkPending" style="color:var(--accent-amber);">–</strong></div>
+        <div class="kpi"><span>Abgemeldet</span><strong id="mkRevoked">–</strong></div>
+      </div>
+      <p class="muted" style="margin-top:12px;">Für den Versand zählen nur <strong>bestätigte</strong> Anmeldungen — nur diese enthält der Export. Offene Anfragen verfallen nach 30 Tagen automatisch. Die Liste ist eine Werbe-Adressliste: nicht weitergeben, nur für LeVITA-Mailings nutzen.</p>
+      <div id="mkStatus" class="hidden"></div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Status:</span>
+      <button class="filter-btn active" onclick="setMkFilter('confirmed', this)">Bestätigt</button>
+      <button class="filter-btn" onclick="setMkFilter('pending', this)">Offen</button>
+      <button class="filter-btn" onclick="setMkFilter('revoked', this)">Abgemeldet</button>
+      <button class="filter-btn" onclick="setMkFilter('alle', this)">Alle</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Vorname</th><th>E-Mail</th><th>Status</th><th>Quelle</th><th>Angefordert</th><th>Bestätigt</th></tr></thead>
+          <tbody id="mkTable"><tr><td colspan="6" class="empty-state">Klicke „Aktualisieren“.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="dash-foot">LeVITA Trainer-Dashboard v2.3.0 · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
 </main>
 
 <script>
@@ -553,6 +839,19 @@
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.getElementById('tab-' + id).classList.add('active');
     if (btn) btn.classList.add('active');
+  }
+
+  // v2.2.0 — Direktlink aus der Studio-Benachrichtigung:
+  //   ?code=LEV-2026-000123  → Analyse samt Trainer-Assistent öffnen (nur mit Freigabe lesbar, RLS)
+  //   ?tab=anfragen          → Reiter Studio-Anfragen
+  // Der Parameter wird danach aus der Adresse entfernt.
+  function openDeepLink() {
+    let params; try { params = new URLSearchParams(location.search); } catch (e) { return; }
+    const code = (params.get('code') || '').trim().toUpperCase();
+    const tab = params.get('tab');
+    if (code && /^LEV-\d{4}-\d{6}$/.test(code)) quickOpenAnalysis(code);
+    else if (tab === 'anfragen') { switchTab('anfragen', document.getElementById('requestsTabBtn')); loadRequests(); }
+    if (code || tab) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
   }
 
   function showAnalysisTab() {
@@ -631,14 +930,54 @@
     requestAnimationFrame(step);
   }
 
+  // ── v2.2.0: TRAINER-NOTIZEN ZENTRAL (Tabelle trainer_notes) ──
+  // Status, Vereinbarungen und Notiz lagen bis v2.1.0 nur im localStorage
+  // eines Browsers. Jetzt sieht jeder Trainer auf jedem Gerät dasselbe.
+  // localStorage bleibt als Rückfall (Tabelle fehlt / offline) und wird beim
+  // ersten Öffnen eines Checks automatisch in die Datenbank übernommen.
+  let notesTableOk = true;
+  async function myStaffId() {
+    try {
+      const staff = await loadStaff();
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const me = staff.find(st => session && st.user_id === session.user.id);
+      return me ? me.id : null;
+    } catch (e) { return null; }
+  }
+  async function upsertTrainerNote(submission, patch) {
+    if (!notesTableOk || !submission || !submission.id) return { ok: false };
+    const payload = Object.assign({ submission_id: submission.id, public_code: submission.public_code }, patch);
+    const sid = await myStaffId(); if (sid) payload.updated_by = sid;
+    const { error } = await supabaseClient.from('trainer_notes').upsert(payload, { onConflict: 'submission_id' });
+    if (error) { if (/relation|does not exist|schema cache/i.test(error.message)) notesTableOk = false; return { ok: false, error }; }
+    return { ok: true };
+  }
+  async function fetchTrainerNote(code) {
+    if (!notesTableOk) return null;
+    const { data, error } = await supabaseClient.from('trainer_notes').select('*').eq('public_code', code).maybeSingle();
+    if (error) { if (/relation|does not exist|schema cache/i.test(error.message)) notesTableOk = false; return null; }
+    return data || null;
+  }
+  // Status aller Checks für die Übersicht (DB schlägt lokalen Stand)
+  async function loadNotesStatusCache() {
+    try { conversationStatus = Object.assign({}, JSON.parse(localStorage.getItem('levita_status') || '{}')); } catch (e) { conversationStatus = {}; }
+    if (!notesTableOk) return;
+    const { data, error } = await supabaseClient.from('trainer_notes').select('public_code, conversation_status').limit(5000);
+    if (error) { if (/relation|does not exist|schema cache/i.test(error.message)) notesTableOk = false; return; }
+    (data || []).forEach(r => { conversationStatus[r.public_code] = r.conversation_status; });
+  }
+
   // ── CONVERSATION STATUS ──
-  function setConversationStatus(status) {
+  async function setConversationStatus(status) {
     if (!currentAnalysis) return;
     const code = currentAnalysis.submission.public_code;
     conversationStatus[code] = status;
-    localStorage.setItem('levita_status', JSON.stringify(conversationStatus));
+    try { localStorage.setItem('levita_status', JSON.stringify(conversationStatus)); } catch (e) {}
     updateStatusButtons(status);
-    document.getElementById('statusSaveNote').textContent = `✓ Status "${status}" gespeichert (lokal).`;
+    const res = await upsertTrainerNote(currentAnalysis.submission, { conversation_status: status });
+    document.getElementById('statusSaveNote').textContent = res.ok
+      ? `✓ Status "${status}" gespeichert – für alle Trainer sichtbar.`
+      : `Status "${status}" nur in diesem Browser gespeichert${res.error ? ' (' + res.error.message + ')' : ''}.`;
   }
 
   function updateStatusButtons(active) {
@@ -652,33 +991,67 @@
   }
 
   function getLocalStatus(code) {
+    if (conversationStatus && conversationStatus[code]) return conversationStatus[code];
     const stored = localStorage.getItem('levita_status');
     if (!stored) return 'offen';
     try { return JSON.parse(stored)[code] || 'offen'; }
     catch { return 'offen'; }
   }
 
-  function saveLocalNote() {
+  function noteToRow(d) {
+    return {
+      next_action: d.nextAction || null,
+      recheck_date: d.recheckDate || null,
+      trainer_note: d.trainerNote || null,
+      agreements: Array.isArray(d.agreements) ? d.agreements : [],
+      own_goal: d.ownGoal || null
+    };
+  }
+  function rowToNote(r) {
+    return { nextAction: r.next_action || '', recheckDate: r.recheck_date || '', trainerNote: r.trainer_note || '',
+             agreements: Array.isArray(r.agreements) ? r.agreements : [], ownGoal: r.own_goal || '' };
+  }
+
+  async function saveLocalNote() {
     if (!currentAnalysis) return;
     const code = currentAnalysis.submission.public_code;
     const data = {
       nextAction: document.getElementById('nextAction').value,
       recheckDate: document.getElementById('recheckDate').value,
-      trainerNote: document.getElementById('trainerNote').value
+      trainerNote: document.getElementById('trainerNote').value,
+      agreements: taState ? [...taState.chosen] : [],
+      ownGoal: document.getElementById('taOwnGoal').value
     };
-    localStorage.setItem(`levita_note_${code}`, JSON.stringify(data));
-    showStatus('copyStatus', '✓ Notiz lokal gespeichert.', 'success');
-    setTimeout(() => hideStatus('copyStatus'), 3000);
+    try { localStorage.setItem(`levita_note_${code}`, JSON.stringify(data)); } catch (e) {}
+    const res = await upsertTrainerNote(currentAnalysis.submission, noteToRow(data));
+    showStatus('copyStatus', res.ok ? '✓ Gespeichert – für alle Trainer sichtbar.' : '⚠ Nur in diesem Browser gespeichert' + (res.error ? ': ' + res.error.message : ' (Tabelle trainer_notes fehlt?)'), res.ok ? 'success' : 'error');
+    setTimeout(() => hideStatus('copyStatus'), 3500);
   }
 
-  function loadLocalNote(code) {
+  function applyNote(data) {
+    if (data.nextAction) document.getElementById('nextAction').value = data.nextAction;
+    if (data.recheckDate) document.getElementById('recheckDate').value = data.recheckDate;
+    if (data.trainerNote) document.getElementById('trainerNote').value = data.trainerNote;
+    if (data.ownGoal) document.getElementById('taOwnGoal').value = data.ownGoal;
+    if (taState && Array.isArray(data.agreements)) { data.agreements.forEach(id => taState.chosen.add(id)); taRenderAgreement(); }
+  }
+
+  async function loadLocalNote(code) {
+    const sub = currentAnalysis && currentAnalysis.submission;
+    const row = await fetchTrainerNote(code);
+    if (!currentAnalysis || currentAnalysis.submission.public_code !== code) return; // inzwischen anderer Check offen
+    const rowHasContent = row && (row.next_action || row.trainer_note || row.own_goal || row.recheck_date || (Array.isArray(row.agreements) && row.agreements.length));
+    if (row) {
+      if (row.conversation_status) { conversationStatus[code] = row.conversation_status; updateStatusButtons(row.conversation_status); }
+      if (rowHasContent) { applyNote(rowToNote(row)); return; }
+    }
     const stored = localStorage.getItem(`levita_note_${code}`);
     if (!stored) return;
     try {
       const data = JSON.parse(stored);
-      if (data.nextAction) document.getElementById('nextAction').value = data.nextAction;
-      if (data.recheckDate) document.getElementById('recheckDate').value = data.recheckDate;
-      if (data.trainerNote) document.getElementById('trainerNote').value = data.trainerNote;
+      applyNote(data);
+      // Einmalige Übernahme alter Browser-Notizen in die Datenbank
+      if (sub) upsertTrainerNote(sub, Object.assign(noteToRow(data), row ? {} : { conversation_status: getLocalStatus(code) }));
     } catch {}
   }
 
@@ -718,7 +1091,8 @@
 
   // ── SEARCH BY NAME ──
   async function searchByName() {
-    const query = document.getElementById("nameSearch").value.trim();
+    // Zeichen, die den PostgREST-.or()-Filter brechen, entfernen
+    const query = document.getElementById("nameSearch").value.replace(/[,()*%\\:"']/g, " ").trim();
     if (!query) return;
     const resultsEl = document.getElementById("searchResults");
     resultsEl.innerHTML = '<p class="muted">Suche läuft …</p>';
@@ -754,7 +1128,7 @@
           <div class="member-row" onclick="quickOpenAnalysis('${subm.public_code}')">
             <div class="member-score" style="color:${color};">${Math.round(total)}</div>
             <div class="member-info">
-              <div class="member-name">${safe(c.first_name)} ${safe(c.last_name, '')} <span style="color:var(--text-muted);font-size:12px;font-weight:400;">${safe(c.email)}</span></div>
+              <div class="member-name">${mkEsc(safe(c.first_name))} ${mkEsc(safe(c.last_name, ''))} <span style="color:var(--text-muted);font-size:12px;font-weight:400;">${mkEsc(safe(c.email))}</span></div>
               <div class="member-meta">${subm.public_code} · ${subm.age ? subm.age + ' J.' : ''} · ${scr ? getScoreLabel(total) : '–'}</div>
             </div>
             <button class="btn-small" onclick="event.stopPropagation();quickOpenAnalysis('${subm.public_code}')">Öffnen →</button>
@@ -783,6 +1157,7 @@
     // Titel
     const name = [contact?.first_name, contact?.last_name].filter(Boolean).join(" ") || "Unbekannt";
     document.getElementById("analysisTitle").textContent = `${name} — ${submission.public_code}`;
+    document.getElementById("libStand") && (document.getElementById("libStand").textContent = TA_LIB_STAND);
     const created = submission.created_at ? new Date(submission.created_at).toLocaleDateString("de-DE") : "–";
     document.getElementById("analysisSubtitle").textContent =
       `Erstellt: ${created} · Alter: ${safe(submission.age)} J. · ${safe(submission.gender)} · BMI: ${safe(submission.bmi)}`;
@@ -795,12 +1170,13 @@
       : `<span class="pill pill-gray">KI-Mail ausstehend</span>`;
 
     // Person-Info
-    const goalLabels = { goal_energy:"⚡ Energie", goal_weight:"⚖️ Gewicht", goal_fitness:"💪 Fitness", goal_prevention:"🛡️ Vorsorge", goal_longevity:"🌿 Longevity", goal_curious:"🔍 Neugier", goal_supplements:"💊 Nährstoffe" };
+    const goalLabels = TA_GOALS;
     document.getElementById("personInfo").innerHTML = `
-      ${contact?.email ? `<span class="pill pill-gray">✉ ${contact.email}</span>` : ""}
+      ${contact?.email ? `<span class="pill pill-gray">✉ ${mkEsc(contact.email)}</span>` : ""}
       ${submission.goal_key && goalLabels[submission.goal_key] ? `<span class="pill pill-blue">${goalLabels[submission.goal_key]}</span>` : ""}
       <span class="pill pill-gray">Größe: ${safe(submission.height_cm)} cm</span>
       <span class="pill pill-gray">Gewicht: ${safe(submission.weight_kg)} kg</span>
+      ${WB_LABEL[Number(submission.wellbeing_self)] ? `<span class="pill pill-blue">💚 Befinden: ${WB_LABEL[Number(submission.wellbeing_self)]}</span>` : ""}
     `;
 
     // Gesprächs-Status laden
@@ -838,9 +1214,12 @@
     renderRadar(areaScores);
     renderAreaBars(areaScores);
     renderPriorities(score.top_priorities);
-    renderConsultingHints(score, areaScores);
-    renderTrainerGuide(score, areaScores, submission);
     renderAnswers(answers);
+
+    // Trainer-Assistent (v2.0.0) — setzt seinen Zustand synchron, lädt Simulation nachträglich
+    document.body.classList.remove('talk-mode');
+    document.getElementById('taTalkBtn').textContent = '🗣 Gesprächsmodus';
+    taRender(submission, score, contact, answers, areaScores);
 
     // Notizen laden
     prepareRecheckDate();
@@ -849,6 +1228,9 @@
     // Antworten-Panel reset
     document.getElementById("answersPanel").style.display = "none";
     document.getElementById("answersToggleBtn").textContent = "Einblenden";
+
+    // Studio-Erfassung (20.09.2026)
+    loadStudioIntake(submission);
 
     // Tab ZULETZT wechseln — erst wenn alles gerendert ist
     showAnalysisTab();
@@ -915,43 +1297,12 @@
       : "<li style='color:var(--text-muted);'>Keine Top-Prioritäten gespeichert.</li>";
   }
 
-  function renderConsultingHints(score, areaScores) {
-    const hints = [];
-    if (score.doctor_hint) hints.push({ cls:"hint-red", text:"⚠️ Ärztliche Abklärung behutsam ansprechen — einige Angaben zeigen stärkere Auffälligkeiten." });
-    if (score.bloodtest_hint) hints.push({ cls:"hint-amber", text:"💉 Trockenbluttest empfehlen — z.B. Vitamin D, Ferritin, Omega-3 oder B12 gezielt prüfen." });
-    if (score.coaching_hint) hints.push({ cls:"hint-green", text:"💪 Coaching- oder Betreuungsgespräch anbieten — Trainingsplan oder Tanita-Körperanalyse als konkreter Einstieg." });
-    areaScores
-      .filter(a => Number(a.score) < 60)
-      .sort((a, b) => Number(a.score) - Number(b.score))
-      .slice(0, 3)
-      .forEach(a => hints.push({ cls:"hint-blue", text:`${AREA_ICONS[a.key]||""} ${a.area}: konkrete Maßnahmen im Gespräch besprechen (Score: ${Math.round(Number(a.score))}).` }));
-    if (!hints.length) hints.push({ cls:"hint-green", text:"✓ Keine starken Auffälligkeiten. Ziele und nächste Schritte gemeinsam definieren." });
-    document.getElementById("consultingHints").innerHTML =
-      hints.map(h => `<div class="hint-box ${h.cls}">${h.text}</div>`).join("");
-  }
-
-  function renderTrainerGuide(score, areaScores, submission) {
-    const weakAreas = areaScores
-      .filter(a => Number(a.score) < 70)
-      .sort((a, b) => Number(a.score) - Number(b.score))
-      .slice(0, 3);
-
-    const guide = [];
-    if (weakAreas.length) {
-      guide.push(`<strong>Fokusbereiche ansprechen:</strong> ${weakAreas.map(a => `${AREA_ICONS[a.key]||""} ${a.area} (${Math.round(Number(a.score))})`).join(", ")}`);
-    }
-    guide.push("Was ist aktuell die größte Belastung im Alltag?");
-    guide.push("Welche Veränderung wäre in den nächsten 7 Tagen realistisch umsetzbar?");
-    guide.push("Was erhoffst du dir konkret von unserem Studio?");
-    if (score.bloodtest_hint) guide.push("💉 Trockenbluttest als konkreten nächsten Schritt vorschlagen — kein Nüchternblut nötig.");
-    if (score.doctor_hint) guide.push("⚠️ Ärztliche Abklärung einfühlsam ansprechen — nicht drängend.");
-    if (submission?.goal_key === "goal_longevity") guide.push("🌿 Longevity-Ziel aufgreifen: Tanita Körperanalyse + Re-Check als Verlaufsmessung anbieten.");
-    if (submission?.goal_key === "goal_fitness") guide.push("💪 Probetraining anbieten — kostenlosen Einstieg konkret vereinbaren.");
-    guide.push("📅 Re-Check in 4–8 Wochen im Kalender fixieren.");
-
-    document.getElementById("trainerGuide").innerHTML =
-      guide.map(g => `<div class="hint-box hint-blue">${g}</div>`).join("");
-  }
+  // ── 03.10.2026 — Selbsteinschätzung des Befindens (Frontend v1.54.0).
+  // Sie zählt NICHT in den Index; sie steht daneben. Interessant ist die
+  // Differenz: Wer sich deutlich anders einschätzt, als der Index ausfällt,
+  // ist das eigentliche Gesprächsthema.
+  const WB_LABEL = { 5:"Sehr gut", 4:"Gut", 3:"Mittel", 2:"Weniger gut", 1:"Gar nicht gut" };
+  function wbStufe(total) { const t = Number(total); return t >= 85 ? 5 : t >= 70 ? 4 : t >= 55 ? 3 : t >= 40 ? 2 : 1; }
 
   function renderAnswers(answers) {
     document.getElementById("answersTable").innerHTML = answers.map(row => {
@@ -959,8 +1310,8 @@
       const riskColor = risk >= 3 ? "var(--accent-red)" : risk >= 2 ? "var(--accent-amber)" : "var(--text-muted)";
       return `<tr>
         <td><span class="pill pill-gray" style="font-size:10px;">${safe(row.area_key || row.questions?.area_key)}</span></td>
-        <td style="color:var(--text-secondary);">${safe(row.questions?.question_text || row.question_key)}</td>
-        <td style="color:var(--text-primary);font-weight:500;">${safe(row.answer_text)}</td>
+        <td style="color:var(--text-secondary);">${mkEsc(safe(row.questions?.question_text || row.question_key))}</td>
+        <td style="color:var(--text-primary);font-weight:500;">${mkEsc(safe(row.answer_text))}</td>
         <td style="color:${riskColor};font-weight:700;">${risk > 0 ? risk : "–"}</td>
       </tr>`;
     }).join("") || `<tr><td colspan="4" style="color:var(--text-muted);">Keine Antworten gefunden.</td></tr>`;
@@ -976,9 +1327,10 @@
 
   function prepareRecheckDate() {
     const date = new Date();
-    date.setDate(date.getDate() + 42);
+    date.setDate(date.getDate() + 70);   // 10 Wochen — Mitte des Re-Check-Fensters 8–12 Wochen
     document.getElementById("recheckDate").value = date.toISOString().split("T")[0];
     document.getElementById("nextAction").value = "";
+    document.getElementById("taOwnGoal").value = "";
     document.getElementById("trainerNote").value = "";
   }
 
@@ -1008,9 +1360,10 @@ Beratungsfokus: ${focus.label}
 
 Vereinbarte Maßnahme:
 ${action || "Noch nicht festgelegt"}
-
-Empfohlener Re-Check: ${recheck || "in 4–8 Wochen"}
-Ergebnis-Link: ${VITAL_CHECK_URL}?code=${submission.public_code}
+${taNoteLevers()}
+Empfohlener Re-Check: ${recheck || "in 8–12 Wochen"}
+Ergebnis-Link (nur für das Mitglied — Zugriff erfordert dessen persönlichen PIN aus der Auswertungs-Mail):
+${VITAL_CHECK_URL}?code=${submission.public_code}
 
 ${internalNote ? `Interne Notiz:\n${internalNote}\n` : ""}
 ──────────────────────────────
@@ -1033,6 +1386,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
   async function loadStudioOverview() {
     showStatus("overviewStatus", "Übersicht wird geladen …", "info");
     try {
+      await loadNotesStatusCache();   // v2.2.0: Status zentral
       const [subRes, scoreRes, ansRes, contactRes] = await Promise.all([
         supabaseClient.from("submissions").select("*").order("created_at", { ascending: false }).limit(500),
         supabaseClient.from("submission_scores").select("*").limit(500),
@@ -1106,7 +1460,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     el.innerHTML = items.map(item => {
       const { submission: s, score: sc, contact: ct, focus, total, localStatus } = item;
       const color = getScoreColor(total);
-      const name = ct ? [ct.first_name, ct.last_name].filter(Boolean).join(" ") : "Anonym";
+      const name = mkEsc(ct ? [ct.first_name, ct.last_name].filter(Boolean).join(" ") : "Anonym");
       const date = s.created_at ? new Date(s.created_at).toLocaleDateString("de-DE") : "–";
       const statusBadges = { offen:"📋 Offen", angesprochen:"💬 Angesprochen", termin:"📅 Termin", abgeschlossen:"✓ Abgeschlossen" };
       const statusColors = { offen:"pill-blue", angesprochen:"pill-amber", termin:"pill-purple", abgeschlossen:"pill-green" };
@@ -1157,7 +1511,8 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
 
     // Filter
     if (activeFilter === "beratung") {
-      filtered = filtered.filter(i => i.score?.doctor_hint || i.score?.bloodtest_hint || i.score?.coaching_hint || i.total < 60);
+      // Gleiche Logik wie KPI "Beratungsbedarf" (inkl. >=2 schwache Bereiche), damit Zahl und Liste übereinstimmen
+      filtered = filtered.filter(i => i.score?.doctor_hint || i.score?.bloodtest_hint || i.score?.coaching_hint || i.total < 60 || i.areaScores.filter(a => Number(a.score) < 50).length >= 2);
     } else if (activeFilter === "offen") {
       filtered = filtered.filter(i => i.localStatus === "offen");
     } else if (activeFilter === "ki_mail") {
@@ -1187,10 +1542,20 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     }
     document.getElementById("loginScreen").style.display = "none";
     loadStudioOverview();
+    initMarketingAccess();
+    initBilanzAccess();
+    loadRequests(true);   // v2.1.0: Zähler für offene Studio-Anfragen
+    openDeepLink();       // v2.2.0
   }
 
   async function doLogout() {
     await supabaseClient.auth.signOut();
+    document.getElementById('newsletterTabBtn').style.display = 'none';
+    document.getElementById('bilanzTabBtn').style.display = 'none';
+    staffList = [];
+    mkRows = [];
+    reqRows = [];   // v2.1.0
+    document.getElementById('reqBadge')?.classList.add('hidden');
     document.getElementById("loginScreen").style.display = "flex";
     document.getElementById("loginEmail").value = "";
     document.getElementById("loginPassword").value = "";
@@ -1202,10 +1567,1138 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     if (session) {
       document.getElementById("loginScreen").style.display = "none";
       loadStudioOverview();
+      initMarketingAccess();
+      initBilanzAccess();
+      loadRequests(true);   // v2.1.0
+      openDeepLink();       // v2.2.0
     }
   }
 
   checkAuth();
+
+  // ── STUDIO-ERFASSUNG + BETREUUNGSBILANZ (20.09.2026) ──
+  // Bewusst ohne Beträge: Punkte als mittelbarer Anreiz (Entscheidung Jörg).
+  const BZ_WINDOW_DAYS = 16 * 7;     // Re-Check zählt binnen 16 Wochen nach dem Check
+  let staffList = [], currentIntakeSub = null;
+  const numOrNull = id => { const v = document.getElementById(id).value; return v === '' ? null : Number(v); };
+  const dateOrNull = id => document.getElementById(id).value || null;
+  const fmtD = v => v ? new Date(v).toLocaleDateString('de-DE') : '–';
+
+  async function loadStaff() {
+    if (staffList.length) return staffList;
+    const { data } = await supabaseClient.from('studio_staff').select('id, display_name, user_id, is_active').order('display_name');
+    staffList = data || [];
+    return staffList;
+  }
+
+  async function loadStudioIntake(submission) {
+    currentIntakeSub = submission;
+    const st = document.getElementById('siStatus'); st.textContent = '';
+    const staff = await loadStaff();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const me = staff.find(s => s.user_id && user && s.user_id === user.id);
+    const sel = document.getElementById('siStaff');
+    sel.innerHTML = '<option value="">– bitte wählen –</option>' + staff.filter(s => s.is_active).map(s => `<option value="${s.id}">${mkEsc(s.display_name)}</option>`).join('');
+    const isRecheck = !!submission.previous_submission_id;
+    document.getElementById('siKind').textContent = isRecheck ? 'Re-Check' : 'Erstbetreuung';
+    document.getElementById('siMemberWrap').style.display = isRecheck ? 'none' : '';
+    const { data: row } = await supabaseClient.from('studio_intakes').select('*').eq('submission_id', submission.id).maybeSingle();
+    const r = row || {};
+    sel.value = r.staff_id || (me ? me.id : '');
+    document.getElementById('siMeasured').value = r.measured_on || '';
+    document.getElementById('siMember').value = r.membership_signed_on || '';
+    document.getElementById('siWeight').value = r.weight_kg ?? '';
+    document.getElementById('siFat').value = r.body_fat_pct ?? '';
+    document.getElementById('siMuscle').value = r.muscle_mass_kg ?? '';
+    document.getElementById('siWater').value = r.body_water_pct ?? '';
+    document.getElementById('siVisceral').value = r.visceral_fat ?? '';
+    document.getElementById('siBmr').value = r.bmr_kcal ?? '';
+    document.getElementById('siNotes').value = r.notes || '';
+    document.getElementById('siMeta').textContent = row ? `Zuletzt gespeichert: ${new Date(row.updated_at).toLocaleString('de-DE')}` : 'Noch nicht erfasst';
+    // Vergleich mit dem vorherigen Check (Re-Check)
+    const cmp = document.getElementById('siCompare'); cmp.textContent = '';
+    if (isRecheck) {
+      const { data: prev } = await supabaseClient.from('studio_intakes').select('weight_kg, body_fat_pct, muscle_mass_kg, measured_on').eq('submission_id', submission.previous_submission_id).maybeSingle();
+      if (prev) cmp.textContent = `Vorherige Messung (${fmtD(prev.measured_on)}): Gewicht ${prev.weight_kg ?? '–'} kg · Körperfett ${prev.body_fat_pct ?? '–'} % · Muskelmasse ${prev.muscle_mass_kg ?? '–'} kg`;
+    }
+  }
+
+  async function saveStudioIntake() {
+    const st = document.getElementById('siStatus');
+    if (!currentIntakeSub) return;
+    const staffId = document.getElementById('siStaff').value || null;
+    if (!staffId) { st.textContent = 'Bitte „Betreut von“ auswählen.'; st.style.color = 'var(--accent-red)'; return; }
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const payload = {
+      submission_id: currentIntakeSub.id, staff_id: staffId, entered_by: user?.id,
+      measured_on: dateOrNull('siMeasured'),
+      membership_signed_on: currentIntakeSub.previous_submission_id ? null : dateOrNull('siMember'),
+      weight_kg: numOrNull('siWeight'), body_fat_pct: numOrNull('siFat'), muscle_mass_kg: numOrNull('siMuscle'),
+      body_water_pct: numOrNull('siWater'), visceral_fat: numOrNull('siVisceral'), bmr_kcal: numOrNull('siBmr'),
+      notes: document.getElementById('siNotes').value.trim() || null,
+    };
+    st.textContent = 'Speichern …'; st.style.color = '';
+    const { error } = await supabaseClient.from('studio_intakes').upsert(payload, { onConflict: 'submission_id' });
+    if (error) { st.textContent = 'Speichern fehlgeschlagen: ' + error.message; st.style.color = 'var(--accent-red)'; return; }
+    st.textContent = '✓ Gespeichert'; st.style.color = 'var(--accent-green)';
+    document.getElementById('siMeta').textContent = `Zuletzt gespeichert: ${new Date().toLocaleString('de-DE')}`;
+  }
+
+  // Bilanz
+  let bzEntries = [], bzOpen = [], bzMeas = [];
+  async function initBilanzAccess() {
+    const btn = document.getElementById('bilanzTabBtn');
+    try { const { data, error } = await supabaseClient.rpc('is_studio_admin'); btn.style.display = (!error && data === true) ? '' : 'none'; }
+    catch (e) { btn.style.display = 'none'; }
+  }
+
+  async function loadBilanz() {
+    showStatus('bzStatus', 'Bilanz wird geladen …', 'info');
+    const m = document.getElementById('bzMonth');
+    if (!m.value) m.value = new Date().toISOString().slice(0, 7);
+    const [intRes, subRes, conRes] = await Promise.all([
+      supabaseClient.from('studio_intakes').select('submission_id, staff_id, membership_signed_on, measured_on, entered_at').limit(5000),
+      supabaseClient.from('submissions').select('id, public_code, previous_submission_id, created_at').order('created_at', { ascending: false }).limit(5000),
+      supabaseClient.from('submission_contacts').select('submission_id, first_name, last_name').limit(5000),
+    ]);
+    if (intRes.error || subRes.error) { showStatus('bzStatus', 'Laden fehlgeschlagen: ' + (intRes.error || subRes.error).message, 'error'); return; }
+    await loadStaff();
+    const staffName = id => (staffList.find(s => s.id === id) || {}).display_name || '–';
+    const subs = {}; (subRes.data || []).forEach(x => subs[x.id] = x);
+    const names = {}; (conRes.data || []).forEach(c => names[c.submission_id] = [c.first_name, c.last_name].filter(Boolean).join(' '));
+    const intakes = {}; (intRes.data || []).forEach(x => intakes[x.submission_id] = x);
+    bzEntries = []; bzOpen = []; bzMeas = [];
+    // Alle erfassten Messungen — unabhängig davon, ob sie Punkte bringen
+    Object.values(intakes).forEach(it => {
+      const sub = subs[it.submission_id]; if (!sub) return;
+      const d = it.measured_on || String(it.entered_at || '').slice(0, 10);
+      if (!d) return;
+      bzMeas.push({
+        date: d, code: sub.public_code, person: names[sub.id] || '',
+        kind: sub.previous_submission_id ? 'Re-Check' : 'Erstcheck',
+        staff: staffName(it.staff_id), member: it.membership_signed_on ? 'ja' : '',
+      });
+    });
+    // Erstbetreuungen mit Mitgliedschaft
+    Object.values(intakes).forEach(it => {
+      const sub = subs[it.submission_id]; if (!sub || sub.previous_submission_id) return;
+      if (!it.membership_signed_on) return;
+      bzEntries.push({ date: it.membership_signed_on, code: sub.public_code, person: names[sub.id] || '', kind: 'Erstbetreuung', staff: staffName(it.staff_id), points: 2 });
+      // Re-Check vorhanden?
+      const deadline = new Date(new Date(sub.created_at).getTime() + BZ_WINDOW_DAYS * 86400000);
+      const rc = Object.values(subs).filter(x => x.previous_submission_id === sub.id)
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))[0];
+      const rcIntake = rc ? intakes[rc.id] : null;
+      if (rc && rcIntake && new Date(rc.created_at) <= deadline) {
+        bzEntries.push({ date: rc.created_at.slice(0, 10), code: rc.public_code, person: names[sub.id] || names[rc.id] || '', kind: 'Re-Check', staff: staffName(rcIntake.staff_id), points: 1 });
+      } else if (!rc && new Date() <= deadline) {
+        bzOpen.push({ code: sub.public_code, person: names[sub.id] || '', checked: sub.created_at, deadline, staff: staffName(it.staff_id) });
+      }
+    });
+    hideStatus('bzStatus');
+    renderBilanz();
+  }
+
+  function renderBilanz() {
+    const month = document.getElementById('bzMonth').value;
+    const rows = bzEntries.filter(e => String(e.date).slice(0, 7) === month).sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    const per = {};
+    rows.forEach(e => { per[e.staff] = per[e.staff] || { first: 0, re: 0, pts: 0 }; if (e.kind === 'Erstbetreuung') per[e.staff].first++; else per[e.staff].re++; per[e.staff].pts += e.points; });
+    const st = document.getElementById('bzStaffTable');
+    const staffRows = Object.entries(per).sort((a, b) => b[1].pts - a[1].pts);
+    st.innerHTML = staffRows.length ? staffRows.map(([n, v]) => `<tr style="cursor:default;"><td>${mkEsc(n)}</td><td>${v.first}</td><td>${v.re}</td><td><strong>${v.pts}</strong></td></tr>`).join('')
+      : '<tr><td colspan="4" class="empty-state">Keine Einträge in diesem Monat.</td></tr>';
+    // Messungen im Monat — zählt jede Erfassung, auch ohne Mitgliedschaft
+    const mRows = bzMeas.filter(e => String(e.date).slice(0, 7) === month);
+    const mPer = {};
+    mRows.forEach(e => {
+      mPer[e.staff] = mPer[e.staff] || { first: 0, re: 0, member: 0 };
+      if (e.kind === 'Re-Check') mPer[e.staff].re++; else mPer[e.staff].first++;
+      if (e.member) mPer[e.staff].member++;
+    });
+    const mt = document.getElementById('bzMeasTable');
+    const mSorted = Object.entries(mPer).sort((a, b) => (b[1].first + b[1].re) - (a[1].first + a[1].re));
+    mt.innerHTML = mSorted.length ? mSorted.map(([n, v]) => `<tr style="cursor:default;"><td>${mkEsc(n)}</td><td><strong>${v.first + v.re}</strong></td><td>${v.first}</td><td>${v.re}</td><td>${v.member}</td></tr>`).join('')
+      : '<tr><td colspan="5" class="empty-state">Keine Messungen in diesem Monat.</td></tr>';
+
+    document.getElementById('bzDetailTable').innerHTML = rows.length ? rows.map(e => `<tr style="cursor:default;"><td>${fmtD(e.date)}</td><td>${mkEsc(e.code)}</td><td>${mkEsc(e.person || '–')}</td><td>${e.kind}</td><td>${mkEsc(e.staff)}</td><td>${e.points}</td></tr>`).join('')
+      : '<tr><td colspan="6" class="empty-state">–</td></tr>';
+    document.getElementById('bzOpenTable').innerHTML = bzOpen.length ? bzOpen.sort((a, b) => a.deadline - b.deadline).map(o => `<tr style="cursor:default;"><td>${mkEsc(o.code)}</td><td>${mkEsc(o.person || '–')}</td><td>${fmtD(o.checked)}</td><td>${fmtD(o.deadline)}</td><td>${mkEsc(o.staff)}</td></tr>`).join('')
+      : '<tr><td colspan="5" class="empty-state">Keine offenen Re-Checks.</td></tr>';
+  }
+
+  function exportMessungenCsv() {
+    const month = document.getElementById('bzMonth').value;
+    const rows = bzMeas.filter(e => String(e.date).slice(0, 7) === month)
+      .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    if (!rows.length) { showStatus('bzStatus', 'Keine Messungen im gewählten Monat.', 'error'); return; }
+    const cell = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+    const lines = [['Messdatum', 'Pilot-ID', 'Person', 'Art', 'Betreut von', 'Mitgliedschaft'].map(cell).join(';')]
+      .concat(rows.map(e => [e.date, e.code, e.person, e.kind, e.staff, e.member].map(cell).join(';')));
+    const blob = new Blob(['﻿' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `levita-messungen-${month}.csv`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  function exportBilanzCsv() {
+    const month = document.getElementById('bzMonth').value;
+    const rows = bzEntries.filter(e => String(e.date).slice(0, 7) === month);
+    if (!rows.length) { showStatus('bzStatus', 'Keine Einträge im gewählten Monat.', 'error'); return; }
+    const cell = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+    const lines = [['Datum', 'Pilot-ID', 'Person', 'Art', 'Betreut von', 'Punkte'].map(cell).join(';')]
+      .concat(rows.map(e => [e.date, e.code, e.person, e.kind, e.staff, e.points].map(cell).join(';')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `levita-betreuungsbilanz-${month}.csv`; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  // ── NEWSLETTER-ANMELDUNGEN (20.09.2026) ──
+  let mkRows = [], mkFilter = 'confirmed';
+  const mkEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const mkDate = v => v ? new Date(v).toLocaleString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '–';
+  const MK_STATUS = { confirmed: ['Bestätigt', 'var(--accent-green)'], pending: ['Offen', 'var(--accent-amber)'], revoked: ['Abgemeldet', 'var(--text-muted)'] };
+  const MK_SOURCE = { after_mail: 'Nach Vital-Plan', review: 'Wiederaufruf' };
+
+  // Tab nur für freigeschaltete Konten zeigen
+  async function initMarketingAccess() {
+    const btn = document.getElementById('newsletterTabBtn');
+    try {
+      const { data, error } = await supabaseClient.rpc('is_marketing_admin');
+      btn.style.display = (!error && data === true) ? '' : 'none';
+    } catch (e) { btn.style.display = 'none'; }
+  }
+
+  async function loadMarketing() {
+    showStatus('mkStatus', 'Anmeldungen werden geladen …', 'info');
+    // Nur die freigegebenen Spalten anfragen — select('*') würde an den
+    // gesperrten Token-Spalten scheitern.
+    const { data, error } = await supabaseClient.from('marketing_consents')
+      .select('id, email, first_name, status, source, consent_version, requested_at, confirmed_at, revoked_at')
+      .order('requested_at', { ascending: false }).limit(5000);
+    if (error) { showStatus('mkStatus', 'Laden fehlgeschlagen: ' + error.message, 'error'); return; }
+    mkRows = data || [];
+    // Kennzahlen je Adresse (eine Person kann mehrere Zeilen haben)
+    const latest = {};
+    mkRows.forEach(r => { const k = (r.email || '').toLowerCase(); if (!latest[k]) latest[k] = r; });
+    const persons = Object.values(latest);
+    document.getElementById('mkConfirmed').textContent = persons.filter(r => r.status === 'confirmed').length;
+    document.getElementById('mkPending').textContent = persons.filter(r => r.status === 'pending').length;
+    document.getElementById('mkRevoked').textContent = persons.filter(r => r.status === 'revoked').length;
+    document.getElementById('mkLastUpdate').textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    hideStatus('mkStatus');
+    renderMarketing();
+  }
+
+  function setMkFilter(f, btn) {
+    mkFilter = f;
+    btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderMarketing();
+  }
+
+  function renderMarketing() {
+    const rows = mkRows.filter(r => mkFilter === 'alle' || r.status === mkFilter);
+    const tb = document.getElementById('mkTable');
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="6" class="empty-state">Keine Einträge.</td></tr>'; return; }
+    tb.innerHTML = rows.map(r => {
+      const st = MK_STATUS[r.status] || [r.status, 'inherit'];
+      return `<tr style="cursor:default;"><td>${mkEsc(r.first_name || '–')}</td><td>${mkEsc(r.email)}</td>
+        <td style="color:${st[1]};font-weight:700;">${st[0]}</td><td>${mkEsc(MK_SOURCE[r.source] || r.source || '–')}</td>
+        <td>${mkDate(r.requested_at)}</td><td>${mkDate(r.confirmed_at)}</td></tr>`;
+    }).join('');
+  }
+
+  // Export: NUR bestätigte, je Adresse einmal (jüngste Bestätigung).
+  // Semikolon + UTF-8-BOM, damit Excel (de) Umlaute und Spalten richtig liest.
+  function exportMarketingCsv() {
+    const byEmail = {};
+    mkRows.filter(r => r.status === 'confirmed').forEach(r => {
+      const k = (r.email || '').toLowerCase();
+      if (!byEmail[k] || new Date(r.confirmed_at) > new Date(byEmail[k].confirmed_at)) byEmail[k] = r;
+    });
+    const list = Object.values(byEmail);
+    if (!list.length) { showStatus('mkStatus', 'Keine bestätigten Anmeldungen zum Exportieren. Erst „Aktualisieren“ klicken.', 'error'); return; }
+    // Schutz vor Formel-Einschleusung in Excel (Zellen, die mit = + - @ beginnen)
+    const cell = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return '"' + t.replace(/"/g, '""') + '"'; };
+    const iso = v => v ? new Date(v).toISOString().replace('T', ' ').slice(0, 19) : '';
+    const lines = [['Vorname', 'E-Mail', 'Bestätigt am (UTC)', 'Angefordert am (UTC)', 'Quelle', 'Einwilligungsversion'].map(cell).join(';')]
+      .concat(list.map(r => [r.first_name || '', r.email, iso(r.confirmed_at), iso(r.requested_at), MK_SOURCE[r.source] || r.source || '', r.consent_version || ''].map(cell).join(';')));
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `levita-newsletter-bestaetigt-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    showStatus('mkStatus', `${list.length} bestätigte Anmeldung${list.length === 1 ? '' : 'en'} exportiert.`, 'success');
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // STUDIO-ANFRAGEN (Dashboard v2.1.0, 10.10.2026, gehört zu Vital-Check v2.0.0)
+  // ════════════════════════════════════════════════════════════
+  let reqRows = [], reqFilter = 'offen';
+  const REQ_STATUS = { offen: 'Offen', kontaktiert: 'Kontaktiert', termin: 'Termin vereinbart', erledigt: 'Erledigt', abgesagt: 'Abgesagt' };
+  const REQ_OFFER = { gespraech: 'Ergebnisgespräch (15 Min., kostenlos)', vital_analyse_plus: 'Vital-Analyse Plus (49,00 €)' };
+
+  async function loadRequests(silent) {
+    if (!silent) showStatus('reqStatus', 'Anfragen werden geladen …', 'info');
+    await loadStaff();
+    const { data, error } = await supabaseClient.from('studio_requests')
+      .select('*')   // v2.2.0: inkl. assigned_to/appointment_at, ohne Fehler falls trainer_notes.sql noch fehlt
+      .order('created_at', { ascending: false }).limit(1000);
+    if (error) {
+      if (!silent) showStatus('reqStatus', /does not exist|relation/i.test(error.message)
+        ? 'Die Tabelle studio_requests fehlt noch — bitte studio_requests.sql einspielen.'
+        : 'Laden fehlgeschlagen: ' + error.message, 'error');
+      return;
+    }
+    reqRows = data || [];
+    updateRequestCounts();
+    document.getElementById('reqLastUpdate').textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    if (!silent) hideStatus('reqStatus');
+    renderRequests();
+  }
+
+  function updateRequestCounts() {
+    const n = st => reqRows.filter(r => r.status === st).length;
+    const open = n('offen');
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('reqOpen', open); set('reqContacted', n('kontaktiert')); set('reqBooked', n('termin'));
+    set('reqOverdue', reqRows.filter(reqIsOverdue).length);
+    const badge = document.getElementById('reqBadge');
+    if (badge) { badge.textContent = open; badge.classList.toggle('hidden', open === 0); }
+  }
+
+  function setReqFilter(f, btn) {
+    reqFilter = f;
+    btn.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderRequests();
+  }
+
+  function renderRequests() {
+    const rows = reqRows.filter(r => reqFilter === 'alle' || r.status === reqFilter);
+    const tb = document.getElementById('reqTable');
+    if (!tb) return;
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="13" class="empty-state">Keine Anfragen.</td></tr>'; return; }
+    const staffName = id => (staffList.find(s => s.id === id) || {}).display_name || '–';
+    const staffOpts = sel => '<option value="">– offen –</option>' + staffList.filter(s => s.is_active).map(s => `<option value="${s.id}"${s.id === sel ? ' selected' : ''}>${mkEsc(s.display_name)}</option>`).join('');
+    tb.innerHTML = rows.map(r => {
+      const tel = String(r.phone || '').replace(/[^+0-9]/g, '');
+      const opts = Object.entries(REQ_STATUS).map(([k, v]) => `<option value="${k}"${k === r.status ? ' selected' : ''}>${v}</option>`).join('');
+      const open = r.trainer_access && r.public_code
+        ? `<button class="btn-inline btn-small" onclick="quickOpenAnalysis('${mkEsc(r.public_code)}')">Ergebnis ansehen</button>`
+        : `<span class="muted" style="font-size:12px;">${mkEsc(r.public_code || '')}<br>im Gespräch mit PIN</span>`;
+      const due = reqDueDate(r.created_at);
+      const overdue = reqIsOverdue(r);
+      const dueTxt = due.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+      const appt = r.appointment_at ? toLocalInput(r.appointment_at) : '';
+      return `<tr style="cursor:default;${overdue ? 'background:rgba(255,92,92,0.07);' : ''}">
+        <td style="white-space:nowrap;">${mkDate(r.created_at)}</td>
+        <td style="white-space:nowrap;">${r.status === 'offen' ? (overdue ? `<span class="req-overdue">⚠ ${dueTxt}</span>` : dueTxt) : '<span class="muted">–</span>'}</td>
+        <td><strong>${mkEsc(r.first_name)}</strong></td>
+        <td><a class="req-tel" href="tel:${mkEsc(tel)}">${mkEsc(r.phone)}</a></td>
+        <td>${mkEsc(r.preferred_slot)}</td>
+        <td>${mkEsc(REQ_OFFER[r.offer] || r.offer)}</td>
+        <td>${r.trainer_access ? '<span class="req-yes">ja</span>' : '<span class="req-no">nein</span>'}</td>
+        <td><select class="req-select" aria-label="Zuständig" onchange="updateRequest('${r.id}', { assigned_to: this.value || null }, true)">${staffOpts(r.assigned_to)}</select></td>
+        <td><select class="req-select" aria-label="Status" onchange="updateRequest('${r.id}', { status: this.value })">${opts}</select></td>
+        <td><input type="datetime-local" class="req-select" aria-label="Termin" value="${appt}" onchange="updateRequest('${r.id}', this.value ? { appointment_at: new Date(this.value).toISOString(), status: 'termin' } : { appointment_at: null })"></td>
+        <td>${mkEsc(staffName(r.handled_by))}</td>
+        <td><input class="req-note" aria-label="Notiz" maxlength="1000" value="${mkEsc(r.note || '')}" onchange="updateRequest('${r.id}', { note: this.value })"></td>
+        <td>${open}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // v2.2.0 — Frist: Rückruf bis Ende des nächsten Werktags (Mo–Fr; Feiertage
+  // nicht berücksichtigt). Eingang Freitag oder Wochenende → Montag.
+  function reqDueDate(created) {
+    const d = new Date(created);
+    d.setDate(d.getDate() + 1);
+    while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+    d.setHours(23, 59, 59, 0);
+    return d;
+  }
+  function reqIsOverdue(r) { return r.status === 'offen' && Date.now() > reqDueDate(r.created_at).getTime(); }
+  function toLocalInput(iso) {
+    const d = new Date(iso); const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+  }
+
+  async function updateRequest(id, patch, keepHandler) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    const me = staffList.find(s => session && s.user_id === session.user.id);
+    const payload = Object.assign({}, patch, (me && !keepHandler) ? { handled_by: me.id } : {});
+    const { error } = await supabaseClient.from('studio_requests').update(payload).eq('id', id);
+    if (error) { showStatus('reqStatus', 'Speichern fehlgeschlagen: ' + error.message, 'error'); return; }
+    const row = reqRows.find(r => r.id === id);
+    if (row) Object.assign(row, payload);
+    updateRequestCounts();
+    renderRequests();
+    showStatus('reqStatus', 'Gespeichert.', 'success');
+    setTimeout(() => hideStatus('reqStatus'), 1500);
+  }
+
+  // ════════════════════════════════════════════════════════════
+  // TRAINER-ASSISTENT (Dashboard v2.0.0, 06.10.2026)
+  // Aus Daten wird Gesprächsvorbereitung: Briefing → Stärken → Hebel mit
+  // Quelle → Simulation → Vereinbarung. Die fachliche Grundlage kommt aus
+  // der kuratierten Wissensbibliothek unten — nicht aus der KI und nicht
+  // aus einer Websuche im Moment des Gesprächs. Jede Empfehlung ist damit
+  // reproduzierbar: Regel → Auslöser → Quelle → Stand der Quelle.
+  // Grenze: Bei Safety-Signalen gibt es aus dem betroffenen Bereich keine
+  // Empfehlung, sondern nur den Hinweis auf ärztliche Einordnung
+  // (Beobachtung nennen, nicht Ursache — Entscheidung 30.08.2026).
+  // ════════════════════════════════════════════════════════════
+  const DASH_VERSION = "2.0.0";
+  const TA_LIB_STAND = "06.10.2026";
+  const taEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const taNum = (v, d = 1) => Number(v).toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
+  const taSigned = (v, d = 1) => (v > 0 ? '+' : v < 0 ? '−' : '±') + taNum(Math.abs(v), d);
+
+  // ── Quellen (alle am 06.10.2026 gegen das Original geprüft) ──
+  const TA_SOURCES = {
+    who_pa:     { short: "WHO-Leitlinien Bewegung", title: "WHO guidelines on physical activity and sedentary behaviour", publisher: "Weltgesundheitsorganisation", year: "2020", url: "https://www.who.int/publications/i/item/9789240015128" },
+    who_fs:     { short: "WHO-Faktenblatt Bewegung", title: "Physical activity — Fact sheet", publisher: "Weltgesundheitsorganisation", year: "2024", url: "https://www.who.int/news-room/fact-sheets/detail/physical-activity" },
+    who_social: { short: "WHO-Kommission Soziale Verbundenheit", title: "Social connection linked to improved health and reduced risk of early death", publisher: "Weltgesundheitsorganisation", year: "2025", url: "https://www.who.int/news/item/30-06-2025-social-connection-linked-to-improved-heath-and-reduced-risk-of-early-death" },
+    aasm:       { short: "AASM/SRS-Konsens Schlafdauer", title: "Recommended Amount of Sleep for a Healthy Adult (Konsens, gilt für 18–60 J.)", publisher: "American Academy of Sleep Medicine / Sleep Research Society", year: "2015", url: "https://pmc.ncbi.nlm.nih.gov/articles/PMC4434546/" },
+    dge_emp:    { short: "DGE-Empfehlungen", title: "Gut essen und trinken – die DGE-Empfehlungen", publisher: "Deutsche Gesellschaft für Ernährung", year: "2024", url: "https://www.dge.de/gesunde-ernaehrung/gut-essen-und-trinken/dge-empfehlungen/" },
+    dge_prot:   { short: "DGE-Referenzwerte Protein", title: "Referenzwerte für die Nährstoffzufuhr: Protein", publisher: "Deutsche Gesellschaft für Ernährung", year: "2017", url: "https://www.dge.de/wissenschaft/referenzwerte/protein/" },
+    dge_alk:    { short: "DGE-Position Alkohol", title: "Am besten null Promille – DGE-Positionspapier zu Alkohol", publisher: "Deutsche Gesellschaft für Ernährung", year: "2024", url: "https://www.dge.de/presse/meldungen/2024/dge-positionspapier-zu-alkohol/" },
+    bfr_vitd:   { short: "BfR – Fragen und Antworten zu Vitamin D", title: "Ausgewählte Fragen und Antworten zu Vitamin D", publisher: "Bundesinstitut für Risikobewertung", year: "2025", url: "https://www.bfr.bund.de/fragen-und-antworten/thema/ausgewaehlte-fragen-und-antworten-zu-vitamin-d/" },
+    dge_vegan:  { short: "DGE – FAQ vegane Ernährung", title: "Ausgewählte Fragen und Antworten zur veganen Ernährung", publisher: "Deutsche Gesellschaft für Ernährung", year: "2024", url: "https://www.dge.de/gesunde-ernaehrung/faq/faqs-vegane-ernaehrung/" },
+    dge_b12:    { short: "DGE – FAQ Vitamin B12", title: "FAQ Vitamin B12", publisher: "Deutsche Gesellschaft für Ernährung", year: "", url: "https://www.dge.de/gesunde-ernaehrung/faq/vitamin-b12/" },
+    bioeg:      { short: "BIÖG – Rauchstopp-Beratung", title: "Rauchfrei: kostenlose Telefonberatung 0800 8 31 31 31 und Online-Ausstiegsprogramm", publisher: "Bundesinstitut für Öffentliche Gesundheit", year: "2025", url: "https://www.rauchfrei-info.de/" },
+  };
+
+  const TA_AREA_LABEL = { sleep:"Schlaf & Regeneration", activity:"Bewegung & Kraft", nutrition:"Ernährung", mental:"Mentale Balance & Stress", vitamin_d:"Vitamin D & Tageslicht", bmi:"BMI / Körperkomposition", lifestyle:"Alkohol / Nikotin", micronutrients:"Mikronährstoff-Risiko", metabolic:"Energie & Stoffwechsel-Signale" };
+  const TA_WEIGHTS = { sleep:16, activity:16, nutrition:12, mental:12, vitamin_d:10, bmi:10, lifestyle:8, micronutrients:8, metabolic:8 };
+  const TA_GOALS = { goal_energy:"⚡ Mehr Energie", goal_weight:"⚖️ Gewicht", goal_fitness:"💪 Fitter werden", goal_prevention:"🛡️ Vorsorge", goal_longevity:"🌿 Langfristig vital", goal_curious:"🔍 Neugier", goal_supplements:"💊 Nährstoffe" };
+  const TA_GOAL_AREAS = { goal_energy:["sleep","metabolic","activity"], goal_weight:["activity","nutrition","bmi"], goal_fitness:["activity"], goal_prevention:["activity","nutrition","sleep","lifestyle"], goal_longevity:["activity","sleep","nutrition"], goal_supplements:["nutrition","vitamin_d","micronutrients"], goal_curious:[] };
+  // Fallback, falls questions.is_simulatable nicht lesbar ist: die Verhaltens-Fragen
+  const TA_SIM_FALLBACK = ["activity_days","strength_training","sitting_hours","sleep_duration","water_intake","vegetables_fruit","protein_intake","omega3_fish","alcohol_frequency","alcohol_amount","nicotine_use","sun_exposure_winter","social_connection"];
+
+  // v2.3.0 (10.10.2026) — Angebot nach Trainer-Leitfaden: betreutes Training oder Kurs, für alle Altersgruppen.
+  // §20-Kurse nur auf Nachfrage (nicht mehr vorgeschlagen). Reha-Sport nie wegen des Alters, sondern nur
+  // als Rückfrage nach einer Verordnung, wenn ein Anlass vorliegt (siehe taRehaAnlass).
+  function taOfferMove(ctx) {
+    return "Betreutes Training oder Kurs aus unserem Programm (Nicht-Mitglieder: Probetraining)";
+  }
+  // Anlass für die Reha-Sport-Rückfrage — gleiche Logik wie die Auswertungs-Mail (edge .6):
+  // Arzt-Hinweis, Warnsignal aus „Zuerst klären“ (außer reinem Befinden) oder Angabe zu Schmerzen/Gelenken/Rücken.
+  function taRehaAnlass(ctx, safety) {
+    if (ctx.score && ctx.score.doctor_hint) return true;
+    if ((safety || []).some(s => s.id !== 'befinden')) return true;
+    return (ctx.answers || []).some(a => /schmerz|gelenk|rücken|arthros|bandscheib/i.test(a.answer_text || ''));
+  }
+
+  // ── WISSENSBIBLIOTHEK: Auslöser → Trainer-Maßnahme → Kundensatz → Warum → Quelle → Angebot ──
+  const TA_RULES = [
+    { id:"kraft", area:"activity", q:"strength_training", icon:"💪", title:"Krafttraining aufbauen",
+      trigger:"Krafttraining: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('strength_training') >= 2,
+      action: c => (c.area('activity') < 50
+        ? "Erster Schritt: <strong>ein</strong> fester Kraft-Termin pro Woche, nach etwa vier Wochen auf zwei steigern. Lieber klein und sicher als ehrgeizig und abgebrochen."
+        : "Zwei feste Kraft-Einheiten pro Woche für die großen Muskelgruppen — Einweisung und Plan gleich mitgeben.")
+        + (c.age >= 65 ? " Ab 65 Gleichgewicht und Koordination fest einbauen." : ""),
+      say: c => "Krafttraining kommt bei dir bislang kaum vor. Genau hier können wir mit festen Terminen viel bewegen — und du merkst es im Alltag.",
+      why: c => c.age >= 65
+        ? "Die WHO empfiehlt Muskelkräftigung an mindestens zwei Tagen pro Woche; ab 65 zusätzlich an mindestens drei Tagen abwechslungsreiches Training mit Schwerpunkt Gleichgewicht und Kraft."
+        : "Die WHO empfiehlt Erwachsenen, die großen Muskelgruppen an mindestens zwei Tagen pro Woche zu kräftigen.",
+      deal: c => c.area('activity') < 50 ? "1× pro Woche fester Kraft-Termin (nach 4 Wochen: 2×)" : "2× pro Woche Krafttraining",
+      src:["who_pa"], offer: taOfferMove },
+    { id:"alltag", area:"activity", q:"activity_days", icon:"🚶", title:"Mehr Bewegung im Alltag",
+      trigger:"Aktive Tage pro Woche: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('activity_days') >= 2,
+      action: c => "Gemeinsam zwei bis drei feste Alltagsfenster finden (Wege zu Fuß oder mit dem Rad, Spaziergang nach dem Essen). Wer eine Uhr trägt: ein Schrittziel daraus machen — die Uhr misst, wir geben die Richtung.",
+      say: c => "Jede Bewegung zählt. Wo in deiner Woche ließe sich ganz nebenbei etwas mehr Bewegung unterbringen?",
+      why: c => "Die WHO empfiehlt Erwachsenen 150–300 Minuten moderate Bewegung pro Woche und betont: Jede Bewegung ist besser als keine.",
+      deal: c => "Mehr Alltagsbewegung: feste Fenster in der Woche",
+      src:["who_pa"], offer: taOfferMove },
+    { id:"sitzen", area:"activity", q:"sitting_hours", icon:"🪑", title:"Sitzzeit unterbrechen",
+      trigger:"Sitzstunden pro Tag: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('sitting_hours') >= 2,
+      action: c => "Zwei kurze Übungen für den Arbeitsplatz zeigen und ein einfaches Signal vereinbaren (z. B. jede Stunde kurz aufstehen).",
+      say: c => "Du sitzt viel — das geht vielen so. Schon kurze Unterbrechungen machen einen Unterschied.",
+      why: c => "Die WHO empfiehlt, Sitzzeit zu begrenzen und durch Bewegung jeder Intensität zu ersetzen.",
+      deal: c => "Sitzen regelmäßig unterbrechen (Arbeitsplatz-Übungen)",
+      src:["who_pa"] },
+    { id:"schlafdauer", area:"sleep", q:"sleep_duration", icon:"🌙", title:"Schlafdauer stärken",
+      trigger:"Schlafdauer: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('sleep_duration') >= 2,
+      action: c => "Nach dem Rhythmus fragen: feste Aufstehzeit, ruhiger Abend. Regelmäßige Bewegung am Tag als Unterstützung einordnen. Halten Schlafprobleme an, gehört das in die Hausarztpraxis.",
+      say: c => "Schlaf ist die Grundlage für alles andere — auch für das, was du im Training erreichen willst.",
+      why: c => "Ein Expertenkonsens der amerikanischen Schlafmedizin empfiehlt Erwachsenen regelmäßig sieben Stunden Schlaf oder mehr" + (c.age > 60 ? " (der Konsens bezieht sich auf 18- bis 60-Jährige)" : "") + ". Laut WHO ist regelmäßige Bewegung mit besserem Schlaf verbunden.",
+      deal: c => "Schlafrhythmus: feste Aufstehzeit",
+      src:["aasm","who_fs"] },
+    { id:"einschlafen", area:"sleep", q:"sleep_latency", icon:"😴", title:"Leichter einschlafen",
+      trigger:"Einschlafdauer: Antwort mit ≥ 3 Risikopunkten",
+      when: c => c.risk('sleep_latency') >= 3,
+      action: c => "Bewegung am Tag als Baustein anbieten. Keine Schlaf-Ratschläge im Detail — hält das Einschlafproblem an, hausärztlich ansprechen.",
+      say: c => "Viele merken, dass regelmäßige Bewegung am Tag auch abends hilft, zur Ruhe zu kommen.",
+      why: c => "Laut WHO ist regelmäßige Bewegung mit besserem Schlaf verbunden.",
+      deal: c => "Bewegung am Tag als Schlaf-Baustein",
+      src:["who_fs"] },
+    { id:"gemuese", area:"nutrition", q:"vegetables_fruit", icon:"🥦", title:"Mehr Obst und Gemüse",
+      trigger:"Obst und Gemüse: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('vegetables_fruit') >= 2,
+      action: c => "Eine Portion mehr pro Tag als Einstieg vereinbaren — konkret an einer Mahlzeit festmachen.",
+      say: c => "Fang mit einer Portion mehr am Tag an. Das ist machbar und bringt viel.",
+      why: c => "Die DGE empfiehlt mindestens fünf Portionen Obst und Gemüse pro Tag.",
+      deal: c => "+1 Portion Obst oder Gemüse pro Tag",
+      src:["dge_emp"] },
+    { id:"protein", area:"nutrition", q:"protein_intake", icon:"🥚", title:"Eiweiß für die Muskeln",
+      trigger:"Eiweißzufuhr: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('protein_intake') >= 2,
+      action: c => {
+        const f = c.age >= 65 ? 1.0 : 0.8;
+        const g = c.weight ? ` Bei ${taNum(c.weight, 0)} kg sind das rund ${Math.round(c.weight * f)} g pro Tag.` : "";
+        return `Eine Eiweißquelle zu jeder Hauptmahlzeit vereinbaren (Milchprodukte, Hülsenfrüchte, Eier, Fisch).${g}` + (c.age >= 70 ? " Ab 70 liegt der Fokus auf Muskelerhalt — zusammen mit Krafttraining." : "");
+      },
+      say: c => "Damit das Training auch ankommt, braucht der Muskel Baumaterial. Eine Eiweißquelle zu jeder Mahlzeit ist ein guter Anfang.",
+      why: c => c.age >= 65 ? "Die DGE nennt ab 65 Jahren 1,0 g Eiweiß pro kg Körpergewicht und Tag als angemessene Zufuhr." : "Die DGE empfiehlt Erwachsenen 0,8 g Eiweiß pro kg Körpergewicht und Tag.",
+      deal: c => "Eiweißquelle zu jeder Hauptmahlzeit",
+      src:["dge_prot"] },
+    { id:"trinken", area:"nutrition", q:"water_intake", icon:"💧", title:"Genug trinken",
+      trigger:"Trinkmenge: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('water_intake') >= 2,
+      action: c => "Trinken an feste Anlässe koppeln (Glas Wasser zu jeder Mahlzeit, Flasche zum Training).",
+      say: c => "Ein Glas Wasser zu jeder Mahlzeit und eine Flasche beim Training — das ist schon fast die Menge.",
+      why: c => "Die DGE empfiehlt rund 1,5 Liter am Tag, am besten Wasser oder andere kalorienfreie Getränke.",
+      deal: c => "Rund 1,5 l am Tag, an feste Anlässe gekoppelt",
+      src:["dge_emp"] },
+    { id:"fisch", area:"nutrition", q:"omega3_fish", icon:"🐟", title:"Fisch in den Wochenplan",
+      trigger:"Fisch/Omega-3: Antwort mit ≥ 2 Risikopunkten (nicht bei vegetarischer/veganer Ernährung)",
+      when: c => c.risk('omega3_fish') >= 2 && !c.vegan && !c.vegetarian,
+      action: c => "Ein fester Fisch-Tag pro Woche als Einstieg.",
+      say: c => "Ein fester Fisch-Tag pro Woche ist ein einfacher Anfang.",
+      why: c => "Die DGE empfiehlt ein- bis zweimal Fisch pro Woche.",
+      deal: c => "1× pro Woche Fisch",
+      src:["dge_emp"] },
+    { id:"b12vegan", area:"micronutrients", q:null, icon:"🌱", title:"B12 bei veganer Ernährung",
+      trigger:"Ernährungsform vegan und kein B12 unter den eingenommenen Präparaten",
+      when: c => c.vegan && !c.hasB12,
+      action: c => "Nur ansprechen, nicht verkaufen: Präparatwahl und Dosierung gehören in die Hausarztpraxis oder Apotheke. Keinesfalls davon abraten.",
+      say: c => "Bei veganer Ernährung ist B12 das eine Thema, das man nicht dem Zufall überlassen sollte. Sprich das am besten in deiner Hausarztpraxis an.",
+      why: c => "Laut DGE ist eine ausreichende Vitamin-B12-Versorgung bei veganer Ernährung nach derzeitigem Kenntnisstand nur mit einem Nährstoffpräparat möglich — dauerhaft und regelmäßig.",
+      deal: c => "B12-Versorgung hausärztlich ansprechen",
+      src:["dge_vegan"] },
+    { id:"b12veggie", area:"micronutrients", q:null, icon:"🌱", title:"B12 im Blick behalten",
+      trigger:"Ernährungsform vegetarisch und kein B12 unter den eingenommenen Präparaten",
+      when: c => c.vegetarian && !c.hasB12,
+      action: c => "Behutsam ansprechen. Ob ein Präparat sinnvoll ist, klärt die Hausarztpraxis — nicht davon abraten.",
+      say: c => "Bei vegetarischer Ernährung lohnt es sich, B12 im Blick zu behalten. Frag am besten bei deiner Hausärztin oder deinem Hausarzt nach.",
+      why: c => "Laut DGE weisen auch Vegetarier teilweise eine zu geringe Vitamin-B12-Zufuhr auf.",
+      deal: c => "B12 bei nächster Gelegenheit hausärztlich ansprechen",
+      src:["dge_b12"] },
+    { id:"stress", area:"mental", q:"stress_level", icon:"🧘", title:"Ausgleich zum Stress",
+      trigger:"Stresslevel: Antwort mit ≥ 3 Risikopunkten",
+      when: c => c.risk('stress_level') >= 3,
+      action: c => "Training als Ausgleich anbieten, nicht als weitere Pflicht: ruhige Einheiten, Mobility, Entspannungsangebote. Kein zusätzlicher Leistungsdruck.",
+      say: c => "Training darf hier ein Ausgleich sein — keine weitere Aufgabe auf der Liste.",
+      why: c => "Laut WHO verbessert regelmäßige Bewegung die psychische Gesundheit und das Wohlbefinden und kann Symptome von Angst und Depression verringern.",
+      deal: c => "Feste Ausgleichs-Einheit pro Woche",
+      src:["who_fs"] },
+    { id:"sozial", area:"mental", q:"social_connection", icon:"🤝", title:"Gemeinsam statt allein",
+      trigger:"Soziale Einbindung: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('social_connection') >= 2,
+      action: c => "Kursangebote oder Trainingszeiten mit festen Gruppen vorschlagen; Trainingspartner vermitteln.",
+      say: c => "In der Gruppe fällt es oft leichter dranzubleiben — und es macht mehr Spaß.",
+      why: c => "Laut WHO kann soziale Verbundenheit die Gesundheit über das ganze Leben schützen und die psychische Gesundheit fördern.",
+      deal: c => "Gruppenangebot ausprobieren",
+      src:["who_social"], offer: c => "Kurs oder feste Trainingsgruppe" },
+    { id:"tageslicht", area:"vitamin_d", q:"sun_exposure_winter", icon:"☀️", title:"Tageslicht tanken",
+      trigger:"Aufenthalt im Freien (Winter): Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('sun_exposure_winter') >= 2,
+      action: c => "Tageslicht thematisieren: Outdoor-Einheiten, Mittagsspaziergang. Kein Präparat pauschal empfehlen — ob eines sinnvoll ist, klärt die Hausarztpraxis."
+        + (c.winter ? " Gerade jetzt im Winterhalbjahr reicht die Sonne für die körpereigene Bildung ohnehin nicht aus." : ""),
+      say: c => "Raus ans Tageslicht tut doppelt gut: Bewegung und Licht zugleich.",
+      why: c => "Laut BfR genügt es, mehrmals pro Woche Gesicht, Hände und Arme 5 bis 25 Minuten der Sonne auszusetzen. Von Oktober bis März reicht die Sonne in Deutschland dafür nicht aus.",
+      deal: c => "Mehrmals pro Woche Bewegung bei Tageslicht",
+      src:["bfr_vitd"] },
+    { id:"alkohol", area:"lifestyle", q:"alcohol_frequency", icon:"🍃", title:"Alkoholfreie Tage",
+      trigger:"Alkohol-Häufigkeit oder -Menge mit ≥ 2 Risikopunkten UND Bereich Alkohol/Nikotin unter 40",
+      when: c => (c.risk('alcohol_frequency') >= 2 || c.risk('alcohol_amount') >= 2) && c.area('lifestyle') < 40,
+      action: c => "Nur behutsam und ohne Wertung ansprechen, am besten, wenn das Mitglied das Thema selbst öffnet. Alkoholfreie Tage als Angebot, nie als Vorwurf.",
+      say: c => "Viele merken bei Schlaf und Energie schnell einen Unterschied, wenn sie ein paar alkoholfreie Tage pro Woche einbauen.",
+      why: c => "Die DGE empfiehlt, auf alkoholische Getränke zu verzichten; wer trinkt, sollte vor allem hohe Mengen und Rauschtrinken vermeiden.",
+      deal: c => "Feste alkoholfreie Tage in der Woche",
+      src:["dge_alk"] },
+    { id:"rauchen", area:"lifestyle", q:"nicotine_use", icon:"🚭", title:"Rauchstopp unterstützen",
+      trigger:"Nikotin: Antwort mit ≥ 2 Risikopunkten",
+      when: c => c.risk('nicotine_use') >= 2,
+      action: c => "Nur anbieten, wenn das Mitglied offen dafür ist. Auf die kostenlose Telefonberatung 0800 8 31 31 31 und rauchfrei-info.de verweisen; Training als Begleitung anbieten.",
+      say: c => "Wenn du irgendwann aufhören möchtest: Es gibt eine kostenlose Beratung, und das Training kann dich dabei gut begleiten.",
+      why: c => "Das Bundesinstitut für Öffentliche Gesundheit bietet eine kostenlose Rauchstopp-Telefonberatung (0800 8 31 31 31) und ein Online-Ausstiegsprogramm an.",
+      deal: c => "Rauchstopp-Beratung als Option (0800 8 31 31 31)",
+      src:["bioeg"] },
+    { id:"koerper", area:"bmi", q:null, icon:"📏", title:"Messen statt schätzen",
+      trigger:"Bereich BMI / Körperkomposition unter 55",
+      when: c => c.area('bmi') < 55,
+      action: c => (c.age >= 70
+        ? "Ab 70 geht es um Muskelerhalt, nicht um Abnehmen: Kraft und Eiweiß in den Mittelpunkt, keine Körperfett-Erzählung."
+        : (c.bmi && c.bmi < 20 ? "BMI unter 20: nicht über Abnehmen sprechen, sondern über Kraft und Energie."
+          : "Nicht über Kilos sprechen, sondern Körperzusammensetzung messen: Muskelmasse und Körperfett als Ausgangswert für den Re-Check."))
+        + " Tanita-Messung als Ausgangspunkt.",
+      say: c => c.age >= 70 ? "Für dich zählt vor allem eines: Muskeln erhalten. Das messen wir und sehen beim nächsten Mal, was sich tut." : "Lass uns messen statt schätzen — dann sehen wir beim nächsten Mal genau, was sich verändert hat.",
+      why: c => c.age >= 70
+        ? "Die WHO empfiehlt älteren Erwachsenen Kraft- und Gleichgewichtstraining an mindestens drei Tagen pro Woche; die DGE nennt ab 65 einen höheren Eiweißbedarf (1,0 g/kg)."
+        : "Laut WHO ist regelmäßige Bewegung mit günstigeren Werten beim Körperfett verbunden.",
+      deal: c => "Tanita-Ausgangsmessung als Vergleichswert",
+      src: c => c && c.age >= 70 ? ["who_pa","dge_prot"] : ["who_fs"], offer: c => "Tanita-Körperanalyse" },
+  ];
+  const taRuleSrc = (r, c) => typeof r.src === 'function' ? r.src(c) : r.src;
+
+  // ── SAFETY: Beobachtung nennen, nicht Ursache. Blockiert Empfehlungen aus dem Bereich. ──
+  const TA_SAFETY = [
+    { id:"gewicht", level:"red", trigger:"Ungewollter Gewichtsverlust ≥ 3 Risikopunkte, oder Gewichtsverlust und Appetitveränderung je ≥ 2",
+      when: c => (c.risk('unintentional_weight_loss') >= 2 && c.risk('appetite_change') >= 2) || c.risk('unintentional_weight_loss') >= 3,
+      obs: c => "Angaben zu ungewolltem Gewichtsverlust" + (c.risk('appetite_change') >= 2 ? " und verändertem Appetit" : "") + ".",
+      todo: "Behutsam eine hausärztliche Abklärung empfehlen. Bis dahin keine Ernährungs-, Gewichts- oder Laborempfehlung aus dem Check.",
+      blocks:["metabolic","bmi","nutrition","micronutrients"], noLab:true },
+    { id:"stimmung", level:"red", trigger:"Gedrückte Stimmung oder Interessenverlust mit 4 Risikopunkten, oder beide zusammen ≥ 5",
+      when: c => (c.risk('low_mood') || 0) + (c.risk('low_interest') || 0) >= 5 || c.risk('low_mood') >= 4 || c.risk('low_interest') >= 4,
+      obs: c => "Angaben zu gedrückter Stimmung und/oder Interessenverlust sind deutlich ausgeprägt.",
+      todo: "Ruhig fragen, wie es gerade geht. Eine hausärztliche oder psychotherapeutische Einordnung empfehlen. Keine Stress- oder Mental-Tipps aus dem Fragebogen ableiten. Bei akuter Krise: 112 oder TelefonSeelsorge 0800 111 0 111 (kostenfrei, rund um die Uhr).",
+      blocks:["mental"] },
+    { id:"schwindel", level:"amber", trigger:"Schwindel/blasse Nägel ≥ 3 Risikopunkte",
+      when: c => c.risk('dizziness_pale_nails') >= 3,
+      obs: c => "Angabe zu Schwindel bzw. blassen Nägeln ist deutlich.",
+      todo: "Hausärztlich einordnen lassen. Kein Präparat und kein Selbsttest auf Verdacht.",
+      blocks:["micronutrients"], noLab:true },
+    { id:"periode", level:"amber", trigger:"Periodenblutung ≥ 3 Risikopunkte",
+      when: c => c.risk('period_bleeding') >= 3,
+      obs: c => "Angabe zu starker Periodenblutung.",
+      todo: "Gynäkologisch einordnen lassen. Keine eigene Nährstoff-Empfehlung.",
+      blocks:["micronutrients"], noLab:true },
+    { id:"muedigkeit", level:"amber", trigger:"Tagesmüdigkeit mit 4 Risikopunkten",
+      when: c => c.risk('daytime_sleepiness') >= 4,
+      obs: c => "Angabe zu sehr ausgeprägter Tagesmüdigkeit.",
+      todo: "Hausärztlich ansprechen, bevor am Schlaf etwas „optimiert“ wird.",
+      blocks:["sleep"] },
+    { id:"arzt", level:"amber", trigger:"doctor_hint aus dem Scoring (u. a. Index unter 40 ab 60 Jahren)",
+      when: c => !!c.score.doctor_hint,
+      obs: c => "Der Check hat eine ärztliche Abklärung angeregt.",
+      todo: "Behutsam eine hausärztliche Einordnung empfehlen — nicht drängend, ohne Vermutung über Ursachen.",
+      blocks:[] },
+    { id:"befinden", level:"amber", trigger:"Selbsteinschätzung Befinden „weniger gut“ oder „gar nicht gut“",
+      when: c => { const wb = Number(c.submission.wellbeing_self) || 0; return wb > 0 && wb <= 2; },
+      obs: c => `Selbsteinschätzung des Befindens: „${WB_LABEL[Number(c.submission.wellbeing_self)]}“.`,
+      todo: "Behutsam nachfragen, ob das anhält; gegebenenfalls zur hausärztlichen Einordnung raten — ohne Ursachenvermutung.",
+      blocks:[] },
+  ];
+
+  const TA_STRENGTH = {
+    activity:"Du bist gut in Bewegung — das ist eine starke Basis.",
+    sleep:"Dein Schlaf ist eine echte Stärke.",
+    nutrition:"Deine Ernährung ist gut aufgestellt.",
+    mental:"Du wirkst mental gut ausbalanciert.",
+    vitamin_d:"Du holst dir viel Tageslicht.",
+    lifestyle:"Beim Thema Alkohol und Nikotin bist du sehr gut aufgestellt.",
+    micronutrients:"Bei der Nährstoffversorgung zeigen deine Angaben keine Auffälligkeiten.",
+    metabolic:"Deine Energie-Signale sind unauffällig.",
+  };
+  const TA_STRENGTH_ORDER = ["activity","sleep","nutrition","mental","lifestyle","vitamin_d","micronutrients","metabolic"];
+  // Stärken ab 70 (gleiche Schwelle wie die Mail). Verhaltensbereiche zuerst — „keine Auffälligkeiten“
+  // bei Mikronährstoffen/Stoffwechsel ist eine schwächere Stärke und füllt nur auf.
+  function taStrongAreas(ctx) {
+    const core = ["activity","sleep","nutrition","mental","lifestyle","vitamin_d"];
+    const ok = k => ctx.areaMap[k] !== undefined && ctx.areaMap[k] >= 70;
+    const bySc = (a, b) => ctx.areaMap[b] - ctx.areaMap[a];
+    return [...core.filter(ok).sort(bySc), ...["micronutrients","metabolic"].filter(ok).sort(bySc)].slice(0, 3);
+  }
+  const TA_HIGHLIGHTS = [
+    ["strength_training","💪 Krafttraining fest dabei"], ["activity_days","🚶 Regelmäßig aktiv"],
+    ["nicotine_use","🚭 Rauchfrei"], ["alcohol_frequency","🍃 Alkohol kaum ein Thema"],
+    ["vegetables_fruit","🥦 Viel Obst & Gemüse"], ["sleep_duration","🌙 Ausreichend Schlaf"],
+    ["social_connection","🤝 Gut eingebunden"], ["sun_exposure_winter","☀️ Viel Tageslicht"],
+  ];
+
+  const TA_OPENERS = {
+    goal_fitness: "Du möchtest fitter werden. Wenn du auf Bewegung, Schlaf und Ernährung schaust: Wo würdest du selbst am liebsten anfangen?",
+    goal_weight: "Dein Ziel ist dein Gewicht. Lass uns zuerst schauen, was dir im Alltag leichtfällt — darauf bauen wir auf.",
+    goal_energy: "Du wünschst dir mehr Energie. Wann am Tag merkst du das am stärksten?",
+    goal_prevention: "Dir ist Vorsorge wichtig. Was möchtest du in zehn Jahren ganz selbstverständlich können?",
+    goal_longevity: "Du denkst langfristig. Was möchtest du mit 80 ganz selbstverständlich können?",
+    goal_supplements: "Du interessierst dich für Nährstoffe. Vieles davon lässt sich über Ernährung und Tageslicht beeinflussen — magst du da zuerst draufschauen?",
+    goal_curious: "Was hat dich an deinem Ergebnis am meisten überrascht?",
+  };
+
+  // ── Kontext aus Submission + Antworten ──
+  function taContext(submission, score, answers, areaScores) {
+    const byKey = {};
+    (answers || []).forEach(a => { const k = a.question_key; if (!k) return; (byKey[k] = byKey[k] || []).push(a); });
+    const risk = k => { const rows = byKey[k]; if (!rows || !rows.length) return null; return Math.max(...rows.map(r => Number(r.risk_points || 0))); };
+    const text = k => (byKey[k] || []).map(r => r.answer_text || '').join(' · ');
+    const areaMap = {}; (areaScores || []).forEach(a => areaMap[a.key] = Number(a.score));
+    const diet = text('diet_type').toLowerCase();
+    const suppl = (text('supplement_types') + ' ' + text('supplement_types_detail')).toLowerCase();
+    const m = new Date().getMonth() + 1;
+    return {
+      submission, score, answers: answers || [], byKey, risk, text, areaMap,
+      area: k => (areaMap[k] === undefined ? 100 : areaMap[k]),
+      age: Number(submission.age) || null, weight: Number(submission.weight_kg) || null, bmi: Number(submission.bmi) || null,
+      goal: submission.goal_key || '', vegan: /vegan/.test(diet), vegetarian: /vegetar/.test(diet) && !/vegan/.test(diet),
+      hasB12: /b\s?-?12/.test(suppl), winter: m >= 10 || m <= 3,
+    };
+  }
+
+  // ── SIMULATION — Nachbau von calculate_submission_score, vorher gegen den gespeicherten Score geprüft ──
+  // Bereichs-Nenner wird aus dem gespeicherten Bereichswert zurückgerechnet (max = Risiko × 100 / (100 − Score)),
+  // damit er exakt zur Server-Formel passt, ohne sie zu kopieren. Stimmt die Nachrechnung des Gesamt-Index
+  // nicht auf ±0,6 Punkte, bleibt die Simulation aus — lieber keine Zahl als eine falsche.
+  function taBuildSim(ctx, meta) {
+    const payload = ctx.score.score_payload || {};
+    const areas = {};
+    Object.entries(payload).forEach(([k, v]) => {
+      const s = typeof v === 'object' && v ? Number(v.score) : Number(v);
+      let w = typeof v === 'object' && v && v.weight !== undefined ? Number(v.weight) : TA_WEIGHTS[k];
+      areas[k] = { score: s, weight: Number.isFinite(w) ? w : (TA_WEIGHTS[k] || 0), risk: 0 };
+    });
+    const wsum = Object.values(areas).reduce((a, x) => a + x.weight, 0);
+    if (wsum > 0 && wsum <= 1.01) Object.values(areas).forEach(x => x.weight *= 100);   // Gewichte als Anteil gespeichert
+    ctx.answers.forEach(a => { const k = a.area_key || a.questions?.area_key; if (areas[k]) areas[k].risk += Number(a.risk_points || 0); });
+    Object.values(areas).forEach(x => { x.max = (x.risk > 0 && x.score < 100) ? x.risk * 100 / (100 - x.score) : null; });
+    const calc = scores => {
+      let t = 0, malus = 0;
+      Object.entries(areas).forEach(([k, x]) => { const s = scores[k] ?? x.score; t += s * x.weight / 100; if (s < 35) malus += (35 - s) * 0.25; });
+      return Math.max(0, Math.min(100, t - malus));
+    };
+    const base = {}; Object.entries(areas).forEach(([k, x]) => base[k] = x.score);
+    const replicated = calc(base);
+    const stored = Number(ctx.score.total_score);
+    const reasons = [];
+    if (ctx.score.score_version !== undefined && ctx.score.score_version !== null && Number(ctx.score.score_version) < 2) reasons.push("ältere Score-Version");
+    if (!Object.keys(areas).length) reasons.push("keine Bereichswerte gespeichert");
+    if (!(Math.abs(replicated - stored) <= 0.6)) reasons.push(`Nachrechnung ${taNum(replicated)} statt ${taNum(stored)}`);
+    const ok = !reasons.length;
+    const bio = t => ctx.age ? Math.max(10, Math.min(120, ctx.age + ((70 - t) / 70) * 10)) : null;
+    const bioOk = ctx.age && ctx.score.bio_age ? Math.abs(bio(stored) - Number(ctx.score.bio_age)) <= 1 : false;
+
+    // Hebel: Frage auf die nächstbessere Antwortstufe setzen
+    const lever = rule => {
+      if (!rule.q) return null;
+      if (meta.simulatable && !meta.simulatable.has(rule.q)) return null;
+      const rows = ctx.byKey[rule.q]; if (!rows || rows.length !== 1) return null;
+      const row = rows[0]; const cur = Number(row.risk_points || 0); if (cur <= 0) return null;
+      const area = row.area_key || rule.area; const ax = areas[area]; if (!ax || !ax.max) return null;
+      let target = 0, toText = null;
+      const opts = meta.options && row.question_id ? meta.options[row.question_id] : null;
+      if (opts && opts.length) {
+        const better = opts.filter(o => Number(o.risk) < cur).sort((a, b) => Number(b.risk) - Number(a.risk))[0];
+        if (!better) return null;
+        target = Number(better.risk); toText = better.text || null;
+      }
+      return { area, delta: cur - target, fromText: row.answer_text || null, toText, ruleId: rule.id };
+    };
+    const project = levers => {
+      const scores = { ...base };
+      const perArea = {};
+      levers.forEach(l => { perArea[l.area] = (perArea[l.area] || 0) + l.delta; });
+      Object.entries(perArea).forEach(([k, d]) => { const x = areas[k]; scores[k] = Math.min(100, 100 - Math.max(0, x.risk - d) / x.max * 100); });
+      const gain = calc(scores) - replicated;
+      const total = stored + gain;
+      return { gain, total, bio: bioOk ? bio(total) : null, areaScores: scores };
+    };
+    return { ok, reasons, lever, project, stored, bioStored: bioOk ? Number(ctx.score.bio_age) : null };
+  }
+
+  // Stammdaten für die Simulation (einmal je Sitzung): simulierbare Fragen + Antwortoptionen
+  let taQuestionMeta = null;
+  async function taLoadMeta(answers) {
+    const meta = { simulatable: null, options: {} };
+    try {
+      const keys = [...new Set(answers.map(a => a.question_key).filter(Boolean))];
+      let res = await supabaseClient.from('questions').select('id, question_key, is_simulatable').in('question_key', keys);
+      if (!res.error && res.data && res.data.length) {
+        meta.simulatable = new Set(res.data.filter(q => q.is_simulatable === true).map(q => q.question_key));
+        if (!meta.simulatable.size) meta.simulatable = new Set(TA_SIM_FALLBACK);
+      } else meta.simulatable = new Set(TA_SIM_FALLBACK);
+    } catch (e) { meta.simulatable = new Set(TA_SIM_FALLBACK); }
+    try {
+      const qids = [...new Set(answers.map(a => a.question_id).filter(Boolean))];
+      if (qids.length) {
+        const { data, error } = await supabaseClient.from('question_options').select('*').in('question_id', qids);
+        if (!error && data) data.forEach(o => {
+          if (o.risk_points === undefined || o.risk_points === null) return;
+          if (o.is_active === false) return;
+          (meta.options[o.question_id] = meta.options[o.question_id] || []).push({ risk: Number(o.risk_points), text: o.option_text || o.label || o.answer_text || o.text || null });
+        });
+      }
+    } catch (e) { /* ohne Optionen: Simulation auf die beste Stufe nicht zulassen */ }
+    return meta;
+  }
+
+  // ── Hebel auswählen ──
+  function taPickLevers(ctx, safety, sim) {
+    const blocked = new Set(safety.flatMap(s => s.blocks || []));
+    const goalAreas = TA_GOAL_AREAS[ctx.goal] || [];
+    const all = TA_RULES.filter(r => !blocked.has(r.area) && r.when(ctx)).map(r => {
+      const lv = sim && sim.ok ? sim.lever(r) : null;
+      const proj = lv ? sim.project([lv]) : null;
+      const riskShare = r.q && ctx.risk(r.q) !== null ? ctx.risk(r.q) / 4 : 0.5;
+      const fallbackRank = riskShare * (TA_WEIGHTS[r.area] || 8) * (100 - ctx.area(r.area)) / 100;
+      let rank = proj ? Math.max(proj.gain, 0.01) : fallbackRank / 10;
+      if (goalAreas.includes(r.area)) rank *= 1.3;
+      return { rule: r, lever: lv, proj, rank, goalMatch: goalAreas.includes(r.area) };
+    }).sort((a, b) => b.rank - a.rank);
+    const top = [], seen = new Set();
+    all.forEach(x => { if (top.length < 3 && !seen.has(x.rule.area)) { top.push(x); seen.add(x.rule.area); } });
+    all.forEach(x => { if (top.length < 3 && !top.includes(x)) top.push(x); });
+    return { top, rest: all.filter(x => !top.includes(x)), blocked };
+  }
+
+  function taSrcChips(ids) {
+    return ids.map(id => { const s = TA_SOURCES[id]; if (!s) return ''; return `<a class="ta-src" href="${taEsc(s.url)}" target="_blank" rel="noopener" title="${taEsc(s.title)} — ${taEsc(s.publisher)}${s.year ? ' ' + s.year : ''}">📚 ${taEsc(s.short)}${s.year ? ' (' + s.year + ')' : ''} ↗</a>`; }).join(' ');
+  }
+
+  // ── RENDER: Einstieg aus renderAnalysis ──
+  let taState = null;
+  async function taRender(submission, score, contact, answers, areaScores) {
+    const ctx = taContext(submission, score, answers, areaScores);
+    const safety = TA_SAFETY.filter(s => { try { return s.when(ctx); } catch (e) { return false; } });
+    const token = Symbol();
+    taState = { ctx, safety, sim: null, picks: null, token, contact, chosen: new Set(), dev: null };
+    // Erst ohne Simulation rendern (sofort sichtbar), dann mit Stammdaten nachschärfen
+    taState.picks = taPickLevers(ctx, safety, null);
+    taRenderAll();
+    let meta = null;
+    try { meta = await taLoadMeta(ctx.answers); } catch (e) { meta = null; }
+    if (!taState || taState.token !== token) return;
+    if (meta) {
+      taState.sim = taBuildSim(ctx, meta);
+      taState.picks = taPickLevers(ctx, safety, taState.sim);
+      taRenderAll();
+    }
+    taRenderDevelopment(submission, score, token);
+  }
+
+  function taRenderAll() {
+    taRenderSafety(); taRenderBrief(); taRenderStrengths(); taRenderLevers(); taRenderSim(); taRenderAgreement();
+  }
+
+  function taRenderSafety() {
+    const { safety, ctx } = taState;
+    const el = document.getElementById('taSafety');
+    if (!safety.length) { el.innerHTML = ''; return; }
+    const red = safety.some(s => s.level === 'red');
+    el.innerHTML = `<div class="card ta-safety ${red ? 'ta-safety-red' : ''} trainer-only">
+      <h3>⚠️ Zuerst klären</h3>
+      <p class="muted" style="margin-bottom:10px;">Diese Angaben liegen außerhalb der Trainerberatung. Aus den betroffenen Bereichen gibt das Dashboard deshalb keine Empfehlung — bitte behutsam eine ärztliche Einordnung empfehlen.</p>
+      ${safety.map(s => `<div class="hint-box ${s.level === 'red' ? 'hint-red' : 'hint-amber'}"><strong>${taEsc(s.obs(ctx))}</strong><br>${taEsc(s.todo)}${s.blocks.length ? `<div class="ta-mini">Keine Empfehlung aus: ${s.blocks.map(b => taEsc(TA_AREA_LABEL[b] || b)).join(', ')}</div>` : ''}</div>`).join('')}
+    </div>`;
+  }
+
+  function taRenderBrief() {
+    const { ctx, safety, picks, contact } = taState;
+    const first = contact?.first_name || 'Mitglied';
+    const goal = TA_GOALS[ctx.goal] || null;
+    const wb = Number(ctx.submission.wellbeing_self) || 0;
+    const low = Object.entries(ctx.areaMap).sort((a, b) => a[1] - b[1]).slice(0, 3);
+    const notes = [];
+    if (safety.length) notes.push(`<span class="ta-flag">⚠️ Zuerst klären — siehe oben</span>`);
+    if (WB_LABEL[wb]) {
+      const gap = wb - wbStufe(ctx.score.total_score);
+      if (gap <= -2) notes.push(`Fühlt sich <strong>${WB_LABEL[wb].toLowerCase()}</strong>, obwohl der Index gut ausfällt — Befinden zuerst ansprechen, nicht mit den Zahlen dagegenhalten.`);
+      else if (gap >= 2) notes.push(`Fühlt sich <strong>${WB_LABEL[wb].toLowerCase()}</strong>, der Index liegt deutlich darunter — Hebel als Angebot formulieren, nicht als Befund.`);
+    }
+    if (taRehaAnlass(ctx, safety)) notes.push("Falls eine ärztliche Verordnung für Reha-Sport vorliegt: Das ist bei uns ebenfalls möglich — nachfragen, nicht empfehlen.");
+    if (ctx.goal === 'goal_weight' && ctx.bmi && ctx.bmi < 20) notes.push("Ziel Gewicht bei BMI unter 20 — sanft auf Kraft und Wohlbefinden umlenken, keine Abnehm-Empfehlung.");
+    const goalAreas = TA_GOAL_AREAS[ctx.goal] || [];
+    if (picks.top.length && goalAreas.length && !goalAreas.includes(picks.top[0].rule.area)) {
+      notes.push(`Wunsch und größter Hebel liegen auseinander: Brücke bauen vom Ziel „${taEsc((goal || '').replace(/^\S+\s/, ''))}“ zu „${taEsc(picks.top[0].rule.title)}“.`);
+    }
+    if (ctx.submission.previous_submission_id) notes.push("📈 Re-Check — zuerst die Entwicklung würdigen (unten).");
+    const opener = TA_OPENERS[ctx.goal] || TA_OPENERS.goal_curious;
+    const recheck = ctx.submission.previous_submission_id ? "nächster Re-Check in 8–12 Wochen" : "Re-Check in 8–12 Wochen";
+    document.getElementById('taBrief').innerHTML = `
+      <div class="ta-brief-head"><strong>${taEsc(first)}${ctx.age ? ', ' + ctx.age + ' Jahre' : ''}</strong>${goal ? ` · Ziel: ${taEsc(goal)}` : ''}${WB_LABEL[wb] ? ` · Befinden: ${taEsc(WB_LABEL[wb])}` : ''}</div>
+      <div class="ta-brief-grid">
+        <div>
+          <div class="ta-label">Das fällt auf</div>
+          <div>${low.map(([k, v]) => `<span class="pill ${v < 55 ? 'pill-amber' : 'pill-gray'}">${AREA_ICONS[k] || ''} ${taEsc(AREA_SHORT[k] || k)} ${Math.round(v)}</span>`).join(' ')}</div>
+          ${notes.length ? `<div class="ta-label" style="margin-top:12px;">Im Gespräch beachten</div>${notes.map(n => `<div class="ta-note">${n}</div>`).join('')}` : ''}
+        </div>
+        <div>
+          <div class="ta-label">Heute ansprechen</div>
+          ${picks.top.length ? `<ol class="ta-brief-list">${picks.top.map(p => `<li><strong>${p.rule.icon} ${taEsc(p.rule.title)}</strong> <span class="ta-mini">${taEsc(TA_SOURCES[taRuleSrc(p.rule, ctx)[0]]?.short || '')}</span></li>`).join('')}</ol>`
+            : `<div class="ta-note">Keine eindeutigen Hebel — Ziele gemeinsam definieren und die Stärken festigen.</div>`}
+          <div class="ta-label" style="margin-top:12px;">Guter Gesprächseinstieg</div>
+          <div class="ta-quote">„${taEsc(opener)}“</div>
+          <div class="ta-mini" style="margin-top:8px;">📅 ${recheck}</div>
+        </div>
+      </div>
+      <div id="taPrevDeal"></div>`;
+    // Beim letzten Mal vereinbart (lokal gespeichert)
+    if (ctx.submission.previous_submission_id) {
+      const prevCode = taState.dev?.prevCode;
+      if (prevCode) taShowPrevDeal(prevCode);
+    }
+  }
+
+  async function taShowPrevDeal(prevCode) {
+    const el = document.getElementById('taPrevDeal'); if (!el) return;
+    let d = null;
+    const row = await fetchTrainerNote(prevCode);
+    if (row) d = rowToNote(row);
+    else { try { d = JSON.parse(localStorage.getItem(`levita_note_${prevCode}`) || 'null'); } catch (e) {} }
+    el.innerHTML = d && d.nextAction ? `<div class="ta-note" style="margin-top:12px;">🗂 <strong>Beim letzten Mal vereinbart (${taEsc(prevCode)}):</strong> ${taEsc(d.nextAction)}</div>` : '';
+  }
+
+  function taRenderStrengths() {
+    const { ctx } = taState;
+    const strong = taStrongAreas(ctx);
+    const chips = TA_HIGHLIGHTS.filter(([q]) => ctx.risk(q) === 0).map(([, l]) => l).slice(0, 5);
+    const el = document.getElementById('taStrengths');
+    if (!strong.length && !chips.length) {
+      el.innerHTML = `<div class="ta-quote">„Dass du dir die Zeit für den Check genommen hast und heute hier bist, ist der wichtigste Schritt. Von hier aus geht es aufwärts.“</div>
+        <p class="ta-mini" style="margin-top:8px;">Kein Bereich erreicht 70 — deshalb Wertschätzung ohne Bereichslob (gleiche Regel wie in der Auswertungs-Mail).</p>`;
+      return;
+    }
+    el.innerHTML = `
+      ${strong.length ? `<div class="ta-strength-row">${strong.map(k => `<div class="ta-strength"><div class="ta-strength-val">${Math.round(ctx.areaMap[k])}</div><div><div class="ta-strength-title">${AREA_ICONS[k] || ''} ${taEsc(TA_AREA_LABEL[k] || k)}</div><div class="ta-strength-say">„${taEsc(TA_STRENGTH[k])}“</div></div></div>`).join('')}</div>` : ''}
+      ${chips.length ? `<div style="margin-top:10px;">${chips.map(c => `<span class="pill pill-green">${taEsc(c)}</span>`).join(' ')}</div>` : ''}
+      <p class="ta-mini" style="margin-top:10px;">Stärke → Hebel → konkrete Maßnahme: das Gespräch mit dem beginnen, was schon gut läuft.</p>`;
+  }
+
+  function taRenderLevers() {
+    const { ctx, picks, sim } = taState;
+    const el = document.getElementById('taLevers');
+    if (!picks.top.length) { el.innerHTML = `<div class="hint-box hint-green">✓ Keine eindeutigen Hebel aus den Antworten. Ziele gemeinsam definieren — und die Stärken festigen.</div>`; return; }
+    const card = (p, i) => {
+      const r = p.rule; const src = taRuleSrc(r, ctx);
+      const offer = r.offer ? r.offer(ctx) : null;
+      const simTxt = p.proj ? `<span class="pill pill-blue" title="Trainer-Simulation: diese Antwort eine Stufe besser">Index ${taSigned(p.proj.gain)}</span>` : '';
+      return `<div class="ta-lever">
+        <div class="ta-lever-head">
+          <div class="ta-lever-num">${i + 1}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="ta-lever-title">${r.icon} ${taEsc(r.title)}</div>
+            <div class="ta-mini">${taEsc(TA_AREA_LABEL[r.area] || r.area)} · ${Math.round(ctx.area(r.area))}${p.goalMatch ? ' · passt zum Ziel' : ''}</div>
+          </div>
+          ${simTxt}
+        </div>
+        <div class="ta-trainer trainer-only"><span class="ta-label">Für dich als Trainer</span>${r.action(ctx)}</div>
+        <div class="ta-say"><span class="ta-label trainer-only">So kannst du es sagen</span>„${taEsc(r.say(ctx))}“</div>
+        <div class="ta-why"><span class="ta-label">Warum?</span>${taEsc(r.why(ctx))}</div>
+        <div class="ta-lever-foot">${taSrcChips(src)}${offer ? ` <span class="pill pill-purple trainer-only">LeVITA: ${taEsc(offer)}</span>` : ''}</div>
+      </div>`;
+    };
+    el.innerHTML = picks.top.map(card).join('') + (picks.rest.length ? `
+      <details class="ta-more trainer-only"><summary>Weitere mögliche Hebel (${picks.rest.length})</summary>
+        ${picks.rest.map((p, i) => card(p, picks.top.length + i)).join('')}
+      </details>` : '') +
+      `<p class="ta-mini trainer-only" style="margin-top:8px;">Die Referenz zeigt, woran sich die Empfehlung orientiert — „Der Vital-Check orientiert sich hier an den Empfehlungen der WHO bzw. DGE.“ Sie ersetzt keine ärztliche Beratung.</p>`;
+  }
+
+  function taRenderSim() {
+    const { ctx, sim, picks } = taState;
+    const el = document.getElementById('taSim');
+    const goalScn = ctx.submission.goal_scenario;
+    const goalTxt = (() => {
+      if (!goalScn) return '';
+      try {
+        const g = typeof goalScn === 'string' ? JSON.parse(goalScn) : goalScn;
+        const keys = Array.isArray(g) ? g : (g.keys || g.levers || []);
+        const names = keys.map(k => { const r = TA_RULES.find(x => x.q === (k.question_key || k)); return r ? r.title : (k.question_text || k.question_key || k); });
+        const tot = g.total_score !== undefined ? ` → Ziel-Index ${taNum(g.total_score)}` : '';
+        return names.length ? `<div class="hint-box hint-blue">🎯 <strong>Selbst gesetztes Ziel auf der Ergebnisseite:</strong> ${names.map(taEsc).join(', ')}${tot}. Daran anknüpfen.</div>` : '';
+      } catch (e) { return ''; }
+    })();
+    if (!sim) { el.innerHTML = goalTxt + `<p class="muted">Simulation wird vorbereitet …</p>`; return; }
+    if (!sim.ok) { el.innerHTML = goalTxt + `<p class="muted">Für diesen Check ist die Simulation nicht verfügbar (${taEsc(sim.reasons.join(', '))}). Das Dashboard zeigt lieber keine Zahl als eine falsche.</p>`; return; }
+    const levers = [...picks.top, ...picks.rest].filter(p => p.lever);
+    if (!levers.length) { el.innerHTML = goalTxt + `<p class="muted">Aus den Antworten ergibt sich kein simulierbarer Verhaltens-Hebel.</p>`; return; }
+    if (!taState.simSel) taState.simSel = new Set(levers.slice(0, 1).map(p => p.rule.id));
+    const selected = levers.filter(p => taState.simSel.has(p.rule.id));
+    const proj = sim.project(selected.map(p => p.lever));
+    el.innerHTML = goalTxt + `
+      <div class="ta-sim-grid">
+        <div>
+          <div class="ta-label">Möglichkeiten durchspielen</div>
+          ${levers.map(p => `<label class="ta-sim-opt ${taState.simSel.has(p.rule.id) ? 'on' : ''}">
+              <input type="checkbox" ${taState.simSel.has(p.rule.id) ? 'checked' : ''} onchange="taToggleSim('${p.rule.id}')" />
+              <span><strong>${p.rule.icon} ${taEsc(p.rule.title)}</strong>
+              ${p.lever.toText ? `<span class="ta-mini">von „${taEsc(p.lever.fromText)}“ auf „${taEsc(p.lever.toText)}“</span>` : ''}</span>
+              <span class="ta-sim-gain">${taSigned(p.proj.gain)}</span>
+            </label>`).join('')}
+        </div>
+        <div class="ta-sim-result">
+          <div class="ta-label">Vitalitäts-Index</div>
+          <div class="ta-sim-big">${Math.round(sim.stored)} <span>→</span> <strong>${Math.round(proj.total)}</strong></div>
+          <div class="ta-mini">${taSigned(proj.gain)} Punkte</div>
+          ${proj.bio !== null && sim.bioStored !== null ? `<div class="ta-mini" style="margin-top:8px;">Vitalitäts-Alter ${Math.round(sim.bioStored)} → ${Math.round(proj.bio)}</div>` : ''}
+          ${selected.length >= 2 ? `<div class="ta-mini" style="margin-top:8px;">Kombinationen werden neu berechnet — Hebel addieren sich nicht einfach.</div>` : ''}
+        </div>
+      </div>
+      <div class="ta-quote" style="margin-top:14px;">„Welches davon möchtest du dir für die nächsten acht Wochen vornehmen?“</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+        <button class="btn-inline" onclick="taSimToDeal()">Auswahl in die Vereinbarung übernehmen</button>
+      </div>
+      <p class="ta-mini" style="margin-top:10px;">Trainer-Simulation: Die gewählte Antwort wird auf die nächstbessere Antwortstufe gesetzt (sind die Stufen nicht lesbar, auf die beste) und mit der Formel des Vital-Checks neu gerechnet — vorher gegen den gespeicherten Index geprüft. Eine Projektion, kein Versprechen. Die Zahlen können von der Simulation auf der Ergebnisseite des Mitglieds abweichen, weil diese andere Zielstufen wählen kann.</p>`;
+  }
+  function taToggleSim(id) { if (!taState) return; taState.simSel.has(id) ? taState.simSel.delete(id) : taState.simSel.add(id); taRenderSim(); }
+  function taSimToDeal() { if (!taState?.simSel) return; taState.simSel.forEach(id => taState.chosen.add('r:' + id)); taRenderAgreement(); taComposeAction(); document.getElementById('taAgreeCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+
+  // ── VEREINBARUNG ──
+  function taDealItems() {
+    const { ctx, picks } = taState;
+    const items = [...picks.top, ...picks.rest].map(p => ({ id: 'r:' + p.rule.id, text: p.rule.deal(ctx), rule: p.rule }));
+    const isRe = !!ctx.submission.previous_submission_id;
+    items.push({ id: 'x:tanita', text: isRe ? 'Tanita-Vergleichsmessung' : 'Tanita-Ausgangsmessung' });
+    const offer = taOfferMove(ctx);
+    if (!isRe) items.push({ id: 'x:offer', text: offer });
+    return items;
+  }
+  function taRenderAgreement() {
+    const items = taDealItems();
+    const topIds = new Set(taState.picks.top.map(p => 'r:' + p.rule.id));
+    const visible = items.filter(i => topIds.has(i.id) || !i.id.startsWith('r:') || taState.chosen.has(i.id));
+    document.getElementById('taAgree').innerHTML = visible.map(i => `<label class="ta-check"><input type="checkbox" ${taState.chosen.has(i.id) ? 'checked' : ''} onchange="taToggleDeal('${i.id}')" /> ${taEsc(i.text)}</label>`).join('');
+  }
+  function taToggleDeal(id) { taState.chosen.has(id) ? taState.chosen.delete(id) : taState.chosen.add(id); taComposeAction(); }
+  function taComposeAction() {
+    const items = taDealItems().filter(i => taState.chosen.has(i.id)).map(i => i.text);
+    const own = document.getElementById('taOwnGoal').value.trim();
+    if (own) items.push(own);
+    document.getElementById('nextAction').value = items.join('; ');
+  }
+  function taChosenRules() {
+    if (!taState) return [];
+    return taDealItems().filter(i => i.rule && taState.chosen.has(i.id)).map(i => i.rule);
+  }
+
+  // ── ENTWICKLUNG (Re-Check) ──
+  async function taRenderDevelopment(submission, score, token) {
+    const el = document.getElementById('taDevelopment');
+    el.innerHTML = '';
+    if (!submission.previous_submission_id) return;
+    try {
+      const prevId = submission.previous_submission_id;
+      const [pSub, pScore, intakes] = await Promise.all([
+        supabaseClient.from('submissions').select('id, public_code, created_at, age').eq('id', prevId).maybeSingle(),
+        supabaseClient.from('submission_scores').select('*').eq('submission_id', prevId).maybeSingle(),
+        supabaseClient.from('studio_intakes').select('submission_id, weight_kg, body_fat_pct, muscle_mass_kg, measured_on').in('submission_id', [prevId, submission.id]),
+      ]);
+      if (!taState || taState.token !== token) return;
+      if (!pScore.data) { el.innerHTML = `<div class="card trainer-only"><h3>📈 Entwicklung</h3><p class="muted">Der vorherige Check ist für Trainer nicht sichtbar (z. B. ohne Trainer-Einwilligung). Das Mitglied kann ihn mit Pilot-ID und PIN selbst zeigen.</p></div>`; return; }
+      const prevCode = pSub.data?.public_code || null;
+      taState.dev = { prevCode };
+      if (prevCode) taShowPrevDeal(prevCode);
+      const ps = pScore.data;
+      const prevAreas = {}; extractAreaScores(ps.score_payload).forEach(a => prevAreas[a.key] = a.score);
+      const curAreas = taState.ctx.areaMap;
+      const weeks = pSub.data?.created_at && submission.created_at ? (new Date(submission.created_at) - new Date(pSub.data.created_at)) / (7 * 86400000) : null;
+      const early = weeks !== null && weeks < 4;
+      const it = {}; (intakes.data || []).forEach(r => it[r.submission_id] = r);
+      const pi = it[prevId], ci = it[submission.id];
+      const rows = [];
+      const row = (label, a, b, unit, dir, d = 0) => {
+        if (a === null || a === undefined || a === '' || b === null || b === undefined || b === '') return;
+        const delta = Number(b) - Number(a);
+        const stable = Math.abs(delta) < (d ? 0.3 : 2);
+        const good = dir === 0 ? null : (dir > 0 ? delta > 0 : delta < 0);
+        const cls = stable || good === null ? 'ta-dev-neutral' : good ? 'ta-dev-good' : 'ta-dev-bad';
+        rows.push(`<tr><td>${label}</td><td>${taNum(a, d)}${unit}</td><td><strong>${taNum(b, d)}${unit}</strong></td><td class="${cls}">${stable ? 'stabil' : (delta > 0 ? '↑ ' : '↓ ') + taNum(Math.abs(delta), d)}</td></tr>`);
+      };
+      row('Vitalitäts-Index', Math.round(ps.total_score), Math.round(score.total_score), '', 1);
+      if (pi && ci) {
+        row('Muskelmasse', pi.muscle_mass_kg, ci.muscle_mass_kg, ' kg', 1, 1);
+        row('Körperfett', pi.body_fat_pct, ci.body_fat_pct, ' %', -1, 1);
+        row('Gewicht', pi.weight_kg, ci.weight_kg, ' kg', 0, 1);
+      }
+      const deltas = Object.keys(curAreas).filter(k => prevAreas[k] !== undefined).map(k => ({ k, d: curAreas[k] - prevAreas[k] }));
+      deltas.sort((a, b) => b.d - a.d).forEach(x => row(`${AREA_ICONS[x.k] || ''} ${AREA_SHORT[x.k] || x.k}`, Math.round(prevAreas[x.k]), Math.round(curAreas[x.k]), '', 1));
+      const better = deltas.filter(x => x.d >= 2).slice(0, 2).map(x => TA_AREA_LABEL[x.k] || x.k);
+      const next = taState.picks.top[0]?.rule.title;
+      el.innerHTML = `<div class="card ta-dev">
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline;">
+          <h3 style="margin:0;">📈 Deine Entwicklung</h3>
+          <span class="ta-mini">${prevCode ? taEsc(prevCode) + ' → ' : ''}${taEsc(submission.public_code)}${weeks !== null ? ` · nach ${Math.round(weeks)} Wochen` : ''}</span>
+        </div>
+        ${early ? `<div class="hint-box hint-amber" style="margin-top:12px;">Abstand unter vier Wochen: Veränderungen sind eher eine Momentaufnahme als ein Trend — würdigen, aber nicht feiern.</div>` : ''}
+        <div class="table-wrap" style="margin-top:12px;"><table><thead><tr><th></th><th>Vorher</th><th>Heute</th><th>Veränderung</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+        <div class="ta-brief-grid" style="margin-top:14px;">
+          <div><div class="ta-label">Was sich besonders verbessert hat</div><div class="ta-quote">${better.length ? taEsc(better.join(' und ')) + (early ? ' (vorläufig)' : '') : 'Die Werte sind stabil geblieben — auch das ist ein Ergebnis, auf dem wir aufbauen.'}</div></div>
+          <div><div class="ta-label">Was wir als Nächstes angehen</div><div class="ta-quote">${next ? taEsc(next) : 'Gemeinsam festlegen'}</div></div>
+        </div>
+        ${!(pi && ci) ? `<p class="ta-mini" style="margin-top:10px;">Tanita-Vergleich erscheint, sobald für beide Checks eine Messung erfasst ist.</p>` : ''}
+      </div>`;
+    } catch (e) {
+      el.innerHTML = '';
+    }
+  }
+
+  // ── GESPRÄCHSMODUS + KUNDEN-ZUSAMMENFASSUNG ──
+  function taToggleTalk() {
+    const on = document.body.classList.toggle('talk-mode');
+    document.getElementById('taTalkBtn').textContent = on ? '← Zurück zur Traineransicht' : '🗣 Gesprächsmodus';
+    if (on) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function taPrintSummary() {
+    if (!currentAnalysis || !taState) return;
+    const { ctx, contact } = taState;
+    const rules = taChosenRules();
+    const own = document.getElementById('taOwnGoal').value.trim();
+    const extras = taDealItems().filter(i => !i.rule && taState.chosen.has(i.id)).map(i => i.text);
+    const recheck = document.getElementById('recheckDate').value;
+    const strong = taStrongAreas(ctx);
+    const first = contact?.first_name || '';
+    const srcList = [...new Set(rules.flatMap(r => taRuleSrc(r, ctx)))].map(id => TA_SOURCES[id]).filter(Boolean);
+    const html = `<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Dein Vital-Gespräch</title>
+      <style>body{font-family:'DM Sans',Arial,sans-serif;color:#0a1628;max-width:720px;margin:32px auto;padding:0 20px;line-height:1.5}
+      h1{font-size:24px;margin:0}h2{font-size:15px;margin:22px 0 8px;color:#13795b;text-transform:uppercase;letter-spacing:.6px}
+      .sub{color:#4a6280;font-size:13px}.box{border:1px solid #d7e1ea;border-radius:10px;padding:12px 14px;margin-bottom:10px}
+      .why{font-size:13px;color:#4a6280;margin-top:4px}.src{font-size:11px;color:#4a6280}.foot{margin-top:28px;font-size:11px;color:#4a6280;border-top:1px solid #d7e1ea;padding-top:10px}
+      .score{font-size:15px;margin-top:10px}@media print{body{margin:0}}</style></head><body>
+      <h1>Le<span style="color:#13795b">VITA</span> · Dein Vital-Gespräch</h1>
+      <div class="sub">${first ? taEsc(first) + ' · ' : ''}${new Date().toLocaleDateString('de-DE')} · Pilot-ID ${taEsc(ctx.submission.public_code)}</div>
+      <div class="score">Vitalitäts-Index heute: <strong>${Math.round(Number(ctx.score.total_score))}</strong> von 100</div>
+      ${strong.length ? `<h2>Das läuft schon gut</h2>${strong.map(k => `<div class="box">${taEsc(TA_STRENGTH[k])}</div>`).join('')}` : ''}
+      <h2>Das haben wir vereinbart</h2>
+      ${rules.map(r => `<div class="box"><strong>${taEsc(r.deal(ctx))}</strong><div class="why">Warum? ${taEsc(r.why(ctx))}</div><div class="src">Quelle: ${taRuleSrc(r, ctx).map(id => taEsc(TA_SOURCES[id]?.short || id)).join(', ')}</div></div>`).join('')}
+      ${extras.map(t => `<div class="box"><strong>${taEsc(t)}</strong></div>`).join('')}
+      ${own ? `<div class="box"><strong>${taEsc(own)}</strong></div>` : ''}
+      ${!rules.length && !extras.length && !own ? '<div class="box">Wir legen deine Schritte gemeinsam fest.</div>' : ''}
+      <h2>Dein Re-Check</h2><div class="box">${recheck ? new Date(recheck).toLocaleDateString('de-DE') : 'in 8–12 Wochen'} — dann sehen wir, was sich verändert hat.</div>
+      ${srcList.length ? `<h2>Quellen</h2>${srcList.map(s => `<div class="src">${taEsc(s.publisher)}: ${taEsc(s.title)}${s.year ? ' (' + s.year + ')' : ''} — ${taEsc(s.url)}</div>`).join('')}` : ''}
+      <div class="foot">Diese Zusammenfassung dient der allgemeinen Vitalitäts- und Präventionsberatung und ersetzt keine medizinische Diagnose oder Behandlung.</div>
+      <script>window.onload=function(){window.print();}<\/script></body></html>`;
+    const w = window.open('', '_blank');
+    if (!w) return showStatus('copyStatus', 'Pop-up wurde blockiert — bitte Pop-ups für das Dashboard erlauben.', 'error');
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
+  // ── WISSENSBIBLIOTHEK-Tab ──
+  function taRenderLibrary() {
+    const stub = { age: 50, area: () => 60, risk: () => 4, weight: null, bmi: null, winter: false, submission: { wellbeing_self: 2 }, score: {} };
+    const byArea = {};
+    TA_RULES.forEach(r => (byArea[r.area] = byArea[r.area] || []).push(r));
+    document.getElementById('libRules').innerHTML = Object.entries(byArea).map(([a, rules]) => rules.map(r => `<tr style="cursor:default;">
+        <td>${AREA_ICONS[a] || ''} ${taEsc(TA_AREA_LABEL[a] || a)}</td>
+        <td><strong>${r.icon} ${taEsc(r.title)}</strong><div class="ta-mini">${taEsc(r.trigger)}</div></td>
+        <td>${taEsc(r.why(stub))}</td>
+        <td>${taSrcChips(taRuleSrc(r, stub))}</td></tr>`).join('')).join('');
+    document.getElementById('libSafety').innerHTML = TA_SAFETY.map(s => `<tr style="cursor:default;">
+        <td><span class="pill ${s.level === 'red' ? 'pill-red' : 'pill-amber'}">${s.level === 'red' ? 'Rot' : 'Gelb'}</span></td>
+        <td>${taEsc(s.trigger)}</td><td>${taEsc(s.todo)}</td>
+        <td>${s.blocks.length ? s.blocks.map(b => taEsc(TA_AREA_LABEL[b] || b)).join(', ') : '–'}</td></tr>`).join('');
+    document.getElementById('libSources').innerHTML = Object.values(TA_SOURCES).map(s => `<tr style="cursor:default;">
+        <td>${taEsc(s.publisher)}</td><td><a class="ta-src" href="${taEsc(s.url)}" target="_blank" rel="noopener">${taEsc(s.title)} ↗</a></td><td>${taEsc(s.year || '–')}</td></tr>`).join('');
+  }
+
+  function taNoteLevers() {
+    if (!taState) return "";
+    const rules = taChosenRules().length ? taChosenRules() : taState.picks.top.map(p => p.rule);
+    if (!rules.length) return "";
+    return "\nBesprochene Hebel (Wissensbibliothek " + TA_LIB_STAND + "):\n" + rules.map(r =>
+      `• ${r.title} — ${r.why(taState.ctx)} [${taRuleSrc(r, taState.ctx).map(id => TA_SOURCES[id]?.short || id).join(", ")}]`).join("\n") + "\n" +
+      (taState.safety.length ? "Zuerst klären: " + taState.safety.map(s => s.obs(taState.ctx)).join(" ") + "\n" : "");
+  }
+  document.getElementById("libStand").textContent = TA_LIB_STAND;
 
   // ── KEYBOARD ──
   document.addEventListener("keydown", e => {
