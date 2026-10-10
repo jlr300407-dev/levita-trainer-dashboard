@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.4.0: nicht in Suchmaschinen aufnehmen (zusätzlich bei IONOS Header X-Robots-Tag: noindex setzen) -->
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <meta name="referrer" content="no-referrer" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -810,7 +813,7 @@
     </div>
   </div>
 
-  <div class="dash-foot">LeVITA Trainer-Dashboard v2.3.0 · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
+  <div class="dash-foot">LeVITA Trainer-Dashboard v2.4.0 · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
 </main>
 
 <script>
@@ -1080,7 +1083,16 @@
         .eq("submission_id", submission.id)
         .order("created_at", { ascending: true });
 
-      renderAnalysis(submission, score, contact, answers || []);
+      // v2.4.0 — ohne Mail gibt es keinen Kontakt; dann den Vornamen aus der Studio-Anfrage nehmen
+      let contactX = contact;
+      if (!contactX || !contactX.first_name) {
+        try {
+          const { data: rq } = await supabaseClient.from("studio_requests").select("first_name")
+            .eq("submission_id", submission.id).order("created_at", { ascending: false }).limit(1);
+          if (rq && rq[0] && rq[0].first_name) contactX = Object.assign({}, contactX || {}, { first_name: rq[0].first_name, _fromRequest: true });
+        } catch (e) { /* Name bleibt leer */ }
+      }
+      renderAnalysis(submission, score, contactX, answers || []);
       hideStatus("singleStatus");
       // showAnalysisTab() wird in renderAnalysis() aufgerufen
 
@@ -1888,7 +1900,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       const tel = String(r.phone || '').replace(/[^+0-9]/g, '');
       const opts = Object.entries(REQ_STATUS).map(([k, v]) => `<option value="${k}"${k === r.status ? ' selected' : ''}>${v}</option>`).join('');
       const open = r.trainer_access && r.public_code
-        ? `<button class="btn-inline btn-small" onclick="quickOpenAnalysis('${mkEsc(r.public_code)}')">Ergebnis ansehen</button>`
+        ? `<button class="btn-inline btn-small" onclick="quickOpenAnalysis('${mkEsc(r.public_code)}')">Ergebnis ansehen</button><br><span class="muted" style="font-size:12px;">${mkEsc(r.public_code)}</span>`
         : `<span class="muted" style="font-size:12px;">${mkEsc(r.public_code || '')}<br>im Gespräch mit PIN</span>`;
       const due = reqDueDate(r.created_at);
       const overdue = reqIsOverdue(r);
