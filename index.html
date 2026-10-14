@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.8.0 (14.10.2026): Wissen › Ernährungs-Check — Wissensbasis fürs Team: Rolle und Grenzen,
+       Ablauf der sechs Kontakte, Messen und rote Flaggen, alle Schritte mit Belegstufe, Text für die Person
+       und Trainerwissen (live aus nutrition_levers/_claims/content_snippets), Eingangsschwelle,
+       Medikationsliste, Quellenverzeichnis Q1–Q43 (geprüft 13.10.2026), Übungs-Profile. Quellennummern
+       (Q22 …) sind überall anklickbar, auch im Trainerwissen des Ernährungsreiters. Direktlink ?tab=wissen-ernaehrung.
+       Gehört zu nutrition-beta-update_v7_quellen.sql (korrigierte Zahlen, lesbare Quellen, demo_profiles);
+       ohne das Skript läuft alles, nur ohne Übungs-PIN. Basis: v2.7.0 -->
   <!-- v2.7.0 (14.10.2026): Konto-Status der Personen — "✓ Konto" / "Konto angefordert" in der Übersicht,
        in der Einzelansicht und bei den Studio-Anfragen (gehört zu konto-trainer_1.0.0.sql, Funktion
        trainer_account_states; fehlt sie, bleiben die Anzeigen einfach weg). Basis: v2.6.0 -->
@@ -279,6 +286,34 @@
     .req-tel { color: var(--accent-green); font-weight: 700; text-decoration: none; white-space: nowrap; }
     .req-yes { color: var(--accent-green); font-weight: 700; }
     .req-no { color: var(--text-secondary); }
+    /* ── WISSEN › ERNÄHRUNGS-CHECK (v2.8.0) ── */
+    .wi-switch { display:flex; gap:4px; background:var(--brand-card); border:1px solid var(--border); border-radius:14px; padding:4px; margin-bottom:18px; max-width:440px; }
+    .wi-switch button:hover { transform:none; box-shadow:none; }
+    .wi-switch button { flex:1; border:none; background:none; color:var(--text-secondary); font-family:inherit; font-size:13px; font-weight:700; padding:9px 10px; border-radius:10px; cursor:pointer; width:auto; margin:0; box-shadow:none; }
+    .wi-switch button.on { background:var(--accent-green); color:#0a1628; }
+    .wn-nav { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+    .wn-nav a, .wn-chip { display:inline-block; padding:5px 12px; border-radius:20px; background:var(--brand-card2); border:1px solid var(--border); color:var(--text-secondary); font-size:12px; font-weight:600; text-decoration:none; cursor:pointer; font-family:inherit; }
+    .wn-nav a:hover, .wn-chip:hover { border-color:var(--border-hover); color:var(--text-primary); }
+    button.wn-chip { width:auto; margin:0; padding:5px 12px; border-radius:20px; transform:none; box-shadow:none; font-weight:600; }
+    button.wn-chip:hover { transform:none; box-shadow:none; }
+    button.wn-chip.on { background:var(--accent-green-dim); border-color:rgba(34,201,122,0.3); color:var(--accent-green); }
+    .wn-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:12px; }
+    .wn-box { background:var(--brand-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; font-size:13px; line-height:1.6; color:var(--text-secondary); }
+    .wn-box h4 { font-size:13.5px; color:var(--text-primary); margin-bottom:6px; }
+    .wn-box ul { margin:0 0 0 18px; }
+    .wn-box li { margin-bottom:3px; }
+    .wn-box.no { border-color:rgba(255,92,92,0.28); }
+    .wn-box.ok { border-color:rgba(34,201,122,0.28); }
+    .wn-lever { background:var(--brand-card2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:10px; }
+    .wn-lever-head { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; margin-bottom:8px; }
+    .wn-lever-title { font-size:15px; font-weight:700; color:var(--text-primary); }
+    .wn-member { font-size:13.5px; color:var(--text-primary); font-style:italic; line-height:1.55; margin-bottom:8px; }
+    .wn-claim { font-size:12.5px; line-height:1.55; color:var(--text-secondary); margin:8px 0; }
+    .wn-claim strong { color:var(--text-primary); }
+    .wn-q { color:var(--accent-blue); font-weight:700; text-decoration:none; cursor:pointer; }
+    .wn-q:hover { text-decoration:underline; }
+    .wn-src tr.flash td { background:rgba(59,158,255,0.14); transition:background .6s; }
+    .wn-anchor { scroll-margin-top:90px; }
     /* ── TRAINER-ASSISTENT (v2.0.0, 06.10.2026) ── */
     .ta-label { display:block; font-size:10px; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
     .ta-mini { font-size:11.5px; color:var(--text-muted); line-height:1.5; }
@@ -379,7 +414,7 @@
       <button class="nav-tab" onclick="switchTab('ernaehrung', this); ntLoad();" id="ntTabBtn">Ernährung <span id="ntBadge" class="req-badge hidden"></span></button>
       <button class="nav-tab" onclick="switchTab('search', this)">Mitglied suchen</button>
       <button class="nav-tab" onclick="switchTab('analysis', this)" id="analysisTabBtn" style="display:none;">Analyse</button>
-      <button class="nav-tab" onclick="switchTab('wissen', this); taRenderLibrary();">Wissen</button>
+      <button class="nav-tab" onclick="switchTab('wissen', this); taRenderLibrary(); wiShow(wiCurrent);" id="wissenTabBtn">Wissen</button>
       <button class="nav-tab" onclick="switchTab('newsletter', this); loadMarketing();" id="newsletterTabBtn" style="display:none;">Newsletter</button>
       <button class="nav-tab" onclick="switchTab('bilanz', this); loadBilanz();" id="bilanzTabBtn" style="display:none;">Bilanz</button>
     </div>
@@ -504,7 +539,8 @@
           <div class="kpi"><span>Aktiv</span><strong id="ntActive" style="color:var(--accent-green);">–</strong></div>
           <div class="kpi"><span>Offene Aufgaben</span><strong id="ntTasks" style="color:var(--accent-red);">–</strong></div>
         </div>
-        <p class="muted" style="margin-top:12px;">Die Person füllt den Fragebogen zu Hause aus und markiert bis zu drei Vorschläge. Im Erstgespräch wählt sie ein bis drei Schritte selbst; ihr formuliert gemeinsam je einen Wenn-Dann-Satz. Starten geht nur mit bestätigtem Konto (Pflicht ab Stufe 3) und — falls nötig — nach der Freigabe der Praxis.</p>
+        <p class="muted" style="margin-top:12px;"><a class="ta-src" onclick="wiOpen('ernaehrung')" style="cursor:pointer;">Wissensbasis Ernährungs-Check →</a></p>
+        <p class="muted" style="margin-top:8px;">Die Person füllt den Fragebogen zu Hause aus und markiert bis zu drei Vorschläge. Im Erstgespräch wählt sie ein bis drei Schritte selbst; ihr formuliert gemeinsam je einen Wenn-Dann-Satz. Starten geht nur mit bestätigtem Konto (Pflicht ab Stufe 3) und — falls nötig — nach der Freigabe der Praxis.</p>
         <div id="ntStatus" class="hidden"></div>
       </div>
       <div class="filter-row">
@@ -755,6 +791,12 @@
        TAB — WISSENSBIBLIOTHEK (06.10.2026)
   ════════════════════════════════ -->
   <div class="tab-content" id="tab-wissen">
+    <!-- v2.8.0: zwei Bereiche — Vital-Check (Trainer-Assistent) und Ernährungs-Check -->
+    <div class="wi-switch" role="tablist">
+      <button type="button" id="wiBtnVital" class="on" onclick="wiShow('vital')">Vital-Check</button>
+      <button type="button" id="wiBtnNutri" onclick="wiShow('ernaehrung')">Ernährungs-Check</button>
+    </div>
+    <div id="wiVital">
     <div class="card">
       <h2>LogiVita Wissensbibliothek</h2>
       <p class="muted">Jede Empfehlung im Trainer-Assistenten stammt aus dieser kuratierten Regelbasis: Auslöser → Maßnahme → Begründung → Quelle. Die KI formuliert die Auswertungs-Mail — die fachliche Grundlage der Trainerberatung liegt hier und ist reproduzierbar. Quellen zuletzt geprüft: <strong id="libStand"></strong>.</p>
@@ -771,6 +813,121 @@
     <div class="card">
       <h3>Quellen</h3>
       <div class="table-wrap"><table><thead><tr><th>Herausgeber</th><th>Titel</th><th>Jahr</th></tr></thead><tbody id="libSources"></tbody></table></div>
+    </div>
+    </div>
+
+    <!-- v2.8.0: Wissensbasis Ernährungs-Check -->
+    <div id="wiNutri" class="hidden">
+      <div class="card" style="margin-bottom:18px;">
+        <h2>Ernährungs-Check mit Begleitung — Wissensbasis</h2>
+        <p class="muted">Alles für Erstgespräch und Begleitung: deine Rolle, der Ablauf, die Schritte mit ihren Belegen, die Ausschlussregeln und die Quellen. Schritte, Regeln und Medikationsliste kommen live aus der Datenbank — genau so, wie der Check sie gerade anwendet.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
+          <span class="pill pill-purple">Beta</span>
+          <span class="pill pill-gray">Regelwerk <span id="wnRules">–</span></span>
+          <span class="pill pill-gray">Quellen geprüft am 13.10.2026</span>
+          <span class="pill pill-amber">Empfehlung im Vital-Check noch ausgeschaltet</span>
+        </div>
+        <div class="wn-nav">
+          <a onclick="wnJump('wnRolle')">Rolle</a><a onclick="wnJump('wnAblauf')">Ablauf</a><a onclick="wnJump('wnMessen')">Messen &amp; rote Flaggen</a>
+          <a onclick="wnJump('wnAuswertung')">Auswertung</a><a onclick="wnJump('wnSchritte')">Schritte</a><a onclick="wnJump('wnSchwelle')">Eingangsschwelle</a>
+          <a onclick="wnJump('wnMeds')">Medikamente</a><a onclick="wnJump('wnQuellen')">Quellen</a><a onclick="wnJump('wnUeben')">Üben</a>
+        </div>
+        <div id="wnStatus" class="hidden"></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnRolle">
+        <h3>Deine Rolle</h3>
+        <div class="wn-grid">
+          <div class="wn-box ok"><h4>Das bist du</h4><ul>
+            <li>Mitarbeiterin oder Mitarbeiter des Studios — Trainerin/Trainer oder Sportwissenschaftlerin/Sportwissenschaftler.</li>
+            <li>Du begleitest Verhalten und Training über zwölf Wochen.</li>
+            <li>Eine Person führt durch alle sechs Kontakte; eine Vertretung ist namentlich benannt und sieht den Verlauf.</li>
+            <li>Für die Person heißt das im Check: „dein Trainer oder deine Trainerin“.</li></ul></div>
+          <div class="wn-box no"><h4>Das machst du nicht</h4><ul>
+            <li>keine Ernährungsberatung oder -therapie (§ 20 / § 43 SGB V), kein Diätplan</li>
+            <li>keine Diagnosen, keine Bewertung von Medikamenten oder Befunden</li>
+            <li>keine Kalorienvorgaben, kein Zählen</li>
+            <li>keine Nahrungsergänzung empfehlen</li>
+            <li>Gesundheitliche Fragen gehen an die Hausarztpraxis.</li></ul></div>
+          <div class="wn-box"><h4>So führst du das Gespräch</h4><ul>
+            <li>Die Person wählt <strong>ein bis drei</strong> Schritte selbst — nie zwei aus derselben Gruppe.</li>
+            <li>Den ersten Vorschlag genau einmal begründen, dann die Entscheidung akzeptieren.</li>
+            <li>Zu jedem Schritt einen Wenn-Dann-Satz laut aussprechen lassen.</li>
+            <li>Bereitschaft auf einer Skala 0–10 erfragen.</li>
+            <li>Erst fragen, wie es gelaufen ist, dann die Zahl. Verhalten loben, nicht das Gewicht.</li>
+            <li>Ein verpasster Kontakt wird angerufen, nicht gemailt.</li></ul></div>
+        </div>
+      </div>
+
+      <div class="card wn-anchor" id="wnAblauf">
+        <h3>Ablauf: vom Fragebogen bis Woche 12</h3>
+        <div class="table-wrap"><table><thead><tr><th>Schritt</th><th>Wann</th><th>Wer</th><th>Was passiert</th></tr></thead><tbody>
+          <tr style="cursor:default;"><td><strong>Vital-Check</strong></td><td>vorher</td><td>Person allein</td><td>Alter, Größe, Gewicht, Ziel und zehn Antworten werden übernommen.</td></tr>
+          <tr style="cursor:default;"><td><strong>Fragebogen</strong></td><td>zu Hause, 6–8 Min.</td><td>Person allein</td><td>Eingangsschwelle zuerst. Bei Ausschluss ein Satz zur Einordnung und Überleitung, meist Hausarztpraxis. Bei Freigabe: Formular an die Praxis, Start erst nach deren Rückmeldung.</td></tr>
+          <tr style="cursor:default;"><td><strong>Auswertung</strong></td><td>sofort danach</td><td>Person allein</td><td>Bis zu sechs Vorschläge mit „Warum für dich“, Parkplatz für später, Vorauswahl bis drei. Auf der Bestätigungsseite: Rückruf durch euch oder „ich melde mich selbst“; Konto ist Pflicht.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 1 · Erstgespräch</strong></td><td>Start · 45 Min. · Raum · Messung</td><td>du und die Person</td><td>Auswertung besprechen; die Person wählt 1–3 Schritte; Wenn-Dann-Sätze; Bereitschaft 0–10; Ausgangsmessung; alle Kontakte buchen; Vertretung benennen. Im Dashboard: <em>Begleitung starten</em>.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 2</strong></td><td>Woche 2 · 15 Min. · Raum</td><td>du</td><td>Halten die Schritte? Wo hakt es? Bei Bedarf sofort tauschen.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 3</strong></td><td>Woche 4 · 10 Min. · Fläche oder Telefon</td><td>du</td><td>Der typische Abbruchmoment: kurz und beiläufig nachfragen.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 4</strong></td><td>Woche 6 · 20 Min. · Raum · Messung</td><td>du</td><td>Messung, Re-Check. Ein Schritt vom Parkplatz darf dazukommen, wenn die bisherigen halten; was nicht hält, wird getauscht, nicht ergänzt.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 5</strong></td><td>Woche 9 · 10 Min. · Fläche oder Telefon</td><td>du</td><td>Kurzkontakt wie in Woche 4.</td></tr>
+          <tr style="cursor:default;"><td><strong>Kontakt 6</strong></td><td>Woche 12 · 30 Min. · Raum · Messung</td><td>du und die Person</td><td>Verlauf über drei Messungen, Re-Check des Vital-Checks, Entscheidung über das Weitere.</td></tr>
+        </tbody></table></div>
+        <p class="muted" style="margin-top:12px;">Warum so: Die Kontakte sollen vor allem Abbrüche verhindern. Eine frühe Reaktion sagt den späteren Erfolg vorher <a class="wn-q" onclick="wnSrc('Q42')">Q42</a>; persönlicher Kontakt im Erhalt wirkt besser als Selbststeuerung <a class="wn-q" onclick="wnSrc('Q40')">Q40</a>; Wenn-Dann-Pläne sind belegt, aber kleiner als früher angenommen <a class="wn-q" onclick="wnSrc('Q36')">Q36</a> <a class="wn-q" onclick="wnSrc('Q37')">Q37</a>; tägliches Wiegen bringt gegenüber wöchentlichem keinen Vorteil <a class="wn-q" onclick="wnSrc('Q38')">Q38</a>.</p>
+      </div>
+
+      <div class="card wn-anchor" id="wnMessen">
+        <h3>Messen und rote Flaggen</h3>
+        <div class="wn-grid" id="wnMessenGrid"></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnAuswertung">
+        <h3>Wie die Auswertung entsteht</h3>
+        <div class="wn-grid">
+          <div class="wn-box"><h4>Regelbasiert, ohne KI, ohne Punktwert</h4>
+            Jeder Schritt bekommt eine Stufe aus zwei Größen: wie oft das Verhalten vorkommt (<strong>Trefferstärke</strong>: stark, mittel, schwach) und wie gut der Schritt belegt ist (<strong>Belegstufe</strong>). Angezeigt werden höchstens sechs Schritte: „Unser erster Vorschlag“, „Passt auch zu dir“, „Ebenfalls möglich“; alle weiteren stehen unter „Später, wenn die ersten laufen“.</div>
+          <div class="wn-box"><h4>Belegstufen</h4><ul>
+            <li><strong>1</strong> — sehr gut untersucht</li><li><strong>2</strong> — gut untersucht</li>
+            <li><strong>3</strong> — begrenzt untersucht</li><li><strong>4</strong> — plausibel, wenig untersucht</li>
+            <li><strong>ohne Stufe</strong> — nicht wissenschaftlich untersucht (wird so gekennzeichnet)</li></ul></div>
+          <div class="wn-box"><h4>Feste Filter vor allem anderen</h4><ul>
+            <li>„Abends ohne Hunger nicht mehr nebenbei essen“ entfällt ab 65 (Verlust fettfreier Masse) <a class="wn-q" onclick="wnSrc('Q13')">Q13</a>.</li>
+            <li>„Eine Stunde mehr Schlaf“ nur 18–39 Jahre <a class="wn-q" onclick="wnSrc('Q14')">Q14</a>.</li>
+            <li>Eiweiß zu jeder Hauptmahlzeit nur mit Krafttraining <a class="wn-q" onclick="wnSrc('Q11')">Q11</a>; ab 65 ist Krafttraining Teilnahmebedingung <a class="wn-q" onclick="wnSrc('Q7')">Q7</a> <a class="wn-q" onclick="wnSrc('Q10')">Q10</a>.</li>
+            <li>Was die Praxis bei der Freigabe ausschließt, wird nicht mehr angeboten.</li></ul></div>
+        </div>
+      </div>
+
+      <div class="card wn-anchor" id="wnSchritte">
+        <h3>Die Schritte</h3>
+        <p class="muted" style="margin-bottom:10px;">Kursiv: der Satz, den die Person in ihrer Auswertung liest. Darunter dein Trainerwissen — was du sagen kannst, mit Quelle, und was wir dazu ausdrücklich nicht sagen.</p>
+        <div class="filter-row" id="wnGroupChips"></div>
+        <div id="wnLevers"><p class="muted">Wird geladen …</p></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnSchwelle">
+        <h3>Eingangsschwelle — wann der Check „passt nicht“ sagt</h3>
+        <p class="muted" style="margin-bottom:12px;">Die Person sieht einen Satz zur Einordnung und, wo angegeben, den Hinweis auf die Hausarztpraxis. Gründe nennst du nicht nach; du ordnest nicht ein.</p>
+        <div class="table-wrap"><table><thead><tr><th>Wann</th><th>Folge</th><th>Überleitung</th></tr></thead><tbody id="wnScreen"></tbody></table></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnMeds">
+        <h3>Medikationsliste</h3>
+        <p class="muted" style="margin-bottom:12px;"><span class="pill pill-red">Ausschluss</span> passt nicht · <span class="pill pill-amber">Freigabe nötig</span> Start erst nach Rückmeldung der Praxis · <span class="pill pill-blue">Hinweis</span> nur für dich sichtbar, die Person startet direkt. Neue Medikamente während der Begleitung: mit dieser Liste abgleichen, bei einem Treffer Pause bis zur Freigabe.</p>
+        <div class="table-wrap"><table><thead><tr><th>Folge</th><th>Medikament</th><th>Warum</th></tr></thead><tbody id="wnMedRows"></tbody></table></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnQuellen">
+        <h3>Quellenverzeichnis</h3>
+        <p class="muted" style="margin-bottom:12px;">Alle Quellen wurden am 13.10.2026 an Abstract oder Volltext geprüft; wo das nur über eine Sekundärquelle möglich war, steht es dabei. Die Nummern (Q22 …) tauchen im Trainerwissen auf und führen hierher.</p>
+        <div class="table-wrap"><table class="wn-src"><thead><tr><th>Nr.</th><th>Quelle</th><th>Link</th></tr></thead><tbody id="wnSrcRows"></tbody></table></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnUeben">
+        <h3>Üben mit Demo-Profilen</h3>
+        <p class="muted" style="margin-bottom:12px;">Acht erfundene Personen zum Durchklicken auf <a class="ta-src" href="https://app.logivita.de/check/ernaehrung.html" target="_blank" rel="noopener">app.logivita.de/check/ernaehrung.html ↗</a> — die Antworten gibst du selbst ein. Sie erscheinen danach im Reiter Ernährung als Demo, ohne Konto-Pflicht.</p>
+        <div id="wnDemoAccess" class="wn-box" style="margin-bottom:12px;"></div>
+        <div class="table-wrap"><table><thead><tr><th>Pilot-ID</th><th>Person</th><th>Was du damit übst</th></tr></thead><tbody id="wnDemoRows"></tbody></table></div>
+      </div>
     </div>
   </div>
 
@@ -871,14 +1028,14 @@
     </div>
   </div>
 
-  <div class="dash-foot">LeVITA Trainer-Dashboard <span class="js-version"></span> · Angemeldet: <span id="footUser">–</span> · Ernährung · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
+  <div class="dash-foot">LeVITA Trainer-Dashboard <span class="js-version"></span> · Angemeldet: <span id="footUser">–</span> · Ernährung · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · Ernährung 13.10.2026 · powered by LogiVita</div>
 </main>
 
 <script>
   // ── VERSION: einzige Stelle, an der sie gepflegt wird (Kopfzeile, Login, Fußzeile lesen von hier) ──
   // v2.6.0 (13.10.2026): Reiter "Ernährung" (Ernährungs-Check: Übersicht, Erstgespräch, Freigabe).
   // v2.5.0 (11.10.2026): Version in Kopfzeile + Login, angemeldeter Trainer in der Kopfzeile.
-  const APP_VERSION = "2.7.0";
+  const APP_VERSION = "2.8.0";
 
   // ── v2.7.0: Konto-Status je Pilot-ID (trainer_account_states) ──
   // active = Check liegt in einem bestätigten Konto · requested = angefordert, Link noch offen
@@ -940,6 +1097,7 @@
     if (code && /^LEV-\d{4}-\d{6}$/.test(code)) quickOpenAnalysis(code);
     else if (tab === 'anfragen') { switchTab('anfragen', document.getElementById('requestsTabBtn')); loadRequests(); }
     else if (tab === 'ernaehrung') { switchTab('ernaehrung', document.getElementById('ntTabBtn')); ntLoad(); }   // v2.6.0
+    else if (tab === 'wissen-ernaehrung') wiOpen('ernaehrung');   // v2.8.0
     if (code || tab) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
   }
 
@@ -2215,7 +2373,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     const say = cl.filter(c => c.may_be_said), no = cl.filter(c => !c.may_be_said);
     return `<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--accent-blue);font-size:12px;font-weight:700;">Trainerwissen</summary>
       ${say.map(c => `<div style="margin:8px 0;font-size:12.5px;line-height:1.55;">
-        <strong style="color:var(--text-primary);">${ntEsc(c.claim_text)}</strong> <span class="muted">(${ntEsc(NT_EVIDENCE[c.evidence] || 'nicht belegt')}${c.source_ref ? ' · ' + ntEsc(c.source_ref) : ''})</span>
+        <strong style="color:var(--text-primary);">${ntEsc(c.claim_text)}</strong> <span class="muted">(${ntEsc(NT_EVIDENCE[c.evidence] || 'nicht belegt')}${c.source_ref ? ' · ' + wnQLinks(c.source_ref) : ''})</span>
         ${c.lay_sentence ? `<br>Satz fürs Gespräch: „${ntEsc(c.lay_sentence)}“` : ''}
         ${c.studio_use ? `<br>Im Studio: ${ntEsc(c.studio_use)}` : ''}</div>`).join('')}
       ${no.length ? `<div style="margin-top:6px;font-size:12.5px;"><strong style="color:var(--accent-red);">Was wir dazu nicht sagen:</strong>
@@ -3158,6 +3316,205 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       (taState.safety.length ? "Zuerst klären: " + taState.safety.map(s => s.obs(taState.ctx)).join(" ") + "\n" : "");
   }
   document.getElementById("libStand").textContent = TA_LIB_STAND;
+
+  // ════════════════════════════════════════════════════════════
+  // WISSEN › ERNÄHRUNGS-CHECK (v2.8.0, 14.10.2026)
+  // Statisch: Rolle, Ablauf, Quellenverzeichnis (Validierungsdokument, geprüft 13.10.2026).
+  // Live aus der Datenbank (RLS: Trainer): Schritte, Aussagen, Texte für die Person,
+  // Eingangsschwelle, Medikationsliste, Einstellungen — damit die Seite nie vom Regelwerk abweicht.
+  // ════════════════════════════════════════════════════════════
+  const WN_SOURCES = [["Eingangsschwelle", "Q1", "Morgan JF, Reid F, Lacey JH. The SCOFF questionnaire: assessment of a new screening tool for eating disorders. BMJ 1999;319:1467.", "https://pubmed.ncbi.nlm.nih.gov/10582927/", "PubMed"], ["Eingangsschwelle", "Q2", "Lähteenmäki S u. a. Validation of the Finnish version of the SCOFF questionnaire among young adults aged 20 to 35 years. BMC Psychiatry 2009;9:5.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2656502/", "PMC"], ["Eingangsschwelle", "Q3", "Berger U u. a. Screening riskanten Essverhaltens bei 12-jährigen Mädchen und Jungen: psychometrischer Vergleich der deutschsprachigen Versionen von SCOFF und EAT-26. Psychother Psychosom Med Psychol 2011;61:311–318.", "https://thieme-connect.de/products/all/doi/10.1055/s-0031-1271786", "Thieme"], ["Eingangsschwelle", "Q4", "Richter F, Strauss B, Braehler E, Adametz L, Berger U. Screening disordered eating in a representative sample of the German population: usefulness and psychometric properties of the German SCOFF questionnaire. Eating Behaviors 2017;25:81–88. (nur Katalogeintrag gesehen)", "", ""], ["Eingangsschwelle", "Q5", "Kyle UG u. a. (ESPEN). Bioelectrical impedance analysis — part II: utilization in clinical practice. Clin Nutr 2004;23:1430–1453.", "https://espen.org/documents/BIA2.pdf", "PDF"], ["Eingangsschwelle", "Q6", "Cruz-Jentoft AJ u. a. Sarcopenia: revised European consensus on definition and diagnosis (EWGSOP2). Age Ageing 2019;48:16–31.", "https://doi.org/10.1093/ageing/afy169", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q7", "Villareal DT u. a. Aerobic or resistance exercise, or both, in dieting obese older adults. N Engl J Med 2017;376:1943–1955.", "https://doi.org/10.1056/NEJMoa1616338", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q8", "Bauer J u. a. Evidence-based recommendations for optimal dietary protein intake in older people: PROT-AGE Study Group. J Am Med Dir Assoc 2013;14:542–559.", "https://doi.org/10.1016/j.jamda.2013.05.021", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q9", "Deutz NE u. a. Protein intake and exercise for optimal muscle function with aging: recommendations from the ESPEN Expert Group. Clin Nutr 2014;33:929–936.", "https://doi.org/10.1016/j.clnu.2014.04.007", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q10", "Di Vincenzo O u. a. EASO Position Statement on the Diagnosis and Management of Obesity in Older Adults. Obes Facts 2026;19:422–437.", "https://doi.org/10.1159/000549751", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q11", "Nunes EA u. a. Systematic review and meta-analysis of protein intake to support muscle mass and function in healthy adults. J Cachexia Sarcopenia Muscle 2022;13:795–810.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978023", "PMC"], ["Altersstufe ab 65, Eiweiß und Training", "Q12", "Momma H u. a. Muscle-strengthening activities are associated with lower risk and mortality in major non-communicable diseases. Br J Sports Med 2022;56:755–763.", "https://bjsm.bmj.com/content/56/13/755", "BJSM"], ["Altersstufe ab 65, Eiweiß und Training", "Q13", "Fernandes-Alves D u. a. Time-restricted eating with and without caloric restriction for weight loss: systematic review and meta-analysis of randomized clinical trials. Nutr Rev 2026;84:463–486 (online 2025).", "https://doi.org/10.1093/nutrit/nuaf053", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q14", "Tasali E u. a. Effect of sleep extension on objectively assessed energy intake among adults with overweight in real-life settings. JAMA Intern Med 2022;182:365–374.", "https://doi.org/10.1001/jamainternmed.2021.8098", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q15", "Deutsche Gesellschaft für Ernährung. Lebensmittelbezogene Ernährungsempfehlungen (März 2024).", "https://www.dge.de/gesunde-ernaehrung/gut-essen-und-trinken/dge-empfehlungen/", "DGE"], ["Medikationsliste", "Q16", "Wiesner A, Gajewska D, Paśko P. Levothyroxine interactions with food and dietary supplements — a systematic review. Pharmaceuticals 2021;14:206.", "https://doi.org/10.3390/ph14030206", "DOI"], ["Medikationsliste", "Q17", "Lam JR u. a. Proton pump inhibitor and histamine 2 receptor antagonist use and vitamin B12 deficiency. JAMA 2013;310:2435–2442.", "https://pubmed.ncbi.nlm.nih.gov/24327038/", "PubMed"], ["Medikationsliste", "Q18", "Wadden TA u. a. (Look AHEAD). The Look AHEAD study: a description of the lifestyle intervention and the evidence supporting it. Obesity 2006;14:737–752.", "https://pubmed.ncbi.nlm.nih.gov/16855180/", "PubMed"], ["Medikationsliste", "Q43", "Fachinformation Lithium (Natriumzufuhr, Dehydratation); Deutsche Herzstiftung zu Vitamin-K-Antagonisten. (aus dem Konzept übernommen, nicht erneut geprüft)", "", ""], ["Ernährungsschritte", "Q19", "Malik VS, Pan A, Willett WC, Hu FB. Sugar-sweetened beverages and weight gain in children and adults: a systematic review and meta-analysis. Am J Clin Nutr 2013;98:1084–1102.", "https://pubmed.ncbi.nlm.nih.gov/23966427/", "PubMed"], ["Ernährungsschritte", "Q20", "Sievert K u. a. Effect of breakfast on weight and energy intake: systematic review and meta-analysis of randomised controlled trials. BMJ 2019;364:l42.", "https://www.bmj.com/content/364/bmj.l42", "BMJ"], ["Ernährungsschritte", "Q21", "Dalgaard LB u. a. No effects of high- v. low-protein breakfast on body composition and cardiometabolic health in young women with overweight: the NewStart randomised trial. Br J Nutr 2025;133:126–135.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11793950", "PMC"], ["Ernährungsschritte", "Q22", "Klos B u. a. Impact of energy density on energy intake in children and adults: a systematic review and meta-analysis of randomized controlled trials. Eur J Nutr 2023;62:1059–1076.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10030411", "PMC"], ["Ernährungsschritte", "Q23", "Kaiser KA u. a. Increased fruit and vegetable intake has no discernible effect on weight loss: a systematic review and meta-analysis. Am J Clin Nutr 2014;100:567–576.", "https://doi.org/10.3945/ajcn.114.090548", "DOI"], ["Ernährungsschritte", "Q24", "Roe LS, Meengs JS, Rolls BJ. Salad and satiety: the effect of timing of salad consumption on meal energy intake. Appetite 2012;58:242–248.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3264798", "PMC"], ["Ernährungsschritte", "Q25", "Reynolds A u. a. Carbohydrate quality and human health: a series of systematic reviews and meta-analyses. Lancet 2019;393:434–445.", "https://doi.org/10.1016/S0140-6736(18)31809-9", "DOI"], ["Ernährungsschritte", "Q26", "Brown RC u. a. Comparing the effects of consuming almonds or biscuits on body weight in habitual snackers: a 1-year randomized controlled trial. Am J Clin Nutr 2023;118:228–240.", "https://doi.org/10.1016/j.ajcnut.2023.05.015", "DOI"], ["Ernährungsschritte", "Q27", "Guarneiri LL, Cooper JA. Intake of nuts or nut products does not lead to weight gain, independent of dietary substitution instructions. Adv Nutr 2021;12:384–401.", "https://doi.org/10.1093/advances/nmaa113", "DOI"], ["Ernährungsschritte", "Q28", "Kwok A u. a. Effect of alcohol consumption on food energy intake: a systematic review and meta-analysis. Br J Nutr 2019;121:481–495.", "https://pubmed.ncbi.nlm.nih.gov/30630543/", "PubMed"], ["Ernährungsschritte", "Q29", "Golzarand M u. a. Association between alcohol intake and overweight and obesity: a systematic review and dose-response meta-analysis of 127 observational studies. Crit Rev Food Sci Nutr 2022;62:8078–8098.", "https://pubmed.ncbi.nlm.nih.gov/33998940/", "PubMed"], ["Ernährungsschritte", "Q30", "Anderson BO u. a. Health and cancer risks associated with low levels of alcohol consumption. Lancet Public Health 2023;8:e6–e7; dazu WHO Europa, 04.01.2023.", "https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health", "WHO"], ["Ernährungsschritte", "Q31", "Richter M u. a. (DGE). Alkohol — Zufuhr in Deutschland, gesundheitliche sowie soziale Folgen und Ableitung von Handlungsempfehlungen. Ernährungs Umschau 2024;71(10).", "https://ernaehrungs-umschau.de/fileadmin/Ernaehrungs-Umschau/pdfs/pdf_2024/10_24/Sonderdruck_DGE_2_gesamt.pdf", "PDF"], ["Ernährungsschritte", "Q32", "Mertens S u. a. The effectiveness of nudging: a meta-analysis of choice architecture interventions across behavioral domains. PNAS 2022;119:e2107346118.", "https://doi.org/10.1073/pnas.2107346118", "DOI"], ["Ernährungsschritte", "Q33", "Maier M u. a. No evidence for nudging after adjusting for publication bias. PNAS 2022;119:e2200300119.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC9351501", "PMC"], ["Ernährungsschritte", "Q34", "Hollands GJ u. a. Portion, package or tableware size for changing selection and consumption of food, alcohol and tobacco. Cochrane Database Syst Rev 2015;(9):CD011045.", "https://www.cochrane.org/CD011045/", "Cochrane"], ["Ernährungsschritte", "Q35", "Kosīte D u. a. Plate size and food consumption: a pre-registered experimental study in a general population sample. Int J Behav Nutr Phys Act 2019;16:75.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-019-0826-1", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q36", "Gollwitzer PM, Sheeran P. Implementation intentions and goal achievement: a meta-analysis of effects and processes. Adv Exp Soc Psychol 2006;38:69–119.", "", ""], ["Ablauf, Gesprächsform und Erhalt", "Q37", "Sheeran P, Listrom O, Gollwitzer PM. The when and how of planning: meta-analysis of the scope and components of implementation intentions in 642 tests. Eur Rev Soc Psychol 2025;36:162–194.", "https://doi.org/10.1080/10463283.2024.2334563", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q38", "Madigan CD u. a. Is self-weighing an effective tool for weight loss: a systematic literature review and meta-analysis. Int J Behav Nutr Phys Act 2015;12:104.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-015-0267-4", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q39", "Dombrowski SU u. a. Long term maintenance of weight loss with non-surgical interventions in obese adults. BMJ 2014;348:g2646.", "https://doi.org/10.1136/bmj.g2646", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q40", "Svetkey LP u. a. Comparison of strategies for sustaining weight loss: the Weight Loss Maintenance randomized controlled trial. JAMA 2008;299:1139–1148.", "https://doi.org/10.1001/jama.299.10.1139", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q41", "Hartmann-Boyce J u. a. Weight regain after behavioural weight management programmes and its impact on quality of life and cost effectiveness. Diabetes Obes Metab 2023;25:526–535.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10092406/", "PMC"], ["Ablauf, Gesprächsform und Erhalt", "Q42", "Al-Abdullah L, Ahern A, Welsh P, Logue J. A predictive model for medium-term weight loss response in people with type 2 diabetes engaging in behavioural weight management interventions. Diabetes Obes Metab 2024;26:3653–3662.", "https://doi.org/10.1111/dom.15706", "DOI"]];
+  const WN_GROUPS = { A: 'Wann gegessen wird', B: 'Was auf den Teller kommt', C: 'Tauschen statt verbieten', D: 'Umgebung', E: 'Wie gegessen wird', F: 'Schlaf' };
+  const WN_STAGE = { '18-39': '18–39', '40-64': '40–64', '65-74': '65–74', '75+': 'ab 75' };
+  const WN_SCREEN = {
+    pregnancy:      'Schwanger oder stillend',
+    condition:      'Diabetes, Nieren- oder Lebererkrankung, Herzerkrankung mit ärztlichen Vorgaben zu Ernährung oder Trinkmenge, Krebserkrankung in Behandlung, chronisch-entzündliche Darmerkrankung',
+    other_therapy:  'Ärztliche Vorgaben zur Ernährung oder laufende Ernährungstherapie',
+    weight_loss:    'Ungewollt 3 kg oder mehr abgenommen in den letzten sechs Monaten (Vital-Check)',
+    appetite:       'Deutlich weniger Appetit oder „muss mich zum Essen zwingen“ (Vital-Check)',
+    scoff:          'Screening Essverhalten (SCOFF): ab {scoff}× „Ja“',
+    no_training_65: 'Ab 65: wenig Krafttraining und kein Wunsch, damit anzufangen',
+  };
+  const WN_SCREEN_Q = { scoff: ['Q1', 'Q2', 'Q4'], no_training_65: ['Q7', 'Q10'] };
+  const WN_REFERRAL = { gp: 'Hausarztpraxis', physio: 'Physiotherapie', none: '–' };
+  const WN_DEMO = [
+    ['LEV-DEMO-01', 'Sabine, 52', 'Standardweg (BMI 29)'],
+    ['LEV-DEMO-02', 'Thomas, 45', 'Mann — keine Schwangerschaftsfrage (BMI 31)'],
+    ['LEV-DEMO-03', 'Helga, 70', 'ab 65: Krafttraining, Eiweiß, Handkraft und Aufstehtest'],
+    ['LEV-DEMO-04', 'Jonas, 29', '18–39: Schlaf-Schritt möglich'],
+    ['LEV-DEMO-05', 'Petra, 58', 'BMI 34,2: ohne Körperanalyse'],
+    ['LEV-DEMO-06', 'Klaus, 63', 'Freigabe der Praxis (z. B. Blutdrucksenker angeben)'],
+    ['LEV-DEMO-07', 'Lena, 34', 'passt nicht: BMI zu niedrig'],
+    ['LEV-DEMO-08', 'Uwe, 50', 'passt nicht: BMI zu hoch'],
+  ];
+  let wiCurrent = 'vital';
+  try { if (localStorage.getItem('wiTab') === 'ernaehrung') wiCurrent = 'ernaehrung'; } catch (e) {}
+  let wnData = null, wnGroup = 'alle';
+
+  function wiShow(which) {
+    wiCurrent = which === 'ernaehrung' ? 'ernaehrung' : 'vital';
+    try { localStorage.setItem('wiTab', wiCurrent); } catch (e) {}
+    document.getElementById('wiVital').classList.toggle('hidden', wiCurrent !== 'vital');
+    document.getElementById('wiNutri').classList.toggle('hidden', wiCurrent !== 'ernaehrung');
+    document.getElementById('wiBtnVital').classList.toggle('on', wiCurrent === 'vital');
+    document.getElementById('wiBtnNutri').classList.toggle('on', wiCurrent === 'ernaehrung');
+    if (wiCurrent === 'ernaehrung') { wnRenderStatic(); if (!wnData) wnLoad(); }
+  }
+  function wiOpen(which) {
+    switchTab('wissen', document.getElementById('wissenTabBtn'));
+    taRenderLibrary();
+    wiShow(which);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function wnJump(id) { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  // Quellennummer anspringen — aus jedem Reiter
+  function wnSrc(q) {
+    if (!document.getElementById('tab-wissen').classList.contains('active') || wiCurrent !== 'ernaehrung') wiOpen('ernaehrung');
+    wnRenderStatic();
+    setTimeout(() => {
+      const row = document.getElementById('wnSrc-' + q);
+      if (!row) return;
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 1800);
+    }, 80);
+  }
+  // "… (Q22, Q23)" → anklickbare Nummern; der übrige Text bleibt escaped
+  function wnQLinks(text) {
+    return taEsc(text).replace(/\bQ(\d{1,2})\b/g, (m, n) => WN_SOURCES.some(s => s[1] === 'Q' + n)
+      ? `<a class="wn-q" onclick="wnSrc('Q${n}')">Q${n}</a>` : m);
+  }
+  const wnQ = list => (list || []).map(q => `<a class="wn-q" onclick="wnSrc('${q}')">${q}</a>`).join(' ');
+
+  let wnStaticDone = false;
+  function wnRenderStatic() {
+    if (wnStaticDone) return;
+    wnStaticDone = true;
+    let g = '';
+    document.getElementById('wnSrcRows').innerHTML = WN_SOURCES.map(([grp, id, t, u, l]) => {
+      const head = grp !== g ? `<tr style="cursor:default;"><td colspan="3" style="padding-top:14px;"><span class="ta-label" style="margin:0;">${taEsc(grp)}</span></td></tr>` : '';
+      g = grp;
+      return head + `<tr id="wnSrc-${id}" class="wn-anchor" style="cursor:default;"><td><strong>${id}</strong></td><td style="font-size:12.5px;line-height:1.5;">${taEsc(t)}</td>
+        <td>${u ? `<a class="ta-src" href="${taEsc(u)}" target="_blank" rel="noopener">${taEsc(l || 'Link')} ↗</a>` : '–'}</td></tr>`;
+    }).join('');
+    document.getElementById('wnDemoRows').innerHTML = WN_DEMO.map(([c, n, w]) => `<tr style="cursor:default;"><td><strong>${c}</strong></td><td>Demo ${taEsc(n)}</td><td>${taEsc(w)}</td></tr>`).join('');
+    wnRenderMessen({});
+  }
+
+  async function wnLoad() {
+    showStatus('wnStatus', 'Schritte und Regeln werden geladen …', 'info');
+    const q = (t, cols, f) => { let r = supabaseClient.from(t).select(cols); return f ? f(r) : r; };
+    const [lv, cl, tips, scr, meds, set] = await Promise.all([
+      q('nutrition_levers', 'lever_key, group_code, title, display_evidence_level, allowed_age_stages, requires_training, sort_order', r => r.eq('is_active', true).order('sort_order')),
+      q('nutrition_lever_claims', 'lever_key, claim_key, claim_text, evidence_level, may_be_said, lay_sentence, studio_use, source_ref', r => r.eq('is_active', true)),
+      q('content_snippets', 'context_key, title, body, benefits', r => r.eq('snippet_type', 'food_tip').eq('is_active', true)),
+      q('nutrition_screening_rules', 'rule_key, condition, outcome, referral, sort_order', r => r.eq('is_active', true).order('sort_order')),
+      q('nutrition_medication_list', 'med_key, label, examples, category, reason, source_ref, sort_order', r => r.eq('is_active', true).order('sort_order')),
+      q('nutrition_settings', 'key, value'),
+    ]);
+    const err = [lv, scr, meds, set].find(r => r.error);
+    if (err) { showStatus('wnStatus', 'Laden fehlgeschlagen: ' + err.error.message, 'error'); return; }
+    const settings = {};
+    (set.data || []).forEach(r => { settings[r.key] = r.value; });
+    wnData = { levers: lv.data || [], claims: cl.data || [], tips: {}, screen: scr.data || [], meds: meds.data || [], settings };
+    (tips.data || []).forEach(t => { wnData.tips[t.context_key] = t; });
+    if (!wnData.levers.length) { showStatus('wnStatus', 'Keine Schritte gefunden — ist das Regelwerk des Ernährungs-Checks eingespielt?', 'error'); return; }
+    hideStatus('wnStatus');
+    document.getElementById('wnRules').textContent = settings.rules_version || '–';
+    wnRenderMessen(settings);
+    wnRenderGroups();
+    wnRenderLevers();
+    wnRenderScreen();
+    wnRenderMeds();
+    wnRenderDemo(settings.demo_profiles);
+  }
+
+  function wnRenderMessen(st) {
+    const num = (v, d) => (v === undefined || v === null || isNaN(Number(v))) ? d : Number(v).toLocaleString('de-DE');
+    const grip = st.grip_threshold_kg || {};
+    document.getElementById('wnMessenGrid').innerHTML = `
+      <div class="wn-box"><h4>Messen</h4><ul>
+        <li>Immer unter gleichen Bedingungen: Wochentag, Uhrzeit, nüchtern, dieselbe Messperson.</li>
+        <li>Körperanalyse bis BMI ${num(st.bmi_max_bia, '34')}; Veränderungen erst ab ${num(st.bia_threshold_kg, '2')} kg deuten (Messgenauigkeit) ${wnQ(['Q5'])}.</li>
+        <li>Gewichtsunterschiede unter ${num(st.weight_comment_threshold_kg, '1')} kg nicht kommentieren — Tagesschwankung.</li>
+        <li>Bauchumfang: erst ab ${num(st.waist_threshold_cm, '2')} cm, bei markierter Messhöhe.</li></ul></div>
+      <div class="wn-box"><h4>Ab 65 zusätzlich</h4><ul>
+        <li>Handkraft und fünfmal Aufstehen ${wnQ(['Q6'])}.</li>
+        <li>Grenzwerte: Handkraft Männer ${num(grip.m, '27')} kg, Frauen ${num(grip.w, '16')} kg; Aufstehen über ${num(st.chair_stand_threshold_s, '15')} s.</li>
+        <li>Ein Wert unter dem Grenzwert ist ein Grund zur Überleitung, keine Trainingsinformation.</li></ul></div>
+      <div class="wn-box no"><h4>Rote Flaggen</h4><ul>
+        <li>auffälliger Gewichtsverlust (mehr als ${num(st.rapid_loss_kg_per_week, '1')} kg pro Woche)</li>
+        <li>Sprechen über Essen vor allem in Verboten</li>
+        <li>wiederholtes Fragen nach Zahlen</li>
+        <li>neue Beschwerden oder neue Medikamente</li></ul>
+        <div style="margin-top:6px;">Ein Haken erzeugt eine Aufgabe an die fachlich verantwortliche Person im Haus — Rückmeldung innerhalb von ${num(st.redflag_sla_hours, '48')} Stunden.</div></div>`;
+  }
+
+  function wnRenderGroups() {
+    const groups = [...new Set(wnData.levers.map(l => l.group_code))].sort();
+    document.getElementById('wnGroupChips').innerHTML = `<span class="filter-label">Gruppe:</span>`
+      + [['alle', 'Alle']].concat(groups.map(g => [g, `${g} · ${WN_GROUPS[g] || ''}`])).map(([k, t]) =>
+        `<button type="button" class="wn-chip ${wnGroup === k ? 'on' : ''}" onclick="wnGroup='${k}';wnRenderGroups();wnRenderLevers();">${taEsc(t)}</button>`).join('');
+  }
+
+  function wnRenderLevers() {
+    const list = wnData.levers.filter(l => wnGroup === 'alle' || l.group_code === wnGroup);
+    document.getElementById('wnLevers').innerHTML = list.map(l => {
+      const ev = l.display_evidence_level;
+      const evPill = ev ? `<span class="pill ${ev <= 2 ? 'pill-green' : 'pill-amber'}">Belegstufe ${ev} · ${taEsc(NT_EVIDENCE[ev] || '')}</span>` : '<span class="pill pill-gray">nicht wissenschaftlich untersucht</span>';
+      const stages = l.allowed_age_stages || [];
+      const agePill = stages.length && stages.length < 4 ? `<span class="pill pill-purple">nur ${stages.map(s => WN_STAGE[s] || s).join(', ')}</span>` : '';
+      const trainPill = l.requires_training ? '<span class="pill pill-blue">nur mit Krafttraining</span>' : '';
+      const tip = wnData.tips[l.lever_key];
+      const b = (tip && tip.benefits) || {};
+      const member = tip ? `<div class="wn-member">„${taEsc(tip.body)}“</div>` : '';
+      const memberMore = tip && (b.warum || b.merkst || b.stolperstein || (b.beispiele || []).length) ? `<details style="margin-bottom:6px;"><summary style="cursor:pointer;color:var(--accent-blue);font-size:12px;font-weight:700;">Was die Person auf Klick liest</summary>
+        <div class="wn-claim">${b.warum ? `<strong>Warum:</strong> ${taEsc(b.warum)}<br>` : ''}${b.merkst ? `<strong>Woran du es merkst:</strong> ${taEsc(b.merkst)}<br>` : ''}${b.stolperstein ? `<strong>Stolperstein:</strong> ${taEsc(b.stolperstein)}<br>` : ''}${(b.beispiele || []).length ? `<strong>Beispiele:</strong> ${b.beispiele.map(taEsc).join(' · ')}` : ''}</div></details>` : '';
+      const cl = wnData.claims.filter(c => c.lever_key === l.lever_key);
+      const say = cl.filter(c => c.may_be_said), no = cl.filter(c => !c.may_be_said);
+      const sayHtml = say.map(c => `<div class="wn-claim"><strong>${taEsc(c.claim_text)}</strong>
+          <span class="muted">(${taEsc(c.evidence_level ? 'Belegstufe ' + c.evidence_level : 'nicht belegt')}${c.source_ref ? ' · ' + wnQLinks(c.source_ref) : ''})</span>
+          ${c.lay_sentence ? `<br>Satz fürs Gespräch: „${taEsc(c.lay_sentence)}“` : ''}${c.studio_use ? `<br>Im Studio: ${taEsc(c.studio_use)}` : ''}</div>`).join('');
+      const noHtml = no.length ? `<div class="wn-claim"><strong style="color:var(--accent-red);">Was wir dazu nicht sagen:</strong><ul style="margin:4px 0 0 18px;">${no.map(c =>
+          `<li>${taEsc(c.claim_text)}${c.studio_use ? ` — ${taEsc(c.studio_use)}` : ''}${c.source_ref ? ` <span class="muted">(${wnQLinks(c.source_ref)})</span>` : ''}</li>`).join('')}</ul></div>` : '';
+      return `<div class="wn-lever">
+        <div class="wn-lever-head"><span class="pill pill-gray">Gruppe ${taEsc(l.group_code)}</span><span class="wn-lever-title">${taEsc((tip && tip.title) || l.title)}</span>${evPill}${agePill}${trainPill}</div>
+        ${member}${memberMore}
+        ${sayHtml || noHtml ? `<details ${wnGroup !== 'alle' ? 'open' : ''}><summary style="cursor:pointer;color:var(--accent-blue);font-size:12px;font-weight:700;">Trainerwissen</summary>${sayHtml}${noHtml}</details>` : ''}
+      </div>`;
+    }).join('') || '<p class="muted">Keine Schritte in dieser Gruppe.</p>';
+  }
+
+  function wnRenderScreen() {
+    const st = wnData.settings, bmiMin = st.bmi_min || {};
+    const rows = wnData.screen.map(r => {
+      const label = (WN_SCREEN[r.rule_key] || r.rule_key).replace('{scoff}', String(st.scoff_exclude_from ?? 2));
+      return `<tr style="cursor:default;"><td>${taEsc(label)} ${wnQ(WN_SCREEN_Q[r.rule_key])}</td>
+        <td><span class="pill ${r.outcome === 'exclude' ? 'pill-red' : 'pill-amber'}">${r.outcome === 'exclude' ? 'passt nicht' : 'Freigabe nötig'}</span></td>
+        <td>${taEsc(WN_REFERRAL[r.referral] || '–')}</td></tr>`;
+    });
+    const minTxt = Object.keys(WN_STAGE).filter(k => bmiMin[k] !== undefined).map(k => `${WN_STAGE[k]}: ${bmiMin[k]}`).join(' · ');
+    rows.push(`<tr style="cursor:default;"><td>BMI unter der Altersgrenze (${taEsc(minTxt || '20, ab 65: 22')}) oder ab ${taEsc(String(st.bmi_max_participation ?? 35))}</td>
+      <td><span class="pill pill-red">passt nicht</span></td><td>–</td></tr>`);
+    rows.push(`<tr style="cursor:default;"><td>Medikament aus der Liste unten</td><td><span class="pill pill-red">passt nicht</span> oder <span class="pill pill-amber">Freigabe nötig</span></td><td>Hausarztpraxis</td></tr>`);
+    document.getElementById('wnScreen').innerHTML = rows.join('');
+  }
+
+  function wnRenderMeds() {
+    const order = { exclude: 0, clearance: 1, none: 2 };
+    document.getElementById('wnMedRows').innerHTML = wnData.meds.slice().sort((a, b) => (order[a.category] - order[b.category]) || (a.sort_order - b.sort_order)).map(m => {
+      const [ml, mc] = NT_MED[m.category] || [m.category, 'pill-gray'];
+      return `<tr style="cursor:default;"><td><span class="pill ${mc}">${ml}</span></td>
+        <td><strong>${taEsc(m.label)}</strong>${m.examples ? `<div class="ta-mini">${taEsc(m.examples)}</div>` : ''}</td>
+        <td style="font-size:12.5px;line-height:1.5;">${taEsc(m.reason)}${m.source_ref ? ` <span class="muted">(${wnQLinks(m.source_ref)})</span>` : ''}</td></tr>`;
+    }).join('');
+  }
+
+  function wnRenderDemo(d) {
+    const box = document.getElementById('wnDemoAccess');
+    box.innerHTML = d && d.pin
+      ? `<strong style="color:var(--text-primary);">Pilot-IDs:</strong> ${taEsc(d.codes || 'LEV-DEMO-01 bis LEV-DEMO-08')} &nbsp;·&nbsp; <strong style="color:var(--text-primary);">PIN:</strong> <code>${taEsc(d.pin)}</code><div class="ta-mini" style="margin-top:4px;">Die PIN gilt nur für die Demo-Profile. Zurücksetzen, wenn die Profile „verbraucht“ sind: Jörg spielt nutrition-demo-profile_v1.sql erneut ein.</div>`
+      : `<span class="muted">Pilot-IDs LEV-DEMO-01 bis LEV-DEMO-08 — die PIN bekommst du von Jörg.</span>`;
+  }
 
   // ── KEYBOARD ──
   document.addEventListener("keydown", e => {
