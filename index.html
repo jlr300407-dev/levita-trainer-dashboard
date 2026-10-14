@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.7.0 (14.10.2026): Konto-Status der Personen — "✓ Konto" / "Konto angefordert" in der Übersicht,
+       in der Einzelansicht und bei den Studio-Anfragen (gehört zu konto-trainer_1.0.0.sql, Funktion
+       trainer_account_states; fehlt sie, bleiben die Anzeigen einfach weg). Basis: v2.6.0 -->
+  <!-- v2.6.0 (13.10.2026): Reiter "Ernährung" — Übersicht, Erstgespräch, Freigabe für den Ernährungs-Check
+       (gehört zu nutrition-beta-update_v5_dashboard.sql); Studio-Anfragen zeigen den Wunsch "Ernährungs-Check"
+       und führen direkt in den Ernährungsbereich; Direktlink ?tab=ernaehrung. Basis: v2.5.0 vom 11.10.2026 -->
   <!-- v2.4.0: nicht in Suchmaschinen aufnehmen (zusätzlich bei IONOS Header X-Robots-Tag: noindex setzen) -->
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <meta name="referrer" content="no-referrer" />
@@ -47,6 +53,9 @@
     .header-logo { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--text-primary); }
     .header-logo span { color: var(--accent-green); }
     .header-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .ver-chip { display:inline-block; margin-left:6px; padding:1px 7px; border-radius:20px; background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--text-secondary); font-size:10px; font-weight:700; letter-spacing:.3px; }
+    .user-chip { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:20px; background:var(--accent-green-dim); border:1px solid rgba(34,201,122,0.25); color:var(--accent-green); font-size:12px; font-weight:700; white-space:nowrap; max-width:220px; overflow:hidden; text-overflow:ellipsis; }
+    .user-chip.unknown { background:rgba(245,166,35,0.1); border-color:rgba(245,166,35,0.3); color:var(--accent-amber); }
     .header-right { display: flex; align-items: center; gap: 10px; }
     .header-badge {
       padding: 4px 12px; border-radius: 20px;
@@ -348,7 +357,7 @@
 <div id="loginScreen">
   <div class="login-card">
     <div class="login-logo">Le<span>VITA</span> Trainer-Dashboard</div>
-    <div class="login-sub">Nur für autorisierte Mitarbeiter</div>
+    <div class="login-sub">Nur für autorisierte Mitarbeiter · <span class="js-version"></span></div>
     <label>E-Mail</label>
     <input type="text" id="loginEmail" placeholder="info@le-vita.com" />
     <label>Passwort</label>
@@ -361,18 +370,20 @@
 <header>
   <div>
     <div class="header-logo">Le<span>VITA</span> Trainer-Dashboard</div>
-    <div class="header-sub">Vital-Check · Mitgliederbetreuung · powered by LogiVita</div>
+    <div class="header-sub">Vital-Check · Mitgliederbetreuung · powered by LogiVita <span class="ver-chip js-version"></span></div>
   </div>
   <div class="header-right">
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="switchTab('overview', this)">Übersicht</button>
       <button class="nav-tab" onclick="switchTab('anfragen', this); loadRequests();" id="requestsTabBtn">Studio-Anfragen <span id="reqBadge" class="req-badge hidden"></span></button>
+      <button class="nav-tab" onclick="switchTab('ernaehrung', this); ntLoad();" id="ntTabBtn">Ernährung <span id="ntBadge" class="req-badge hidden"></span></button>
       <button class="nav-tab" onclick="switchTab('search', this)">Mitglied suchen</button>
       <button class="nav-tab" onclick="switchTab('analysis', this)" id="analysisTabBtn" style="display:none;">Analyse</button>
       <button class="nav-tab" onclick="switchTab('wissen', this); taRenderLibrary();">Wissen</button>
       <button class="nav-tab" onclick="switchTab('newsletter', this); loadMarketing();" id="newsletterTabBtn" style="display:none;">Newsletter</button>
       <button class="nav-tab" onclick="switchTab('bilanz', this); loadBilanz();" id="bilanzTabBtn" style="display:none;">Bilanz</button>
     </div>
+    <span class="user-chip hidden" id="userChip" title=""></span>
     <div class="header-badge">Intern</div>
     <button class="btn-secondary btn-small" id="logoutBtn" onclick="doLogout()" style="margin-left:8px;">Ausloggen</button>
   </div>
@@ -469,6 +480,53 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- ════════════════════════════════
+       TAB — ERNÄHRUNG (v2.6.0, 13.10.2026)
+       Teilnahmen am Ernährungs-Check: Übersicht, Erstgespräch (Schritte +
+       Wenn-Dann + Kontaktplan), Freigabe der Hausarztpraxis.
+       Daten nur über Funktionen mit is_trainer() (update_v5_dashboard.sql).
+  ════════════════════════════════ -->
+  <div class="tab-content" id="tab-ernaehrung">
+    <div id="ntListWrap">
+      <div class="card" style="margin-bottom:18px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h2>Ernährungs-Check mit Begleitung</h2>
+            <p class="muted">Teilnahmen und Erstgespräche — zuletzt aktualisiert: <span id="ntLastUpdate">–</span></p>
+          </div>
+          <button class="btn-inline btn-secondary" onclick="ntLoad()">Aktualisieren</button>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="kpi"><span>Bereit fürs Erstgespräch</span><strong id="ntReady" style="color:var(--accent-blue);">–</strong></div>
+          <div class="kpi"><span>Freigabe Praxis offen</span><strong id="ntClearance" style="color:var(--accent-amber);">–</strong></div>
+          <div class="kpi"><span>Aktiv</span><strong id="ntActive" style="color:var(--accent-green);">–</strong></div>
+          <div class="kpi"><span>Offene Aufgaben</span><strong id="ntTasks" style="color:var(--accent-red);">–</strong></div>
+        </div>
+        <p class="muted" style="margin-top:12px;">Die Person füllt den Fragebogen zu Hause aus und markiert bis zu drei Vorschläge. Im Erstgespräch wählt sie ein bis drei Schritte selbst; ihr formuliert gemeinsam je einen Wenn-Dann-Satz. Starten geht nur mit bestätigtem Konto (Pflicht ab Stufe 3) und — falls nötig — nach der Freigabe der Praxis.</p>
+        <div id="ntStatus" class="hidden"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Ansicht:</span>
+        <button class="filter-btn active" onclick="ntSetFilter('todo', this)">Zu tun</button>
+        <button class="filter-btn" onclick="ntSetFilter('ready', this)">Erstgespräch</button>
+        <button class="filter-btn" onclick="ntSetFilter('clearance', this)">Freigabe offen</button>
+        <button class="filter-btn" onclick="ntSetFilter('active', this)">Aktiv</button>
+        <button class="filter-btn" onclick="ntSetFilter('screening', this)">Fragebogen läuft</button>
+        <button class="filter-btn" onclick="ntSetFilter('alle', this)">Alle</button>
+        <label style="display:inline-flex;gap:6px;align-items:center;margin:0 0 0 10px;text-transform:none;letter-spacing:0;font-size:12px;"><input type="checkbox" id="ntShowDemo" onchange="ntRenderList()" style="width:auto;margin:0;"> Demo-Profile zeigen</label>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Seit</th><th>Person</th><th>Status</th><th>Konto</th><th>Auswahl</th><th>Erstgespräch</th><th>Nächster Kontakt</th><th>Aufgaben</th></tr></thead>
+            <tbody id="ntTable"><tr><td colspan="8" class="empty-state">Klicke „Aktualisieren“.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div id="ntDetail" class="hidden"></div>
   </div>
 
   <div class="tab-content" id="tab-search">
@@ -813,10 +871,37 @@
     </div>
   </div>
 
-  <div class="dash-foot">LeVITA Trainer-Dashboard v2.4.0 · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
+  <div class="dash-foot">LeVITA Trainer-Dashboard <span class="js-version"></span> · Angemeldet: <span id="footUser">–</span> · Ernährung · Studio-Anfragen · Notizen zentral · Wissensbibliothek Stand 06.10.2026 · powered by LogiVita</div>
 </main>
 
 <script>
+  // ── VERSION: einzige Stelle, an der sie gepflegt wird (Kopfzeile, Login, Fußzeile lesen von hier) ──
+  // v2.6.0 (13.10.2026): Reiter "Ernährung" (Ernährungs-Check: Übersicht, Erstgespräch, Freigabe).
+  // v2.5.0 (11.10.2026): Version in Kopfzeile + Login, angemeldeter Trainer in der Kopfzeile.
+  const APP_VERSION = "2.7.0";
+
+  // ── v2.7.0: Konto-Status je Pilot-ID (trainer_account_states) ──
+  // active = Check liegt in einem bestätigten Konto · requested = angefordert, Link noch offen
+  const acctStates = {};
+  async function loadAccountStates(codes) {
+    const want = [...new Set((codes || []).filter(Boolean))].filter(c => !(c in acctStates));
+    if (!want.length) return;
+    try {
+      for (let i = 0; i < want.length; i += 1000) {
+        const { data, error } = await supabaseClient.rpc('trainer_account_states', { p_codes: want.slice(i, i + 1000) });
+        if (error) return;   // Funktion fehlt (konto-trainer_1.0.0.sql) → Anzeige bleibt weg
+        (data || []).forEach(r => { acctStates[r.public_code] = r.state; });
+      }
+    } catch (e) { /* still: der Status ist eine Zusatzanzeige */ }
+  }
+  function acctPill(code, small) {
+    const st = acctStates[code];
+    const sz = small ? ' style="font-size:10px;"' : '';
+    if (st === 'active') return `<span class="pill pill-green"${sz} title="Der Check liegt im persönlichen Konto der Person">✓ Konto</span>`;
+    if (st === 'requested') return `<span class="pill pill-amber"${sz} title="Konto angefordert — die Person muss noch den Link in ihrer Mail bestätigen">Konto angefordert</span>`;
+    return '';
+  }
+  document.querySelectorAll('.js-version').forEach(el => el.textContent = 'v' + APP_VERSION);
   const SUPABASE_URL = "https://koctweetotpqaazeicwj.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvY3R3ZWV0b3RwcWFhemVpY3dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODQ3NzMsImV4cCI6MjA5NDk2MDc3M30.OS4WUR-q2rc82yxs_HkwlCzr9gDG8tBL0gIlwdUoyc0";
   const VITAL_CHECK_URL = "https://jlr300407-dev.github.io/logivita-platform/";
@@ -854,6 +939,7 @@
     const tab = params.get('tab');
     if (code && /^LEV-\d{4}-\d{6}$/.test(code)) quickOpenAnalysis(code);
     else if (tab === 'anfragen') { switchTab('anfragen', document.getElementById('requestsTabBtn')); loadRequests(); }
+    else if (tab === 'ernaehrung') { switchTab('ernaehrung', document.getElementById('ntTabBtn')); ntLoad(); }   // v2.6.0
     if (code || tab) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
   }
 
@@ -1180,6 +1266,14 @@
     document.getElementById("aiMailBadge").innerHTML = submission.status === 'analysis_sent'
       ? `<span class="pill pill-purple">✦ KI-Mail versendet</span>`
       : `<span class="pill pill-gray">KI-Mail ausstehend</span>`;
+    // v2.7.0 — Konto-Status nachladen und anhängen
+    loadAccountStates([submission.public_code]).then(() => {
+      const el = document.getElementById("aiMailBadge");
+      const pill = acctPill(submission.public_code);
+      if (el && pill && currentAnalysis?.submission?.public_code === submission.public_code && !el.querySelector('[data-acct]')) {
+        el.insertAdjacentHTML('beforeend', ' ' + pill.replace('<span ', '<span data-acct="1" '));
+      }
+    });
 
     // Person-Info
     const goalLabels = TA_GOALS;
@@ -1457,6 +1551,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
         return { submission:s, score:sc, contact:ct, areaScores, focus, total, localStatus };
       });
 
+      await loadAccountStates(submissions.map(s => s.public_code));   // v2.7.0
       renderMemberList(allSubmissions);
       hideStatus("overviewStatus");
 
@@ -1489,6 +1584,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
         <div class="member-badges">
           <span class="pill ${focus.cls}" style="font-size:10px;">${focus.label}</span>
           <span class="pill ${statusColors[localStatus]||'pill-gray'}" style="font-size:10px;">${statusBadges[localStatus]||localStatus}</span>
+          ${acctPill(s.public_code, true)}
         </div>
         <button class="btn-small" onclick="event.stopPropagation();quickOpenAnalysis('${s.public_code}')">→</button>
       </div>`;
@@ -1553,10 +1649,12 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       statusEl.className = "status status-error"; return;
     }
     document.getElementById("loginScreen").style.display = "none";
+    showCurrentUser();    // v2.4.0
     loadStudioOverview();
     initMarketingAccess();
     initBilanzAccess();
     loadRequests(true);   // v2.1.0: Zähler für offene Studio-Anfragen
+    ntLoad(true);         // v2.6.0: Zähler Ernährung
     openDeepLink();       // v2.2.0
   }
 
@@ -1566,7 +1664,9 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     document.getElementById('bilanzTabBtn').style.display = 'none';
     staffList = [];
     mkRows = [];
+    hideCurrentUser();   // v2.4.0
     reqRows = [];   // v2.1.0
+    ntRows = []; ntCurrent = null; document.getElementById('ntBadge')?.classList.add('hidden');   // v2.6.0
     document.getElementById('reqBadge')?.classList.add('hidden');
     document.getElementById("loginScreen").style.display = "flex";
     document.getElementById("loginEmail").value = "";
@@ -1578,12 +1678,42 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
       document.getElementById("loginScreen").style.display = "none";
+      showCurrentUser();    // v2.4.0
       loadStudioOverview();
       initMarketingAccess();
       initBilanzAccess();
       loadRequests(true);   // v2.1.0
+      ntLoad(true);         // v2.6.0
       openDeepLink();       // v2.2.0
     }
+  }
+
+  // ── v2.4.0: ANGEMELDETER TRAINER in der Kopfzeile ──
+  // Name aus studio_staff (user_id = Auth-Konto). Fehlt die Zuordnung, steht die
+  // E-Mail da und der Chip ist gelb — dann in studio_staff die user_id nachtragen,
+  // sonst wird auch „Betreut von“ nicht automatisch vorbelegt.
+  async function showCurrentUser() {
+    const chip = document.getElementById('userChip');
+    const foot = document.getElementById('footUser');
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const user = session && session.user;
+      if (!user) return hideCurrentUser();
+      let staff = [];
+      try { staff = await loadStaff(); } catch (e) {}
+      const me = staff.find(st => st.user_id && st.user_id === user.id);
+      const name = me ? me.display_name : (user.email || 'Unbekanntes Konto');
+      chip.textContent = '👤 ' + name;
+      chip.title = (me ? 'Angemeldet als ' + me.display_name + ' · ' : 'Kein Trainerprofil verknüpft · ') + (user.email || '');
+      chip.classList.toggle('unknown', !me);
+      chip.classList.remove('hidden');
+      if (foot) foot.textContent = name;
+    } catch (e) { hideCurrentUser(); }
+  }
+  function hideCurrentUser() {
+    const chip = document.getElementById('userChip');
+    if (chip) { chip.textContent = ''; chip.classList.add('hidden'); }
+    const foot = document.getElementById('footUser'); if (foot) foot.textContent = '–';
   }
 
   checkAuth();
@@ -1851,7 +1981,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
   // ════════════════════════════════════════════════════════════
   let reqRows = [], reqFilter = 'offen';
   const REQ_STATUS = { offen: 'Offen', kontaktiert: 'Kontaktiert', termin: 'Termin vereinbart', erledigt: 'Erledigt', abgesagt: 'Abgesagt' };
-  const REQ_OFFER = { gespraech: 'Ergebnisgespräch (15 Min., kostenlos)', vital_analyse_plus: 'Vital-Analyse Plus (49,00 €)' };
+  const REQ_OFFER = { gespraech: 'Ergebnisgespräch (15 Min., kostenlos)', vital_analyse_plus: 'Vital-Analyse Plus (49,00 €)', ernaehrung: 'Ernährungs-Check: Erstgespräch' };   // v2.6.0
 
   async function loadRequests(silent) {
     if (!silent) showStatus('reqStatus', 'Anfragen werden geladen …', 'info');
@@ -1866,6 +1996,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       return;
     }
     reqRows = data || [];
+    await loadAccountStates(reqRows.map(r => r.public_code));   // v2.7.0
     updateRequestCounts();
     document.getElementById('reqLastUpdate').textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
     if (!silent) hideStatus('reqStatus');
@@ -1899,7 +2030,9 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     tb.innerHTML = rows.map(r => {
       const tel = String(r.phone || '').replace(/[^+0-9]/g, '');
       const opts = Object.entries(REQ_STATUS).map(([k, v]) => `<option value="${k}"${k === r.status ? ' selected' : ''}>${v}</option>`).join('');
-      const open = r.trainer_access && r.public_code
+      const open = r.offer === 'ernaehrung' && r.public_code   // v2.6.0: Einsicht über die Einwilligung des Ernährungs-Checks
+        ? `<button class="btn-inline btn-small" onclick="ntOpenByCode('${mkEsc(r.public_code)}')">Im Ernährungsbereich</button><br><span class="muted" style="font-size:12px;">${mkEsc(r.public_code)}</span>`
+        : r.trainer_access && r.public_code
         ? `<button class="btn-inline btn-small" onclick="quickOpenAnalysis('${mkEsc(r.public_code)}')">Ergebnis ansehen</button><br><span class="muted" style="font-size:12px;">${mkEsc(r.public_code)}</span>`
         : `<span class="muted" style="font-size:12px;">${mkEsc(r.public_code || '')}<br>im Gespräch mit PIN</span>`;
       const due = reqDueDate(r.created_at);
@@ -1909,7 +2042,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       return `<tr style="cursor:default;${overdue ? 'background:rgba(255,92,92,0.07);' : ''}">
         <td style="white-space:nowrap;">${mkDate(r.created_at)}</td>
         <td style="white-space:nowrap;">${r.status === 'offen' ? (overdue ? `<span class="req-overdue">⚠ ${dueTxt}</span>` : dueTxt) : '<span class="muted">–</span>'}</td>
-        <td><strong>${mkEsc(r.first_name)}</strong></td>
+        <td><strong>${mkEsc(r.first_name)}</strong>${acctPill(r.public_code, true) ? '<br>' + acctPill(r.public_code, true) : ''}</td>
         <td><a class="req-tel" href="tel:${mkEsc(tel)}">${mkEsc(r.phone)}</a></td>
         <td>${mkEsc(r.preferred_slot)}</td>
         <td>${mkEsc(REQ_OFFER[r.offer] || r.offer)}</td>
@@ -1954,6 +2087,320 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
   }
 
   // ════════════════════════════════════════════════════════════
+  // ERNÄHRUNGS-CHECK (Dashboard v2.6.0, 13.10.2026) — Teil 1: Übersicht,
+  // Erstgespräch, Freigabe. Liest und schreibt nur über die Funktionen aus
+  // nutrition-beta-update_v5_dashboard.sql (alle mit is_trainer()):
+  //   nutrition_trainer_list · nutrition_trainer_detail ·
+  //   nutrition_record_clearance · nutrition_start_program
+  // Kontakte 2–6 (Haltestatus, rote Flaggen, Messungen) folgen in Teil 2.
+  // ════════════════════════════════════════════════════════════
+  let ntRows = [], ntFilter = 'todo', ntCurrent = null;
+  const ntEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ntDay = v => v ? new Date(v).toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit', year: '2-digit' }) : '–';
+  const NT_STATUS = {
+    screening: ['Fragebogen läuft', 'pill-gray'], pending_clearance: ['Freigabe Praxis offen', 'pill-amber'],
+    ready: ['Bereit fürs Erstgespräch', 'pill-blue'], active: ['Aktiv', 'pill-green'], paused: ['Pausiert', 'pill-gray'],
+    completed: ['Abgeschlossen', 'pill-purple'], dropped: ['Beendet', 'pill-gray'], excluded: ['Passt nicht', 'pill-red'],
+  };
+  const NT_EVIDENCE = { 1: 'sehr gut untersucht', 2: 'gut untersucht', 3: 'begrenzt untersucht', 4: 'plausibel, wenig untersucht' };
+  const NT_MED = { exclude: ['Ausschluss', 'pill-red'], clearance: ['Freigabe nötig', 'pill-amber'], none: ['Hinweis', 'pill-blue'] };
+  const NT_PLAN = [0, 2, 4, 6, 9, 12];
+  const NT_SCOPE = { measure: 'mit Messung', short: 'Kurzkontakt' };
+  const NT_FORM = { room: 'Raum', floor: 'Fläche', phone: 'Telefon' };
+  const NT_CSTAT = { planned: 'geplant', held: 'gehalten', rescheduled: 'verschoben', missed: 'ausgefallen' };
+
+  async function ntLoad(silent) {
+    if (!silent) showStatus('ntStatus', 'Teilnahmen werden geladen …', 'info');
+    const { data, error } = await supabaseClient.rpc('nutrition_trainer_list');
+    if (error) {
+      if (!silent) showStatus('ntStatus', /function|does not exist/i.test(error.message)
+        ? 'Die Funktionen fehlen noch — bitte nutrition-beta-update_v5_dashboard.sql einspielen.'
+        : 'Laden fehlgeschlagen: ' + error.message, 'error');
+      return;
+    }
+    ntRows = data || [];
+    ntCounts();
+    document.getElementById('ntLastUpdate').textContent = new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    if (!silent) hideStatus('ntStatus');
+    ntRenderList();
+  }
+
+  function ntIsTodo(r) { return r.status === 'ready' || (r.status === 'pending_clearance') || r.open_tasks > 0; }
+  function ntCounts() {
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('ntReady', ntRows.filter(r => r.status === 'ready').length);
+    set('ntClearance', ntRows.filter(r => r.status === 'pending_clearance').length);
+    set('ntActive', ntRows.filter(r => r.status === 'active').length);
+    set('ntTasks', ntRows.reduce((a, r) => a + (r.open_tasks || 0), 0));
+    const todo = ntRows.filter(r => !r.is_demo && ntIsTodo(r)).length;
+    const b = document.getElementById('ntBadge');
+    if (b) { b.textContent = todo; b.classList.toggle('hidden', todo === 0); }
+  }
+
+  function ntSetFilter(f, btn) {
+    ntFilter = f;
+    btn.parentElement.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    ntRenderList();
+  }
+
+  function ntRenderList() {
+    const pick = {
+      todo: ntIsTodo, ready: r => r.status === 'ready', clearance: r => r.status === 'pending_clearance',
+      active: r => r.status === 'active', screening: r => r.status === 'screening', alle: () => true,
+    }[ntFilter] || (() => true);
+    const showDemo = document.getElementById('ntShowDemo')?.checked;
+    const rows = ntRows.filter(r => pick(r) && (showDemo || !r.is_demo));
+    const tb = document.getElementById('ntTable');
+    if (!rows.length) { tb.innerHTML = '<tr><td colspan="8" class="empty-state">Keine Teilnahmen in dieser Ansicht.</td></tr>'; return; }
+    tb.innerHTML = rows.map(r => {
+      const [sl, sc] = NT_STATUS[r.status] || [r.status, 'pill-gray'];
+      const acc = r.is_demo ? '<span class="pill pill-purple">Demo</span>' : r.in_account ? '<span class="pill pill-green">✓ Konto</span>' : '<span class="pill pill-amber">Konto ausstehend</span>';
+      const cb = r.callback_status ? `Rückruf ${ntEsc(r.callback_slot || '')} · ${ntEsc(REQ_STATUS[r.callback_status] || r.callback_status)}`
+        : (r.contact_preference === 'self' ? 'meldet sich selbst' : '–');
+      const choice = r.choice_confirmed_at ? `${(r.member_choice || []).length} bestätigt` : ((r.member_choice || []).length ? `${r.member_choice.length} markiert` : '–');
+      const next = r.next_contact_no ? `K${r.next_contact_no} · ${ntDay(r.next_contact_date)}` : '–';
+      return `<tr onclick="ntOpen('${r.enrollment_id}')">
+        <td style="white-space:nowrap;">${ntDay(r.created_at)}</td>
+        <td><strong>${ntEsc(r.first_name || '–')}</strong><br><span class="muted" style="font-size:12px;">${ntEsc(r.public_code)} · ${ntEsc(r.age)} J.</span></td>
+        <td><span class="pill ${sc}">${sl}</span>${r.clearance_needed && !r.clearance_received_at ? '' : ''}</td>
+        <td>${acc}</td>
+        <td>${choice}</td>
+        <td>${cb}</td>
+        <td style="white-space:nowrap;">${next}</td>
+        <td>${r.open_tasks ? `<span class="pill pill-red">${r.open_tasks} offen</span>` : '–'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function ntOpenByCode(code) {
+    switchTab('ernaehrung', document.getElementById('ntTabBtn'));
+    if (!ntRows.length) await ntLoad(true);
+    const r = ntRows.find(x => x.public_code === code);
+    if (r) ntOpen(r.enrollment_id); else showStatus('ntStatus', 'Keine Teilnahme zu ' + code + ' gefunden.', 'error');
+  }
+
+  async function ntOpen(id) {
+    const box = document.getElementById('ntDetail');
+    box.innerHTML = '<div class="card"><p class="muted">Wird geladen …</p></div>';
+    document.getElementById('ntListWrap').classList.add('hidden');
+    box.classList.remove('hidden');
+    const { data, error } = await supabaseClient.rpc('nutrition_trainer_detail', { p_enrollment_id: id });
+    if (error) { box.innerHTML = `<div class="card"><div class="status status-error">${ntEsc(error.message)}</div><button class="btn-inline btn-secondary" onclick="ntBack()">← Zur Liste</button></div>`; return; }
+    ntCurrent = data;
+    ntRenderDetail();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function ntBack() {
+    ntCurrent = null;
+    document.getElementById('ntDetail').classList.add('hidden');
+    document.getElementById('ntListWrap').classList.remove('hidden');
+  }
+
+  // Antwort-Zeilen nach Frage
+  function ntAnswerMap(d) {
+    const m = {};
+    (d.answers || []).forEach(a => { (m[a.question_key] ||= { label: a.label, part: a.part, answers: [] }).answers.push(a.answer); });
+    return m;
+  }
+  function ntLeverTitle(d, k) {
+    return (d.tips || {})[k]?.title || ((d.levers || []).find(l => l.lever_key === k) || {}).title || k;
+  }
+  function ntGroup(d, k) { return ((d.levers || []).find(l => l.lever_key === k) || {}).group_code || '?'; }
+
+  function ntClaimsHtml(d, k) {
+    const cl = (d.claims || []).filter(c => c.lever_key === k);
+    if (!cl.length) return '';
+    const say = cl.filter(c => c.may_be_said), no = cl.filter(c => !c.may_be_said);
+    return `<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--accent-blue);font-size:12px;font-weight:700;">Trainerwissen</summary>
+      ${say.map(c => `<div style="margin:8px 0;font-size:12.5px;line-height:1.55;">
+        <strong style="color:var(--text-primary);">${ntEsc(c.claim_text)}</strong> <span class="muted">(${ntEsc(NT_EVIDENCE[c.evidence] || 'nicht belegt')}${c.source_ref ? ' · ' + ntEsc(c.source_ref) : ''})</span>
+        ${c.lay_sentence ? `<br>Satz fürs Gespräch: „${ntEsc(c.lay_sentence)}“` : ''}
+        ${c.studio_use ? `<br>Im Studio: ${ntEsc(c.studio_use)}` : ''}</div>`).join('')}
+      ${no.length ? `<div style="margin-top:6px;font-size:12.5px;"><strong style="color:var(--accent-red);">Was wir dazu nicht sagen:</strong>
+        <ul style="margin:4px 0 0 18px;">${no.map(c => `<li>${ntEsc(c.claim_text)}${c.studio_use ? ` — ${ntEsc(c.studio_use)}` : ''}</li>`).join('')}</ul></div>` : ''}
+    </details>`;
+  }
+
+  function ntLeverRow(d, l, am, choice, excluded) {
+    const why = (l.trigger || []).map(t => {
+      const a = am[t.q];
+      return a ? `${ntEsc(a.label)}: <strong>${ntEsc(a.answers.join(', '))}</strong>` : ntEsc(t.q);
+    }).join('<br>');
+    const label = l.is_top ? '<span class="pill pill-green">Erster Vorschlag</span>' : l.tier === 'also' ? '<span class="pill pill-gray">ebenfalls möglich</span>' : '<span class="pill pill-blue">passt auch</span>';
+    const marks = [
+      choice.includes(l.lever_key) ? '<span class="pill pill-green">von der Person gewählt</span>' : '',
+      l.imaginable ? '<span class="pill pill-gray">vorstellbar</span>' : '',
+      l.failed_before ? '<span class="pill pill-amber">schon probiert</span>' : '',
+      excluded.includes(l.lever_key) ? '<span class="pill pill-red">Praxis ausgeschlossen</span>' : '',
+    ].join('');
+    return `<tr style="cursor:default;">
+      <td>${l.rank || ''}</td>
+      <td>${label}<br><strong style="color:var(--text-primary);">${ntEsc(ntLeverTitle(d, l.lever_key))}</strong> <span class="muted">· Gruppe ${ntEsc(ntGroup(d, l.lever_key))}</span><br>${marks}${ntClaimsHtml(d, l.lever_key)}</td>
+      <td style="font-size:12.5px;line-height:1.5;">${why || '–'}</td>
+      <td style="font-size:12px;">${ntEsc(NT_EVIDENCE[l.evidence_level] || 'nicht untersucht')}</td>
+    </tr>`;
+  }
+
+  function ntRenderDetail() {
+    const d = ntCurrent, e = d.enrollment, p = d.person;
+    const am = ntAnswerMap(d);
+    const lv = (d.result && d.result.levers) || {};
+    const choice = e.member_choice || [];
+    const excluded = e.clearance_excluded_levers || [];
+    const [sl, sc] = NT_STATUS[e.status] || [e.status, 'pill-gray'];
+    const acc = p.is_demo ? '<span class="pill pill-purple">Demo-Profil (ohne Konto)</span>' : p.in_account ? '<span class="pill pill-green">✓ Konto bestätigt</span>' : '<span class="pill pill-amber">Konto ausstehend</span>';
+    const cb = d.callback;
+    const tel = cb ? String(cb.phone || '').replace(/[^+0-9]/g, '') : '';
+
+    // Hinweise nur für Trainer
+    const meds = (d.medications || []).map(m => {
+      const [ml, mc] = NT_MED[m.category] || [m.category, 'pill-gray'];
+      return `<li style="margin-bottom:6px;"><span class="pill ${mc}">${ml}</span> <strong>${ntEsc(m.label)}</strong><br><span class="muted">${ntEsc(m.reason || '')}</span></li>`;
+    }).join('');
+    const thints = (lv.trainer_hints || []).map(h => (d.hints || {})[h.snippet_key]).filter(Boolean)
+      .map(h => `<li style="margin-bottom:6px;"><strong>${ntEsc(h.title)}</strong><br><span class="muted">${ntEsc(h.body)}</span></li>`).join('');
+    const tried = am['d_tried'] ? am['d_tried'].answers.join(', ') : '';
+    const notes = am['d_notes'] ? am['d_notes'].answers.join(' ') : '';
+
+    const shown = lv.shown || [], parking = lv.parking || [];
+    const allLevers = [...shown, ...parking];
+
+    // Erstgespräch
+    let action = '';
+    if (e.status === 'pending_clearance') {
+      action = `<div class="card" style="border-color:rgba(245,166,35,.4);">
+        <h2>Freigabe der Hausarztpraxis</h2>
+        <p class="muted">Die Begleitung startet erst, wenn die Praxis das Formular bestätigt hat. Schritte, die die Praxis ausschließt, hier ankreuzen — sie werden danach nicht mehr angeboten.</p>
+        <div style="margin:12px 0;">${allLevers.map(l => `<label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px;font-weight:500;letter-spacing:0;color:var(--text-primary);margin:6px 0;">
+          <input type="checkbox" class="nt-excl" value="${ntEsc(l.lever_key)}" style="width:auto;margin:0;"> ${ntEsc(ntLeverTitle(d, l.lever_key))}</label>`).join('')}</div>
+        <button class="btn-inline" onclick="ntClearance()">Freigabe ist eingegangen</button>
+        <div id="ntActStatus" class="hidden"></div></div>`;
+    } else if (e.status === 'ready') {
+      const selectable = allLevers.filter(l => !excluded.includes(l.lever_key));
+      const blocked = !p.in_account && !p.is_demo;
+      action = `<div class="card" style="border-color:rgba(34,201,122,.45);">
+        <h2>Erstgespräch: Begleitung starten</h2>
+        <p class="muted">Die Person wählt <strong>ein bis drei</strong> Schritte selbst — nie zwei aus derselben Gruppe. Den ersten Vorschlag einmal begründen, dann die Entscheidung akzeptieren. Zu jedem Schritt einen Wenn-Dann-Satz <strong>gemeinsam laut</strong> formulieren. Vorausgewählt ist, was die Person selbst markiert hat.</p>
+        ${blocked ? `<div class="status status-error" style="margin:12px 0;">Konto fehlt: Die Person muss erst den Link in ihrer Mail bestätigen (Konto ist Pflicht ab Stufe 3). Im Gespräch auf ernaehrung.html einloggen lassen und den Konto-Schritt ausführen — danach hier „Neu laden“.</div>` : ''}
+        <div id="ntPick" style="margin:12px 0;">${selectable.map(l => {
+          const on = choice.includes(l.lever_key);
+          return `<div style="border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;">
+            <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13.5px;font-weight:600;letter-spacing:0;color:var(--text-primary);margin:0;">
+              <input type="checkbox" class="nt-step" value="${ntEsc(l.lever_key)}" ${on ? 'checked' : ''} onchange="ntStepToggle()" style="width:auto;margin:0;">
+              ${ntEsc(ntLeverTitle(d, l.lever_key))} <span class="muted" style="font-weight:500;">· Gruppe ${ntEsc(ntGroup(d, l.lever_key))}${l.is_top ? ' · erster Vorschlag' : ''}</span></label>
+            <textarea class="nt-ifthen ${on ? '' : 'hidden'}" data-k="${ntEsc(l.lever_key)}" maxlength="300" placeholder="Wenn …, dann …" style="min-height:54px;margin:8px 0 0;"></textarea>
+          </div>`; }).join('')}</div>
+        <div class="grid-2" style="gap:12px;">
+          <div><label for="ntFirst">Erstgespräch (Kontakt 1) am</label><input type="date" id="ntFirst" value="${new Date().toISOString().slice(0, 10)}" onchange="ntPlanPreview()"></div>
+          <div><label>Kontaktplan</label><div id="ntPlan" class="muted" style="font-size:12.5px;line-height:1.6;"></div></div>
+        </div>
+        <button class="btn-inline" onclick="ntStart()" ${blocked ? 'disabled style="opacity:.45;cursor:default;"' : ''}>Begleitung starten</button>
+        <button class="btn-inline btn-secondary" onclick="ntOpen('${e.id}')" style="margin-left:8px;">Neu laden</button>
+        <div id="ntActStatus" class="hidden"></div></div>`;
+    } else if ((d.steps || []).length) {
+      action = `<div class="card">
+        <h2>Laufende Begleitung</h2>
+        <h3 style="margin-top:10px;">Schritte</h3>
+        <ul style="margin:0 0 12px 18px;font-size:13.5px;line-height:1.6;">${d.steps.map(s => `<li><strong>${ntEsc(ntLeverTitle(d, s.lever_key))}</strong>${s.ended_at ? ' <span class="pill pill-gray">beendet</span>' : ''}<br><span class="muted">${ntEsc(s.if_then_text)}</span></li>`).join('')}</ul>
+        <h3>Kontakte</h3>
+        <div class="table-wrap"><table><thead><tr><th>Nr</th><th>Datum</th><th>Umfang</th><th>Form</th><th>Status</th></tr></thead><tbody>
+          ${(d.contacts || []).map(c => `<tr style="cursor:default;"><td>K${c.contact_no}</td><td>${ntDay(c.planned_date)}</td><td>${NT_SCOPE[c.scope] || c.scope}</td><td>${NT_FORM[c.form] || '–'}</td><td>${NT_CSTAT[c.status] || c.status}</td></tr>`).join('')}
+        </tbody></table></div>
+        ${(d.tasks || []).filter(t => !t.done_at).length ? `<div class="status status-error" style="margin-top:12px;">${d.tasks.filter(t => !t.done_at).length} offene Aufgabe(n) — Bearbeitung folgt in Teil 2.</div>` : ''}
+        <p class="muted" style="margin-top:12px;">Kontakte erfassen (Haltestatus, rote Flaggen, Messungen) folgt im nächsten Schritt des Dashboards.</p>
+      </div>`;
+    }
+
+    // Antworten nach Teilen
+    const parts = { S: 'Eingangsschwelle', A: 'Alltag', B: 'Mahlzeiten', C: 'Teller', D: 'Bisherige Versuche', E: 'Vorstellbar' };
+    const answersHtml = Object.entries(parts).map(([pk, pl]) => {
+      const rows = Object.entries(am).filter(([, v]) => v.part === pk);
+      if (!rows.length) return '';
+      return `<h3 style="margin-top:12px;">${pl}</h3><table><tbody>${rows.map(([, v]) => `<tr style="cursor:default;"><td style="width:55%;">${ntEsc(v.label)}</td><td style="color:var(--text-primary);">${ntEsc(v.answers.join(', '))}</td></tr>`).join('')}</tbody></table>`;
+    }).join('');
+
+    document.getElementById('ntDetail').innerHTML = `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+          <div>
+            <h2>${ntEsc(p.first_name || 'Ohne Namen')} <span class="muted" style="font-weight:500;">· ${ntEsc(p.public_code)}</span></h2>
+            <p class="muted">${ntEsc(p.age)} Jahre · Altersstufe ${ntEsc(e.age_stage_override || e.age_stage)} · BMI ${ntEsc(p.bmi)}${e.bia_allowed ? '' : ' · <strong style="color:var(--accent-amber);">ohne Körperanalyse</strong>'}</p>
+            <div style="margin-top:8px;"><span class="pill ${sc}">${sl}</span> ${acc}
+              ${e.choice_confirmed_at ? `<span class="pill pill-gray">Auswahl bestätigt ${ntDay(e.choice_confirmed_at)}</span>` : ''}</div>
+          </div>
+          <button class="btn-inline btn-secondary" onclick="ntBack()">← Zur Liste</button>
+        </div>
+        ${cb ? `<p style="margin-top:12px;font-size:13px;">Rückrufbitte: <strong>${ntEsc(cb.first_name)}</strong> · <a class="req-tel" href="tel:${ntEsc(tel)}">${ntEsc(cb.phone)}</a> · ${ntEsc(cb.preferred_slot)} · ${ntEsc(REQ_STATUS[cb.status] || cb.status)}${cb.note && /Probetraining/.test(cb.note) ? ' · <span class="pill pill-blue">Interesse betreutes Training</span>' : ''}</p>`
+              : e.contact_preference === 'self' ? '<p class="muted" style="margin-top:12px;">Die Person meldet sich selbst zum Erstgespräch.</p>' : ''}
+        <p class="muted" style="margin-top:6px;font-size:12px;">Einwilligung ${ntEsc(d.consent?.version || '–')} · Regelwerk ${ntEsc(d.result?.rules_version || '–')}</p>
+      </div>
+
+      ${(meds || thints || tried || notes) ? `<div class="card"><h2>Nur für euch</h2>
+        ${meds ? `<h3 style="margin-top:10px;">Medikamente (Liste entscheidet — nicht bewerten)</h3><ul style="list-style:none;font-size:13px;">${meds}</ul>` : ''}
+        ${thints ? `<h3 style="margin-top:10px;">Hinweise</h3><ul style="list-style:none;font-size:13px;">${thints}</ul>` : ''}
+        ${tried ? `<p style="margin-top:10px;font-size:13px;"><strong>Schon ausprobiert:</strong> ${ntEsc(tried)}</p>` : ''}
+        ${notes ? `<p style="margin-top:6px;font-size:13px;"><strong>Notiz der Person:</strong> „${ntEsc(notes)}“</p>` : ''}
+      </div>` : ''}
+
+      ${action}
+
+      <div class="card"><h2>Vorschläge aus dem Fragebogen</h2>
+        ${shown.length ? `<div class="table-wrap"><table><thead><tr><th>#</th><th>Schritt</th><th>Warum (Antworten)</th><th>Studienlage</th></tr></thead>
+          <tbody>${shown.map(l => ntLeverRow(d, l, am, choice, excluded)).join('')}</tbody></table></div>` : '<p class="muted">Noch kein Ergebnis.</p>'}
+        ${parking.length ? `<h3 style="margin-top:16px;">Später, wenn die ersten laufen</h3><div class="table-wrap"><table><tbody>${parking.map(l => ntLeverRow(d, l, am, choice, excluded)).join('')}</tbody></table></div>` : ''}
+      </div>
+
+      <div class="card"><details><summary style="cursor:pointer;font-weight:700;">Alle Antworten</summary>${answersHtml || '<p class="muted">Keine Antworten.</p>'}</details></div>`;
+    if (e.status === 'ready') { ntStepToggle(); }
+  }
+
+  function ntStepToggle() {
+    document.querySelectorAll('.nt-step').forEach(cb => {
+      const ta = document.querySelector(`.nt-ifthen[data-k="${cb.value}"]`);
+      if (ta) ta.classList.toggle('hidden', !cb.checked);
+    });
+    ntPlanPreview();
+  }
+  function ntPlanPreview() {
+    const el = document.getElementById('ntPlan'); const f = document.getElementById('ntFirst');
+    if (!el || !f || !f.value) return;
+    const base = new Date(f.value + 'T12:00:00');
+    el.innerHTML = NT_PLAN.map((w, i) => { const x = new Date(base); x.setDate(x.getDate() + w * 7);
+      return `K${i + 1} ${x.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })} ${[0, 3, 5].includes(i) ? '· Messung' : ''}`; }).join('<br>');
+  }
+
+  async function ntStart() {
+    const d = ntCurrent;
+    const picked = [...document.querySelectorAll('.nt-step:checked')].map(cb => cb.value);
+    const err = m => showStatus('ntActStatus', m, 'error');
+    if (picked.length < 1 || picked.length > 3) return err('Bitte ein bis drei Schritte wählen.');
+    const groups = picked.map(k => ntGroup(d, k));
+    if (new Set(groups).size !== groups.length) return err('Nie zwei Schritte aus derselben Gruppe — bitte einen anderen wählen.');
+    const steps = picked.map(k => ({ lever_key: k, if_then: (document.querySelector(`.nt-ifthen[data-k="${k}"]`)?.value || '').trim() }));
+    const missing = steps.find(s => s.if_then.length < 10);
+    if (missing) return err(`Bitte zu „${ntLeverTitle(d, missing.lever_key)}“ einen Wenn-Dann-Satz eintragen.`);
+    showStatus('ntActStatus', 'Wird gestartet …', 'info');
+    const { error } = await supabaseClient.rpc('nutrition_start_program', {
+      p_enrollment_id: d.enrollment.id, p_steps: steps, p_first_date: document.getElementById('ntFirst').value,
+    });
+    if (error) return err(error.message);
+    await ntLoad(true);
+    await ntOpen(d.enrollment.id);
+  }
+
+  async function ntClearance() {
+    const d = ntCurrent;
+    const ex = [...document.querySelectorAll('.nt-excl:checked')].map(cb => cb.value);
+    showStatus('ntActStatus', 'Wird gespeichert …', 'info');
+    const { error } = await supabaseClient.rpc('nutrition_record_clearance', { p_enrollment_id: d.enrollment.id, p_excluded_levers: ex });
+    if (error) return showStatus('ntActStatus', error.message, 'error');
+    await ntLoad(true);
+    await ntOpen(d.enrollment.id);
+  }
+
+  // ════════════════════════════════════════════════════════════
   // TRAINER-ASSISTENT (Dashboard v2.0.0, 06.10.2026)
   // Aus Daten wird Gesprächsvorbereitung: Briefing → Stärken → Hebel mit
   // Quelle → Simulation → Vereinbarung. Die fachliche Grundlage kommt aus
@@ -1964,7 +2411,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
   // Empfehlung, sondern nur den Hinweis auf ärztliche Einordnung
   // (Beobachtung nennen, nicht Ursache — Entscheidung 30.08.2026).
   // ════════════════════════════════════════════════════════════
-  const DASH_VERSION = "2.0.0";
+  const DASH_VERSION = APP_VERSION;
   const TA_LIB_STAND = "06.10.2026";
   const taEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const taNum = (v, d = 1) => Number(v).toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d });
