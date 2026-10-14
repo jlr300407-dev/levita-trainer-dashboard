@@ -4,6 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.9.0 (14.10.2026): Score-Karte Version 3 (gehört zu vital-check-score-v3.sql + _neuberechnung.sql).
+       Bereiche Rauchen und Alkohol (Radar, Icons, Stärken, Regeln Rauchstopp/Alkohol), Level-Grenzen
+       85/65/50/35, Trainer-Simulation rechnet mit der v3-Zuordnung Frage -> Bereich (Warnsignale zählen
+       nicht) und dem Drehpunkt 68; Stoffwechsel/Mikronährstoffe als Themenwerte aus den Antworten.
+       Basis: v2.8.0 -->
   <!-- v2.8.0 (14.10.2026): Wissen › Ernährungs-Check — Wissensbasis fürs Team: Rolle und Grenzen,
        Ablauf der sechs Kontakte, Messen und rote Flaggen, alle Schritte mit Belegstufe, Text für die Person
        und Trainerwissen (live aus nutrition_levers/_claims/content_snippets), Eingangsschwelle,
@@ -1035,7 +1040,7 @@
   // ── VERSION: einzige Stelle, an der sie gepflegt wird (Kopfzeile, Login, Fußzeile lesen von hier) ──
   // v2.6.0 (13.10.2026): Reiter "Ernährung" (Ernährungs-Check: Übersicht, Erstgespräch, Freigabe).
   // v2.5.0 (11.10.2026): Version in Kopfzeile + Login, angemeldeter Trainer in der Kopfzeile.
-  const APP_VERSION = "2.8.0";
+  const APP_VERSION = "2.9.0";
 
   // ── v2.7.0: Konto-Status je Pilot-ID (trainer_account_states) ──
   // active = Check liegt in einem bestätigten Konto · requested = angefordert, Link noch offen
@@ -1074,9 +1079,37 @@
   const AREA_SHORT = {
     sleep:"Schlaf", activity:"Bewegung", nutrition:"Ernährung",
     vitamin_d:"Vit. D", bmi:"BMI", mental:"Mental",
+    smoking:"Rauchen", alcohol:"Alkohol",
     lifestyle:"Lifestyle", micronutrients:"Mikro", metabolic:"Energie"
   };
-  const AREA_ICONS = { sleep:"🌙", activity:"⚡", nutrition:"🥗", vitamin_d:"☀️", bmi:"⚖️", mental:"🧘", lifestyle:"🍃", micronutrients:"💊", metabolic:"🔥" };
+  const AREA_ICONS = { sleep:"🌙", activity:"⚡", nutrition:"🥗", vitamin_d:"☀️", bmi:"⚖️", mental:"🧘", smoking:"🚭", alcohol:"🍷", lifestyle:"🍃", micronutrients:"💊", metabolic:"🔥" };
+
+  // v2.9.0 — Score-Karte Version 3: Frage -> Score-Bereich (questions.score_area), Themenwerte
+  const TA_SCORE_AREA_V3 = { nicotine_use: "smoking", alcohol_frequency: "alcohol", alcohol_amount: "alcohol" };
+  const TA_NOT_SCORED_V3 = new Set(["muscle_cramps","appetite_change","unintentional_weight_loss","dizziness_pale_nails",
+    "period_bleeding","hormonal_transition","low_mood","low_interest","supplement_usage","supplement_types","vital_goal"]);
+  function taScoreArea(a, version) {
+    const k = a.area_key || a.questions?.area_key;
+    if (Number(version) >= 3) {
+      if (TA_NOT_SCORED_V3.has(a.question_key)) return null;
+      if (["micronutrients","metabolic","general"].includes(k)) return null;
+      return TA_SCORE_AREA_V3[a.question_key] || k;
+    }
+    return k;
+  }
+  const THEME_QMAX = { muscle_cramps: 2, social_connection: 2, alcohol_amount: 3, hormonal_transition: 2, supplement_usage: 2, supplement_types: 0 };
+  function themeScore(answers, theme) {
+    const perQ = {};
+    (answers || []).forEach(a => {
+      const k = a.area_key || a.questions?.area_key;
+      if (k !== theme || a.question_key === "supplement_types") return;
+      perQ[a.question_key] = (perQ[a.question_key] || 0) + Number(a.risk_points || 0);
+    });
+    const keys = Object.keys(perQ); if (!keys.length) return 100;
+    const risk = keys.reduce((x, q) => x + perQ[q], 0);
+    const max = Math.max(keys.reduce((x, q) => x + (THEME_QMAX[q] ?? 4), 0), risk, 1);
+    return Math.round((100 - risk / max * 100) * 100) / 100;
+  }
 
   // ── TAB SWITCHING ──
   function switchTab(id, btn) {
@@ -1119,18 +1152,19 @@
   function hideStatus(id) { document.getElementById(id)?.classList.add("hidden"); }
   function safe(v, fallback = "–") { return v === null || v === undefined || v === "" ? fallback : v; }
 
+  // v2.9.0: Level-Grenzen Score-Karte Version 3 (85 / 65 / 50 / 35)
   function getScoreColor(s) {
     if (s >= 85) return "#22c97a";
-    if (s >= 70) return "#3b9eff";
-    if (s >= 55) return "#f5a623";
-    if (s >= 40) return "#ff8c42";
+    if (s >= 65) return "#3b9eff";
+    if (s >= 50) return "#f5a623";
+    if (s >= 35) return "#ff8c42";
     return "#ff5c5c";
   }
   function getScoreLabel(s) {
     if (s >= 85) return "Vital & Stabil";
-    if (s >= 70) return "Aktiv mit Momentum";
-    if (s >= 55) return "Auf dem Weg";
-    if (s >= 40) return "Im Aufbau";
+    if (s >= 65) return "Aktiv mit Momentum";
+    if (s >= 50) return "Auf dem Weg";
+    if (s >= 35) return "Im Aufbau";
     return "Neustart";
   }
 
@@ -1566,7 +1600,7 @@
   // Differenz: Wer sich deutlich anders einschätzt, als der Index ausfällt,
   // ist das eigentliche Gesprächsthema.
   const WB_LABEL = { 5:"Sehr gut", 4:"Gut", 3:"Mittel", 2:"Weniger gut", 1:"Gar nicht gut" };
-  function wbStufe(total) { const t = Number(total); return t >= 85 ? 5 : t >= 70 ? 4 : t >= 55 ? 3 : t >= 40 ? 2 : 1; }
+  function wbStufe(total) { const t = Number(total); return t >= 85 ? 5 : t >= 65 ? 4 : t >= 50 ? 3 : t >= 35 ? 2 : 1; }   // v2.9.0
 
   function renderAnswers(answers) {
     document.getElementById("answersTable").innerHTML = answers.map(row => {
@@ -2590,10 +2624,11 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     bioeg:      { short: "BIÖG – Rauchstopp-Beratung", title: "Rauchfrei: kostenlose Telefonberatung 0800 8 31 31 31 und Online-Ausstiegsprogramm", publisher: "Bundesinstitut für Öffentliche Gesundheit", year: "2025", url: "https://www.rauchfrei-info.de/" },
   };
 
-  const TA_AREA_LABEL = { sleep:"Schlaf & Regeneration", activity:"Bewegung & Kraft", nutrition:"Ernährung", mental:"Mentale Balance & Stress", vitamin_d:"Vitamin D & Tageslicht", bmi:"BMI / Körperkomposition", lifestyle:"Alkohol / Nikotin", micronutrients:"Mikronährstoff-Risiko", metabolic:"Energie & Stoffwechsel-Signale" };
-  const TA_WEIGHTS = { sleep:16, activity:16, nutrition:12, mental:12, vitamin_d:10, bmi:10, lifestyle:8, micronutrients:8, metabolic:8 };
+  const TA_AREA_LABEL = { sleep:"Schlaf & Regeneration", activity:"Bewegung & Kraft", nutrition:"Ernährung", mental:"Mentale Balance & Stress", smoking:"Rauchen", alcohol:"Alkohol", vitamin_d:"Vitamin D & Tageslicht", bmi:"BMI / Körperkomposition", lifestyle:"Alkohol / Nikotin", micronutrients:"Mikronährstoff-Risiko", metabolic:"Energie & Stoffwechsel-Signale" };
+  // v2.9.0: Gewichte Version 3 (nur Rückfall, wenn das Ergebnis keine Gewichte mitliefert)
+  const TA_WEIGHTS = { activity:25, nutrition:16, sleep:14, smoking:12, bmi:12, mental:10, alcohol:6, vitamin_d:5, lifestyle:8, micronutrients:8, metabolic:8 };
   const TA_GOALS = { goal_energy:"⚡ Mehr Energie", goal_weight:"⚖️ Gewicht", goal_fitness:"💪 Fitter werden", goal_prevention:"🛡️ Vorsorge", goal_longevity:"🌿 Langfristig vital", goal_curious:"🔍 Neugier", goal_supplements:"💊 Nährstoffe" };
-  const TA_GOAL_AREAS = { goal_energy:["sleep","metabolic","activity"], goal_weight:["activity","nutrition","bmi"], goal_fitness:["activity"], goal_prevention:["activity","nutrition","sleep","lifestyle"], goal_longevity:["activity","sleep","nutrition"], goal_supplements:["nutrition","vitamin_d","micronutrients"], goal_curious:[] };
+  const TA_GOAL_AREAS = { goal_energy:["sleep","activity"], goal_weight:["activity","nutrition","bmi"], goal_fitness:["activity"], goal_prevention:["activity","nutrition","sleep","smoking"], goal_longevity:["activity","sleep","nutrition"], goal_supplements:["nutrition","vitamin_d","micronutrients"], goal_curious:[] };
   // Fallback, falls questions.is_simulatable nicht lesbar ist: die Verhaltens-Fragen
   const TA_SIM_FALLBACK = ["activity_days","strength_training","sitting_hours","sleep_duration","water_intake","vegetables_fruit","protein_intake","omega3_fish","alcohol_frequency","alcohol_amount","nicotine_use","sun_exposure_winter","social_connection"];
 
@@ -2735,15 +2770,15 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       why: c => "Laut BfR genügt es, mehrmals pro Woche Gesicht, Hände und Arme 5 bis 25 Minuten der Sonne auszusetzen. Von Oktober bis März reicht die Sonne in Deutschland dafür nicht aus.",
       deal: c => "Mehrmals pro Woche Bewegung bei Tageslicht",
       src:["bfr_vitd"] },
-    { id:"alkohol", area:"lifestyle", q:"alcohol_frequency", icon:"🍃", title:"Alkoholfreie Tage",
+    { id:"alkohol", area:"alcohol", q:"alcohol_frequency", icon:"🍃", title:"Alkoholfreie Tage",
       trigger:"Alkohol-Häufigkeit oder -Menge mit ≥ 2 Risikopunkten UND Bereich Alkohol/Nikotin unter 40",
-      when: c => (c.risk('alcohol_frequency') >= 2 || c.risk('alcohol_amount') >= 2) && c.area('lifestyle') < 40,
+      when: c => (c.risk('alcohol_frequency') >= 2 || c.risk('alcohol_amount') >= 2) && c.area('alcohol') < 40,
       action: c => "Nur behutsam und ohne Wertung ansprechen, am besten, wenn das Mitglied das Thema selbst öffnet. Alkoholfreie Tage als Angebot, nie als Vorwurf.",
       say: c => "Viele merken bei Schlaf und Energie schnell einen Unterschied, wenn sie ein paar alkoholfreie Tage pro Woche einbauen.",
       why: c => "Die DGE empfiehlt, auf alkoholische Getränke zu verzichten; wer trinkt, sollte vor allem hohe Mengen und Rauschtrinken vermeiden.",
       deal: c => "Feste alkoholfreie Tage in der Woche",
       src:["dge_alk"] },
-    { id:"rauchen", area:"lifestyle", q:"nicotine_use", icon:"🚭", title:"Rauchstopp unterstützen",
+    { id:"rauchen", area:"smoking", q:"nicotine_use", icon:"🚭", title:"Rauchstopp unterstützen",
       trigger:"Nikotin: Antwort mit ≥ 2 Risikopunkten",
       when: c => c.risk('nicotine_use') >= 2,
       action: c => "Nur anbieten, wenn das Mitglied offen dafür ist. Auf die kostenlose Telefonberatung 0800 8 31 31 31 und rauchfrei-info.de verweisen; Training als Begleitung anbieten.",
@@ -2813,15 +2848,17 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     nutrition:"Deine Ernährung ist gut aufgestellt.",
     mental:"Du wirkst mental gut ausbalanciert.",
     vitamin_d:"Du holst dir viel Tageslicht.",
+    smoking:"Du rauchst nicht — das ist eine der wichtigsten Grundlagen überhaupt.",
+    alcohol:"Beim Alkohol bist du sehr zurückhaltend.",
     lifestyle:"Beim Thema Alkohol und Nikotin bist du sehr gut aufgestellt.",
     micronutrients:"Bei der Nährstoffversorgung zeigen deine Angaben keine Auffälligkeiten.",
     metabolic:"Deine Energie-Signale sind unauffällig.",
   };
-  const TA_STRENGTH_ORDER = ["activity","sleep","nutrition","mental","lifestyle","vitamin_d","micronutrients","metabolic"];
+  const TA_STRENGTH_ORDER = ["activity","sleep","nutrition","mental","smoking","alcohol","lifestyle","vitamin_d","micronutrients","metabolic"];
   // Stärken ab 70 (gleiche Schwelle wie die Mail). Verhaltensbereiche zuerst — „keine Auffälligkeiten“
   // bei Mikronährstoffen/Stoffwechsel ist eine schwächere Stärke und füllt nur auf.
   function taStrongAreas(ctx) {
-    const core = ["activity","sleep","nutrition","mental","lifestyle","vitamin_d"];
+    const core = ["activity","sleep","nutrition","mental","smoking","alcohol","lifestyle","vitamin_d"];
     const ok = k => ctx.areaMap[k] !== undefined && ctx.areaMap[k] >= 70;
     const bySc = (a, b) => ctx.areaMap[b] - ctx.areaMap[a];
     return [...core.filter(ok).sort(bySc), ...["micronutrients","metabolic"].filter(ok).sort(bySc)].slice(0, 3);
@@ -2855,7 +2892,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     const m = new Date().getMonth() + 1;
     return {
       submission, score, answers: answers || [], byKey, risk, text, areaMap,
-      area: k => (areaMap[k] === undefined ? 100 : areaMap[k]),
+      area: k => (areaMap[k] === undefined ? themeScore(answers || [], k) : areaMap[k]),   // v2.9.0: Themenwert, wenn kein Score-Bereich
       age: Number(submission.age) || null, weight: Number(submission.weight_kg) || null, bmi: Number(submission.bmi) || null,
       goal: submission.goal_key || '', vegan: /vegan/.test(diet), vegetarian: /vegetar/.test(diet) && !/vegan/.test(diet),
       hasB12: /b\s?-?12/.test(suppl), winter: m >= 10 || m <= 3,
@@ -2876,7 +2913,8 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     });
     const wsum = Object.values(areas).reduce((a, x) => a + x.weight, 0);
     if (wsum > 0 && wsum <= 1.01) Object.values(areas).forEach(x => x.weight *= 100);   // Gewichte als Anteil gespeichert
-    ctx.answers.forEach(a => { const k = a.area_key || a.questions?.area_key; if (areas[k]) areas[k].risk += Number(a.risk_points || 0); });
+    const ver = ctx.score.score_version;
+    ctx.answers.forEach(a => { const k = taScoreArea(a, ver); if (k && areas[k]) areas[k].risk += Number(a.risk_points || 0); });   // v2.9.0
     Object.values(areas).forEach(x => { x.max = (x.risk > 0 && x.score < 100) ? x.risk * 100 / (100 - x.score) : null; });
     const calc = scores => {
       let t = 0, malus = 0;
@@ -2891,7 +2929,8 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     if (!Object.keys(areas).length) reasons.push("keine Bereichswerte gespeichert");
     if (!(Math.abs(replicated - stored) <= 0.6)) reasons.push(`Nachrechnung ${taNum(replicated)} statt ${taNum(stored)}`);
     const ok = !reasons.length;
-    const bio = t => ctx.age ? Math.max(10, Math.min(120, ctx.age + ((70 - t) / 70) * 10)) : null;
+    const pivot = Number(ver) >= 3 ? 68 : 70;   // v2.9.0: Drehpunkt Version 3
+    const bio = t => ctx.age ? Math.max(10, Math.min(120, ctx.age + ((pivot - t) / 70) * 10)) : null;
     const bioOk = ctx.age && ctx.score.bio_age ? Math.abs(bio(stored) - Number(ctx.score.bio_age)) <= 1 : false;
 
     // Hebel: Frage auf die nächstbessere Antwortstufe setzen
@@ -2900,7 +2939,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       if (meta.simulatable && !meta.simulatable.has(rule.q)) return null;
       const rows = ctx.byKey[rule.q]; if (!rows || rows.length !== 1) return null;
       const row = rows[0]; const cur = Number(row.risk_points || 0); if (cur <= 0) return null;
-      const area = row.area_key || rule.area; const ax = areas[area]; if (!ax || !ax.max) return null;
+      const area = taScoreArea(row, ctx.score.score_version) || rule.area; const ax = areas[area]; if (!ax || !ax.max) return null;
       let target = 0, toText = null;
       const opts = meta.options && row.question_id ? meta.options[row.question_id] : null;
       if (opts && opts.length) {
