@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.9.1 (15.10.2026): Anfragen mit Weg "meldet sich selbst" (gehört zu vital-check-studio-anfrage-selbst_v1.sql
+       + Edge edge-2026-10-15.1 + Check v2.8.1): statt Telefon ein Hinweis "meldet sich selbst – nicht anrufen",
+       keine Rückruf-Frist und nicht überfällig; Kennzahl "Offen" und Hinweiszahl am Reiter zählen nur
+       Rückrufe. Basis: v2.9.0 -->
   <!-- v2.9.0 (14.10.2026): Score-Karte Version 3 (gehört zu vital-check-score-v3.sql + _neuberechnung.sql).
        Bereiche Rauchen und Alkohol (Radar, Icons, Stärken, Regeln Rauchstopp/Alkohol), Level-Grenzen
        85/65/50/35, Trainer-Simulation rechnet mit der v3-Zuordnung Frage -> Bereich (Warnsignale zählen
@@ -495,7 +499,7 @@
         <button class="btn-inline btn-secondary" onclick="loadRequests()">Aktualisieren</button>
       </div>
       <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
-        <div class="kpi"><span>Offen</span><strong id="reqOpen" style="color:var(--accent-amber);">–</strong></div>
+        <div class="kpi"><span>Rückruf offen</span><strong id="reqOpen" style="color:var(--accent-amber);">–</strong></div>
         <div class="kpi"><span>Überfällig</span><strong id="reqOverdue" style="color:var(--accent-red, #ff5c5c);">–</strong></div>
         <div class="kpi"><span>Kontaktiert</span><strong id="reqContacted" style="color:var(--accent-blue);">–</strong></div>
         <div class="kpi"><span>Termin vereinbart</span><strong id="reqBooked" style="color:var(--accent-green);">–</strong></div>
@@ -2197,7 +2201,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
 
   function updateRequestCounts() {
     const n = st => reqRows.filter(r => r.status === st).length;
-    const open = n('offen');
+    const open = reqRows.filter(r => r.status === 'offen' && !reqIsSelf(r)).length;   // v2.9.1: nur Rückrufe
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
     set('reqOpen', open); set('reqContacted', n('kontaktiert')); set('reqBooked', n('termin'));
     set('reqOverdue', reqRows.filter(reqIsOverdue).length);
@@ -2221,6 +2225,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     const staffOpts = sel => '<option value="">– offen –</option>' + staffList.filter(s => s.is_active).map(s => `<option value="${s.id}"${s.id === sel ? ' selected' : ''}>${mkEsc(s.display_name)}</option>`).join('');
     tb.innerHTML = rows.map(r => {
       const tel = String(r.phone || '').replace(/[^+0-9]/g, '');
+      const self = reqIsSelf(r);   // v2.9.1
       const opts = Object.entries(REQ_STATUS).map(([k, v]) => `<option value="${k}"${k === r.status ? ' selected' : ''}>${v}</option>`).join('');
       const open = r.offer === 'ernaehrung' && r.public_code   // v2.6.0: Einsicht über die Einwilligung des Ernährungs-Checks
         ? `<button class="btn-inline btn-small" onclick="ntOpenByCode('${mkEsc(r.public_code)}')">Im Ernährungsbereich</button><br><span class="muted" style="font-size:12px;">${mkEsc(r.public_code)}</span>`
@@ -2233,10 +2238,10 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       const appt = r.appointment_at ? toLocalInput(r.appointment_at) : '';
       return `<tr style="cursor:default;${overdue ? 'background:rgba(255,92,92,0.07);' : ''}">
         <td style="white-space:nowrap;">${mkDate(r.created_at)}</td>
-        <td style="white-space:nowrap;">${r.status === 'offen' ? (overdue ? `<span class="req-overdue">⚠ ${dueTxt}</span>` : dueTxt) : '<span class="muted">–</span>'}</td>
+        <td style="white-space:nowrap;">${r.status === 'offen' && !self ? (overdue ? `<span class="req-overdue">⚠ ${dueTxt}</span>` : dueTxt) : '<span class="muted">–</span>'}</td>
         <td><strong>${mkEsc(r.first_name)}</strong>${acctPill(r.public_code, true) ? '<br>' + acctPill(r.public_code, true) : ''}</td>
-        <td><a class="req-tel" href="tel:${mkEsc(tel)}">${mkEsc(r.phone)}</a></td>
-        <td>${mkEsc(r.preferred_slot)}</td>
+        <td>${self ? '<span class="pill pill-blue" title="Die Person ruft an oder kommt vorbei – keine Telefonnummer angegeben.">meldet sich selbst</span><br><span class="muted" style="font-size:12px;">nicht anrufen</span>' : `<a class="req-tel" href="tel:${mkEsc(tel)}">${mkEsc(r.phone)}</a>`}</td>
+        <td>${self ? '<span class="muted">–</span>' : mkEsc(r.preferred_slot)}</td>
         <td>${mkEsc(REQ_OFFER[r.offer] || r.offer)}</td>
         <td>${r.trainer_access ? '<span class="req-yes">ja</span>' : '<span class="req-no">nein</span>'}</td>
         <td><select class="req-select" aria-label="Zuständig" onchange="updateRequest('${r.id}', { assigned_to: this.value || null }, true)">${staffOpts(r.assigned_to)}</select></td>
@@ -2258,7 +2263,8 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     d.setHours(23, 59, 59, 0);
     return d;
   }
-  function reqIsOverdue(r) { return r.status === 'offen' && Date.now() > reqDueDate(r.created_at).getTime(); }
+  function reqIsSelf(r) { return r && r.contact_preference === 'self'; }   // v2.9.1
+  function reqIsOverdue(r) { return r.status === 'offen' && !reqIsSelf(r) && Date.now() > reqDueDate(r.created_at).getTime(); }
   function toLocalInput(iso) {
     const d = new Date(iso); const p = n => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
