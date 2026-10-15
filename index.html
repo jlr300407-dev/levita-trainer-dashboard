@@ -4,6 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LeVITA Trainer-Dashboard</title>
+  <!-- v2.10.2 (15.10.2026): Wissen um den Abschnitt "Persönliches Konto" ergänzt (Anmeldelink: Gültigkeit,
+       angemeldet bleiben, typische Fragen im Studio, warum das sicher ist; gehört zu konto.js 1.3.0 und
+       konto.html 1.3.0). Angezeigte Versionsnummer korrigiert (stand seit v2.9.0 fest). Basis: v2.10.1 -->
+  <!-- v2.10.1 (15.10.2026): Quellen der Medikationsliste geprüft (gehört zu nutrition-medikamente_v9.sql):
+       Q43 Phenprocoumon und neu Q44–Q53 (Lithium, Tranylcypromin, Blutdruck, Spironolacton, DOAK,
+       Psychopharmaka, Prednisolon, Levothyroxin, Alendronsäure, Simvastatin/Pantoprazol). Wissen:
+       DOAK jetzt grün, Einnahme-Hinweise bei Schilddrüsenhormon und Osteoporose-Mitteln. Basis: v2.10.0 -->
+  <!-- v2.10.0 (15.10.2026): Ernährungs-Check in der Einführungsphase ohne Begleitung (gehört zu
+       nutrition-einfuehrung_v8.sql, EDGE_nutrition-check_v1-7.ts, ernaehrung.html 0.6.0).
+       Liste zeigt nur Teilnahmen mit Trainer-Einwilligung (serverseitig), Teilnahmen der Einführungsphase
+       ohne Fristen und ohne "Zu tun"; Spalte Auswahl mit Schrittzuständen. Detail: Schritte mit Zustand,
+       Wenn-Dann-Satz und Datum, Arzt-Bestätigung (Selbstauskunft), Kühlschrank-Zettel, Feedback,
+       Programm-Information; kein Programmstart in der Einführungsphase. Neue Übersicht
+       "Einführungsphase" (nutrition_intro_overview): Kennzahlen, Altersstufen, Hilfe-Wünsche, Freitexte
+       mit Kategorie, Liste der bestätigten Programm-Interessenten. Wissen › Ernährungs-Check: Abschnitt
+       Einführungsphase. Basis: v2.9.1 -->
   <!-- v2.9.1 (15.10.2026): Anfragen mit Weg "meldet sich selbst" (gehört zu vital-check-studio-anfrage-selbst_v1.sql
        + Edge edge-2026-10-15.1 + Check v2.8.1): statt Telefon ein Hinweis "meldet sich selbst – nicht anrufen",
        keine Rückruf-Frist und nicht überfällig; Kennzahl "Offen" und Hinweiszahl am Reiter zählen nur
@@ -537,10 +553,13 @@
       <div class="card" style="margin-bottom:18px;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
           <div>
-            <h2>Ernährungs-Check mit Begleitung</h2>
+            <h2>Ernährungs-Check</h2>
             <p class="muted">Teilnahmen und Erstgespräche — zuletzt aktualisiert: <span id="ntLastUpdate">–</span></p>
           </div>
-          <button class="btn-inline btn-secondary" onclick="ntLoad()">Aktualisieren</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-inline" onclick="ntIntroOpen()">Übersicht Einführungsphase</button>
+            <button class="btn-inline btn-secondary" onclick="ntLoad()">Aktualisieren</button>
+          </div>
         </div>
         <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
           <div class="kpi"><span>Bereit fürs Erstgespräch</span><strong id="ntReady" style="color:var(--accent-blue);">–</strong></div>
@@ -549,7 +568,8 @@
           <div class="kpi"><span>Offene Aufgaben</span><strong id="ntTasks" style="color:var(--accent-red);">–</strong></div>
         </div>
         <p class="muted" style="margin-top:12px;"><a class="ta-src" onclick="wiOpen('ernaehrung')" style="cursor:pointer;">Wissensbasis Ernährungs-Check →</a></p>
-        <p class="muted" style="margin-top:8px;">Die Person füllt den Fragebogen zu Hause aus und markiert bis zu drei Vorschläge. Im Erstgespräch wählt sie ein bis drei Schritte selbst; ihr formuliert gemeinsam je einen Wenn-Dann-Satz. Starten geht nur mit bestätigtem Konto (Pflicht ab Stufe 3) und — falls nötig — nach der Freigabe der Praxis.</p>
+        <p class="muted" style="margin-top:8px;"><strong>Einführungsphase (seit 15.10.2026):</strong> Der Ernährungs-Check läuft kostenlos und ohne Begleitung. Die Person wählt ihre Schritte selbst, formuliert den Wenn-Dann-Satz selbst und meldet sich, wenn sie Unterstützung möchte. In der Liste stehen nur Personen, die der Einsicht durch Trainerinnen und Trainer zugestimmt haben; für sie gibt es keine Fristen und keine Aufgaben. Gesamtzahlen und Rückmeldungen stehen in der Übersicht Einführungsphase.</p>
+        <p class="muted" style="margin-top:8px;"><strong>Programm mit Begleitung (später):</strong> Die Person füllt den Fragebogen zu Hause aus und markiert bis zu drei Vorschläge. Im Erstgespräch wählt sie ein bis drei Schritte selbst; ihr formuliert gemeinsam je einen Wenn-Dann-Satz. Starten geht nur mit bestätigtem Konto (Pflicht ab Stufe 3) und — falls nötig — nach der Freigabe der Praxis.</p>
         <div id="ntStatus" class="hidden"></div>
       </div>
       <div class="filter-row">
@@ -572,6 +592,7 @@
       </div>
     </div>
     <div id="ntDetail" class="hidden"></div>
+    <div id="ntIntro" class="hidden"></div>
   </div>
 
   <div class="tab-content" id="tab-search">
@@ -828,20 +849,33 @@
     <!-- v2.8.0: Wissensbasis Ernährungs-Check -->
     <div id="wiNutri" class="hidden">
       <div class="card" style="margin-bottom:18px;">
-        <h2>Ernährungs-Check mit Begleitung — Wissensbasis</h2>
+        <h2>Ernährungs-Check — Wissensbasis</h2>
         <p class="muted">Alles für Erstgespräch und Begleitung: deine Rolle, der Ablauf, die Schritte mit ihren Belegen, die Ausschlussregeln und die Quellen. Schritte, Regeln und Medikationsliste kommen live aus der Datenbank — genau so, wie der Check sie gerade anwendet.</p>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;">
-          <span class="pill pill-purple">Beta</span>
+          <span class="pill pill-blue">Einführungsphase seit 15.10.2026</span>
           <span class="pill pill-gray">Regelwerk <span id="wnRules">–</span></span>
-          <span class="pill pill-gray">Quellen geprüft am 13.10.2026</span>
-          <span class="pill pill-amber">Empfehlung im Vital-Check noch ausgeschaltet</span>
+          <span class="pill pill-gray">Quellen geprüft am 13. und 15.10.2026 (Medikamente: Q43–Q53)</span>
+          <span class="pill pill-green">Empfehlung im Vital-Check für alle</span>
         </div>
         <div class="wn-nav">
-          <a onclick="wnJump('wnRolle')">Rolle</a><a onclick="wnJump('wnAblauf')">Ablauf</a><a onclick="wnJump('wnMessen')">Messen &amp; rote Flaggen</a>
+          <a onclick="wnJump('wnEinf')">Einführungsphase</a><a onclick="wnJump('wnRolle')">Rolle</a><a onclick="wnJump('wnAblauf')">Ablauf</a><a onclick="wnJump('wnMessen')">Messen &amp; rote Flaggen</a>
           <a onclick="wnJump('wnAuswertung')">Auswertung</a><a onclick="wnJump('wnSchritte')">Schritte</a><a onclick="wnJump('wnSchwelle')">Eingangsschwelle</a>
-          <a onclick="wnJump('wnMeds')">Medikamente</a><a onclick="wnJump('wnQuellen')">Quellen</a><a onclick="wnJump('wnUeben')">Üben</a>
+          <a onclick="wnJump('wnMeds')">Medikamente</a><a onclick="wnJump('wnQuellen')">Quellen</a><a onclick="wnJump('wnKonto')">Konto</a><a onclick="wnJump('wnUeben')">Üben</a>
         </div>
         <div id="wnStatus" class="hidden"></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnEinf">
+        <h3>Einführungsphase (ab 15.10.2026)</h3>
+        <p class="muted">Der Ernährungs-Check ist für alle mit Vital-Check kostenlos und läuft <strong>ohne Begleitung</strong>. Nach außen heißt es „kostenlos in der aktuellen Einführungsphase“, ohne Enddatum. Danach kommt das 12-Wochen-Programm mit Begleitung im Studio, gegen Bezahlung.</p>
+        <ul style="margin:10px 0 0 18px;font-size:13.5px;line-height:1.7;">
+          <li><strong>Was die Person sieht:</strong> Vorschläge aus ihren Antworten, Empfehlung „Starte mit einem Schritt“, höchstens drei gleichzeitig. Jeder Schritt ist <em>vorgemerkt</em>, <em>gestartet</em> (eigener Wenn-Dann-Satz) oder <em>im Alltag angekommen</em> — dann kann sie nachlegen. Dazu ein Kühlschrank-Zettel zum Ausdrucken.</li>
+          <li><strong>Medikamente (geprüft 15.10.2026, Quellen Q43–Q53):</strong> Rot = Ausschluss (Lithium, Vitamin-K-Antagonisten, Blutzuckersenker, Abnehmmittel, jede ärztliche Ernährungsvorgabe wie MAO-Hemmer). Gelb = erst nach ärztlicher Rücksprache (Blutdrucksenker, Antidepressiva/Neuroleptika, Kortison dauerhaft, andere Dauermedikamente): Schritte lassen sich erst starten, wenn die Person bestätigt, die Tipps mit Ärztin oder Arzt besprochen zu haben — ihre Selbstauskunft, keine Freigabe. Grün = ohne Einschränkung (DOAK, Cholesterinsenker, Magensäureblocker, Verhütung, bei Bedarf); bei Schilddrüsenhormon und Osteoporose-Mitteln steht ein kurzer Einnahme-Hinweis am Frühstücks-Schritt. Wir bewerten Medikamente nie.</li>
+          <li><strong>Ab 65 ohne Krafttraining</strong> (und ohne Absicht anzufangen): kein Ausschluss mehr, aber keine Schritte, die vor allem Kalorien sparen (Getränke, Snack-Tausch, Einmal auftun, Gemüse-Ersatz). Grund: Abnehmen ohne Krafttraining kostet ab 65 Muskeln und Knochenmasse (Q7). Wer fragt: Krafttraining im Studio anbieten.</li>
+          <li><strong>Wer euch anspricht:</strong> Gern unterstützen — auf Wunsch ein Gespräch im Studio. Ihr seht die Person in der Liste nur, wenn sie der Einsicht zugestimmt hat; sonst mit Pilot-ID und PIN gemeinsam auf ihrem Gerät ansehen.</li>
+          <li><strong>Für wen:</strong> Tipps für gesunde Menschen, die sich bewusster ernähren wollen — ohne allgemeine Risiko-Hinweise. Wer nicht passt, wird vorher über die Eingangsschwelle ausgeschlossen. Das Screening zum Essverhalten erkennt allerdings nur etwa ein Viertel der Betroffenen (Q4): Fällt euch im Gespräch etwas auf, behutsam auf Hausarztpraxis oder Beratungsstelle hinweisen, nicht selbst einordnen.</li>
+          <li><strong>Rückmeldungen</strong> stehen in der Übersicht Einführungsphase (ohne Namen). Beschwerden und mögliche fachliche Fehler bitte als solche einordnen — die werden zuerst bearbeitet.</li>
+        </ul>
       </div>
 
       <div class="card wn-anchor" id="wnRolle">
@@ -929,6 +963,20 @@
         <h3>Quellenverzeichnis</h3>
         <p class="muted" style="margin-bottom:12px;">Alle Quellen wurden am 13.10.2026 an Abstract oder Volltext geprüft; wo das nur über eine Sekundärquelle möglich war, steht es dabei. Die Nummern (Q22 …) tauchen im Trainerwissen auf und führen hierher.</p>
         <div class="table-wrap"><table class="wn-src"><thead><tr><th>Nr.</th><th>Quelle</th><th>Link</th></tr></thead><tbody id="wnSrcRows"></tbody></table></div>
+      </div>
+
+      <div class="card wn-anchor" id="wnKonto">
+        <h3>Persönliches Konto: Anmeldelink erklären</h3>
+        <p class="muted">Mitglieder melden sich in „Mein Bereich“ ohne Passwort an: Sie geben ihre E-Mail-Adresse ein und bekommen einen Anmeldelink. Das Konto ist freiwillig, Pilot-ID und PIN funktionieren weiter.</p>
+        <ul style="margin:10px 0 0 18px;font-size:13.5px;line-height:1.7;">
+          <li><strong>Der Link</strong> gilt eine Stunde und nur für einen Klick. Ein neuer Link geht frühestens nach einer Minute raus; bei mehreren Mails gilt die neueste.</li>
+          <li><strong>Danach bleibt das Gerät angemeldet</strong> — kein neuer Link nötig. Einen neuen braucht man nur auf einem anderen Gerät oder Browser, im privaten Fenster, nach „Abmelden“ oder nach dem Löschen der Browserdaten.</li>
+          <li><strong>„Ich bin schon wieder abgemeldet“:</strong> Meist wurde der Link in der Mail-App geöffnet (eigener Browser der App). Tipp: Link mit „Im Browser öffnen“ in Safari oder Chrome öffnen, dann „Mein Bereich“ als Lesezeichen oder auf den Home-Bildschirm legen.</li>
+          <li><strong>„Der Link geht nicht“:</strong> abgelaufen, schon benutzt oder eine neuere Mail ist da. In „Mein Bereich“ einfach einen neuen anfordern. Keine Mail: Spam-Ordner prüfen, Tippfehler in der Adresse?</li>
+          <li><strong>Warum das sicher ist:</strong> Es gibt kein Passwort, das erraten oder von anderen Seiten wiederverwendet werden kann. Anmelden kann sich nur, wer Zugriff auf das E-Mail-Postfach hat. Jeder Link ist kurz gültig und einmalig, die Verbindung verschlüsselt, die Daten liegen in der EU (Frankfurt).</li>
+          <li><strong>Eure Rolle:</strong> Nie nach dem Link oder der Mail fragen und keine Anmeldung auf eurem Gerät für das Mitglied machen. Auf geteilten Geräten (z. B. Studio-Tablet) nach der Nutzung abmelden. Mitglieder auf ein sicheres E-Mail-Passwort hinweisen.</li>
+          <li><strong>Mit Trainer-Adresse</strong> gibt es keinen persönlichen Bereich — Mitglieder brauchen ihre private E-Mail-Adresse, jede Person eine eigene.</li>
+        </ul>
       </div>
 
       <div class="card wn-anchor" id="wnUeben">
@@ -1044,7 +1092,7 @@
   // ── VERSION: einzige Stelle, an der sie gepflegt wird (Kopfzeile, Login, Fußzeile lesen von hier) ──
   // v2.6.0 (13.10.2026): Reiter "Ernährung" (Ernährungs-Check: Übersicht, Erstgespräch, Freigabe).
   // v2.5.0 (11.10.2026): Version in Kopfzeile + Login, angemeldeter Trainer in der Kopfzeile.
-  const APP_VERSION = "2.9.0";
+  const APP_VERSION = "2.10.2";
 
   // ── v2.7.0: Konto-Status je Pilot-ID (trainer_account_states) ──
   // active = Check liegt in einem bestätigten Konto · requested = angefordert, Link noch offen
@@ -2323,11 +2371,18 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     ntRenderList();
   }
 
-  function ntIsTodo(r) { return r.status === 'ready' || (r.status === 'pending_clearance') || r.open_tasks > 0; }
+  // v2.10.0: Einführungsphase ohne Begleitung → keine Fristen, nichts "zu tun" (außer echten offenen Aufgaben)
+  function ntIsTodo(r) { if (r.phase === 'einfuehrung') return r.open_tasks > 0; return r.status === 'ready' || (r.status === 'pending_clearance') || r.open_tasks > 0; }
+  const NT_SELF = { vorgemerkt: 'vorgemerkt', gestartet: 'gestartet', angekommen: 'angekommen', beendet: 'beendet' };
+  function ntSelfSummary(ss) {
+    ss = ss || {};
+    const parts = ['vorgemerkt', 'gestartet', 'angekommen'].filter(k => ss[k]).map(k => `${ss[k]} ${NT_SELF[k]}`);
+    return parts.length ? parts.join(' · ') : '–';
+  }
   function ntCounts() {
     const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    set('ntReady', ntRows.filter(r => r.status === 'ready').length);
-    set('ntClearance', ntRows.filter(r => r.status === 'pending_clearance').length);
+    set('ntReady', ntRows.filter(r => r.status === 'ready' && r.phase !== 'einfuehrung').length);
+    set('ntClearance', ntRows.filter(r => r.status === 'pending_clearance' && r.phase !== 'einfuehrung').length);
     set('ntActive', ntRows.filter(r => r.status === 'active').length);
     set('ntTasks', ntRows.reduce((a, r) => a + (r.open_tasks || 0), 0));
     const todo = ntRows.filter(r => !r.is_demo && ntIsTodo(r)).length;
@@ -2356,15 +2411,17 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
       const acc = r.is_demo ? '<span class="pill pill-purple">Demo</span>' : r.in_account ? '<span class="pill pill-green">✓ Konto</span>' : '<span class="pill pill-amber">Konto ausstehend</span>';
       const cb = r.callback_status ? `Rückruf ${ntEsc(r.callback_slot || '')} · ${ntEsc(REQ_STATUS[r.callback_status] || r.callback_status)}`
         : (r.contact_preference === 'self' ? 'meldet sich selbst' : '–');
-      const choice = r.choice_confirmed_at ? `${(r.member_choice || []).length} bestätigt` : ((r.member_choice || []).length ? `${r.member_choice.length} markiert` : '–');
+      const intro = r.phase === 'einfuehrung';
+      const choice = intro ? ntSelfSummary(r.self_steps)
+        : (r.choice_confirmed_at ? `${(r.member_choice || []).length} bestätigt` : ((r.member_choice || []).length ? `${r.member_choice.length} markiert` : '–'));
       const next = r.next_contact_no ? `K${r.next_contact_no} · ${ntDay(r.next_contact_date)}` : '–';
       return `<tr onclick="ntOpen('${r.enrollment_id}')">
         <td style="white-space:nowrap;">${ntDay(r.created_at)}</td>
         <td><strong>${ntEsc(r.first_name || '–')}</strong><br><span class="muted" style="font-size:12px;">${ntEsc(r.public_code)} · ${ntEsc(r.age)} J.</span></td>
-        <td><span class="pill ${sc}">${sl}</span>${r.clearance_needed && !r.clearance_received_at ? '' : ''}</td>
+        <td>${intro ? '<span class="pill pill-blue">Einführungsphase</span>' + (r.status === 'pending_clearance' ? `<br><span class="muted" style="font-size:12px;">Arzt ${r.doctor_confirmed_at ? 'bestätigt' : 'offen'}</span>` : '') : `<span class="pill ${sc}">${sl}</span>`}${r.is_internal ? ' <span class="pill pill-gray">Test</span>' : ''}</td>
         <td>${acc}</td>
         <td>${choice}</td>
-        <td>${cb}</td>
+        <td>${intro ? (r.contact_preference === 'callback' ? cb : '<span class="muted">ohne Begleitung</span>') : cb}</td>
         <td style="white-space:nowrap;">${next}</td>
         <td>${r.open_tasks ? `<span class="pill pill-red">${r.open_tasks} offen</span>` : '–'}</td>
       </tr>`;
@@ -2388,6 +2445,79 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
     ntCurrent = data;
     ntRenderDetail();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // v2.10.0 — Übersicht Einführungsphase (Gesamtzahlen ohne Personen, Freitexte ohne Namen)
+  const NT_FB_CAT = { '': '– einordnen –', beschwerde: 'Beschwerde', fachlich: 'Fachlicher Fehler', missverstaendlich: 'Missverständlich', lob: 'Lob', sonstiges: 'Sonstiges' };
+  const NT_HELP = { gespraech: 'Persönliches Gespräch', rueckmeldung: 'Regelmäßige Rückmeldung', koerperanalyse: 'Körperanalyse', plan: 'Individueller Plan', erinnerung: 'Erinnerung', keine: 'Keine zusätzliche Unterstützung' };
+  const NT_EXCL = { scoff: 'Screening Essverhalten', pregnancy: 'Schwangerschaft/Stillzeit', condition: 'Erkrankung', other_therapy: 'andere Therapie', weight_loss: 'ungewollter Gewichtsverlust', appetite: 'Appetit', no_training_65: 'ab 65 ohne Training (alt)' };
+  let ntIntroData = null;
+  async function ntIntroOpen() {
+    const box = document.getElementById('ntIntro');
+    document.getElementById('ntListWrap').classList.add('hidden');
+    document.getElementById('ntDetail').classList.add('hidden');
+    box.classList.remove('hidden');
+    box.innerHTML = '<div class="card"><p class="muted">Wird geladen …</p></div>';
+    const inclTest = !!document.getElementById('ntIntroTest')?.checked;
+    const { data, error } = await supabaseClient.rpc('nutrition_intro_overview', { p_include_internal: inclTest });
+    if (error) { box.innerHTML = `<div class="card"><div class="status status-error">${ntEsc(/function|does not exist/i.test(error.message) ? 'Die Funktion fehlt noch — bitte nutrition-einfuehrung_v8.sql einspielen.' : error.message)}</div><button class="btn-inline btn-secondary" onclick="ntIntroClose()">← Zurück</button></div>`; return; }
+    ntIntroData = data; ntIntroRender(inclTest);
+  }
+  function ntIntroClose() {
+    document.getElementById('ntIntro').classList.add('hidden');
+    document.getElementById('ntListWrap').classList.remove('hidden');
+  }
+  function ntPct(a, b) { return b ? Math.round(a / b * 100) + ' %' : '–'; }
+  function ntIntroRender(inclTest) {
+    const d = ntIntroData || {};
+    const kpi = (label, val, sub, color) => `<div class="kpi"><span>${label}</span><strong style="color:${color || 'var(--text-primary)'};">${val}</strong>${sub ? `<div class="muted" style="font-size:11.5px;margin-top:2px;">${sub}</div>` : ''}</div>`;
+    const done = Number(d.completed || 0) - Number(d.excluded || 0);
+    const goal = (v, ok) => `<span class="pill ${ok ? 'pill-green' : 'pill-gray'}" style="margin-left:6px;">Ziel ${v}</span>`;
+    const by = d.by_age_stage || {}, help = d.help_options || {}, ex = d.excluded_by || {};
+    document.getElementById('ntIntro').innerHTML = `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start;">
+          <div><h2>Ernährungs-Check · Einführungsphase</h2>
+            <p class="muted">Alle Teilnahmen der Einführungsphase, ohne Demo-Profile${inclTest ? '' : ' und ohne interne Tests'}. Personen erscheinen hier nicht — nur Zahlen, Rückmeldungen ohne Namen und die bestätigten Programm-Interessenten.</p></div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <label style="display:inline-flex;gap:6px;align-items:center;margin:0;text-transform:none;letter-spacing:0;font-size:12px;"><input type="checkbox" id="ntIntroTest" ${inclTest ? 'checked' : ''} onchange="ntIntroOpen()" style="width:auto;margin:0;"> Tests mitzählen</label>
+            <button class="btn-inline btn-secondary" onclick="ntIntroClose()">← Zur Liste</button>
+          </div>
+        </div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-top:14px;">
+          ${kpi('Gestartet', d.started || 0)}
+          ${kpi('Fragebogen abgeschlossen', d.completed || 0, ntPct(d.completed, d.started) + ' der Starts' + goal('≥ 65 %', d.started && d.completed / d.started >= .65))}
+          ${kpi('≥ 1 Schritt gewählt', d.with_step || 0, ntPct(d.with_step, done) + ' der Geeigneten' + goal('≥ 75 %', done && d.with_step / done >= .75), 'var(--accent-blue)')}
+          ${kpi('Bewertung', d.rating_avg ?? '–', (d.feedback_count || 0) + ' Rückmeldungen' + goal('≥ 4,0', Number(d.rating_avg) >= 4), 'var(--accent-green)')}
+          ${kpi('Schritt gestartet', d.with_started || 0, ntPct(d.with_started, d.with_step) + ' der Wählenden')}
+          ${kpi('Im Alltag angekommen', d.with_arrived || 0, ntPct(d.with_arrived, d.with_step) + ' der Wählenden', 'var(--accent-green)')}
+          ${kpi('Nachgelegte Schritte', d.steps_added || 0)}
+          ${kpi('Programm-Interesse bestätigt', (d.interest_confirmed || []).length, ntPct((d.interest_confirmed || []).length, done) + ' der Geeigneten' + goal('≥ 15 %', done && (d.interest_confirmed || []).length / done >= .15) + ((d.interest_pending || 0) ? ` · ${d.interest_pending} offen` : ''), 'var(--accent-amber)')}
+          ${kpi('Ausgeschlossen', d.excluded || 0, Object.entries(ex).map(([k, n]) => `${ntEsc(/^med_/.test(k) ? 'Medikament' : (NT_EXCL[k] || k))} ${n}`).join(' · ') || '–', 'var(--accent-red)')}
+          ${kpi('Arzt-Hinweis (gelb)', d.doctor_flag || 0, (d.doctor_confirmed || 0) + ' bestätigt')}
+          ${kpi('Kühlschrank-Zettel', d.fridge_note || 0)}
+          ${kpi('Mit Konto', d.accounts || 0)}
+        </div>
+        <p class="muted" style="margin-top:10px;font-size:12px;">Die Ziele sind Orientierungswerte für den Pilot, keine Belege. Rücklauf und „nach 3 Wochen noch aktiv“ kommen mit dem 7-Tage-Kurzcheck und der Nachfass-Mail; Abbruchstellen im Fragebogen stehen im Funnel.</p>
+      </div>
+      <div class="grid-2" style="gap:16px;">
+        <div class="card"><h3>Nach Altersstufe</h3>
+          ${Object.keys(by).length ? `<table><tbody>${['18-39', '40-64', '65-74', '75+'].filter(k => by[k]).map(k => `<tr style="cursor:default;"><td>${k}</td><td style="text-align:right;">${by[k]}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">Noch keine Daten.</p>'}</div>
+        <div class="card"><h3>Was würde helfen?</h3>
+          ${Object.keys(help).length ? `<table><tbody>${Object.entries(help).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<tr style="cursor:default;"><td>${ntEsc(NT_HELP[k] || k)}</td><td style="text-align:right;">${n}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">Noch keine Antworten.</p>'}</div>
+      </div>
+      <div class="card"><h3>Rückmeldungen im Wortlaut (ohne Namen)</h3>
+        ${(d.feedback_texts || []).length ? `<div class="table-wrap"><table><thead><tr><th>Datum</th><th>Bewertung</th><th>Text</th><th>Einordnung</th></tr></thead><tbody>
+          ${d.feedback_texts.map(f => `<tr style="cursor:default;"><td style="white-space:nowrap;">${ntDay(f.at)}</td><td>${f.rating ? f.rating + '/5' : '–'}</td><td>${ntEsc(f.text)}</td>
+            <td><select class="req-select" onchange="ntIntroCategorize('${f.id}', this.value)">${Object.entries(NT_FB_CAT).map(([k, v]) => `<option value="${k}"${(f.category || '') === k ? ' selected' : ''}>${v}</option>`).join('')}</select></td></tr>`).join('')}
+        </tbody></table></div>` : '<p class="muted">Noch keine Freitexte.</p>'}</div>
+      <div class="card"><h3>Möchten über das Programm informiert werden (bestätigt)</h3>
+        <p class="muted" style="margin-bottom:8px;">Nur Personen mit bestätigter Einwilligung (Double-Opt-in). Nur für die Information zum Programmstart verwenden.</p>
+        ${(d.interest_confirmed || []).length ? `<table><tbody>${d.interest_confirmed.map(x => `<tr style="cursor:default;"><td>${ntEsc(x.first_name || '–')}</td><td><a href="mailto:${ntEsc(x.email)}">${ntEsc(x.email)}</a></td><td style="white-space:nowrap;">${ntDay(x.confirmed_at)}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">Noch niemand.</p>'}</div>`;
+  }
+  async function ntIntroCategorize(id, cat) {
+    const { error } = await supabaseClient.rpc('nutrition_feedback_categorize', { p_feedback_id: id, p_category: cat || null });
+    if (error) alert('Einordnung nicht gespeichert: ' + error.message);
   }
 
   function ntBack() {
@@ -2467,7 +2597,26 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
 
     // Erstgespräch
     let action = '';
-    if (e.status === 'pending_clearance') {
+    if (e.phase === 'einfuehrung') {
+      const ss = d.self_steps || [];
+      const fb = d.feedback || [];
+      const pi = d.program_interest;
+      const HELP = { gespraech: 'Persönliches Gespräch', rueckmeldung: 'Regelmäßige Rückmeldung', koerperanalyse: 'Körperanalyse', plan: 'Individueller Plan', erinnerung: 'Erinnerung', keine: 'Keine zusätzliche Unterstützung' };
+      action = `<div class="card" style="border-color:rgba(59,158,255,.35);">
+        <h2>Einführungsphase: eigene Schritte</h2>
+        <p class="muted">Ohne Begleitung — die Person wählt und plant selbst. Wenn sie im Studio ist: nachfragen, wie es läuft, und ermutigen. Kein Programmstart nötig.</p>
+        ${ss.length ? `<div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>Schritt</th><th>Zustand</th><th>Wenn-Dann</th><th>Seit</th></tr></thead><tbody>
+          ${ss.map(x => `<tr style="cursor:default;"><td><strong>${ntEsc(ntLeverTitle(d, x.lever_key))}</strong>${x.origin === 'nachgelegt' ? ' <span class="pill pill-gray">nachgelegt</span>' : ''}</td>
+            <td>${ntEsc(NT_SELF[x.state] || x.state)}</td><td>${ntEsc(x.if_then_text || '–')}</td>
+            <td style="white-space:nowrap;">${ntDay(x.arrived_at || x.started_at || x.marked_at)}</td></tr>`).join('')}
+        </tbody></table></div>` : '<p class="muted" style="margin-top:8px;">Noch kein Schritt gewählt.</p>'}
+        <p style="margin-top:12px;font-size:13px;">
+          ${e.status === 'pending_clearance' ? `Arzt-Rücksprache (Selbstauskunft): <strong>${e.doctor_confirmed_at ? 'bestätigt ' + ntDay(e.doctor_confirmed_at) : 'noch offen'}</strong> · ` : ''}
+          Kühlschrank-Zettel: <strong>${e.fridge_note_at ? 'gedruckt ' + ntDay(e.fridge_note_at) : 'nein'}</strong> ·
+          Programm-Information: <strong>${pi ? (pi.status === 'confirmed' ? 'bestätigt' : pi.status === 'pending' ? 'angefragt, Bestätigung offen' : pi.status) : 'nein'}</strong></p>
+        ${fb.length ? `<h3 style="margin-top:12px;">Rückmeldung</h3>${fb.map(f => `<p style="font-size:13px;margin-top:4px;">${f.rating ? `<strong>${f.rating}/5</strong> · ` : ''}${(f.help_options || []).map(k => ntEsc(HELP[k] || k)).join(', ') || '–'}${f.missing_text ? `<br><span class="muted">„${ntEsc(f.missing_text)}“</span>` : ''}</p>`).join('')}` : ''}
+      </div>`;
+    } else if (e.status === 'pending_clearance') {
       action = `<div class="card" style="border-color:rgba(245,166,35,.4);">
         <h2>Freigabe der Hausarztpraxis</h2>
         <p class="muted">Die Begleitung startet erst, wenn die Praxis das Formular bestätigt hat. Schritte, die die Praxis ausschließt, hier ankreuzen — sie werden danach nicht mehr angeboten.</p>
@@ -3368,7 +3517,7 @@ Diese Auswertung dient der allgemeinen Vitalitäts- und Präventionsberatung und
   // Live aus der Datenbank (RLS: Trainer): Schritte, Aussagen, Texte für die Person,
   // Eingangsschwelle, Medikationsliste, Einstellungen — damit die Seite nie vom Regelwerk abweicht.
   // ════════════════════════════════════════════════════════════
-  const WN_SOURCES = [["Eingangsschwelle", "Q1", "Morgan JF, Reid F, Lacey JH. The SCOFF questionnaire: assessment of a new screening tool for eating disorders. BMJ 1999;319:1467.", "https://pubmed.ncbi.nlm.nih.gov/10582927/", "PubMed"], ["Eingangsschwelle", "Q2", "Lähteenmäki S u. a. Validation of the Finnish version of the SCOFF questionnaire among young adults aged 20 to 35 years. BMC Psychiatry 2009;9:5.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2656502/", "PMC"], ["Eingangsschwelle", "Q3", "Berger U u. a. Screening riskanten Essverhaltens bei 12-jährigen Mädchen und Jungen: psychometrischer Vergleich der deutschsprachigen Versionen von SCOFF und EAT-26. Psychother Psychosom Med Psychol 2011;61:311–318.", "https://thieme-connect.de/products/all/doi/10.1055/s-0031-1271786", "Thieme"], ["Eingangsschwelle", "Q4", "Richter F, Strauss B, Braehler E, Adametz L, Berger U. Screening disordered eating in a representative sample of the German population: usefulness and psychometric properties of the German SCOFF questionnaire. Eating Behaviors 2017;25:81–88. (nur Katalogeintrag gesehen)", "", ""], ["Eingangsschwelle", "Q5", "Kyle UG u. a. (ESPEN). Bioelectrical impedance analysis — part II: utilization in clinical practice. Clin Nutr 2004;23:1430–1453.", "https://espen.org/documents/BIA2.pdf", "PDF"], ["Eingangsschwelle", "Q6", "Cruz-Jentoft AJ u. a. Sarcopenia: revised European consensus on definition and diagnosis (EWGSOP2). Age Ageing 2019;48:16–31.", "https://doi.org/10.1093/ageing/afy169", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q7", "Villareal DT u. a. Aerobic or resistance exercise, or both, in dieting obese older adults. N Engl J Med 2017;376:1943–1955.", "https://doi.org/10.1056/NEJMoa1616338", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q8", "Bauer J u. a. Evidence-based recommendations for optimal dietary protein intake in older people: PROT-AGE Study Group. J Am Med Dir Assoc 2013;14:542–559.", "https://doi.org/10.1016/j.jamda.2013.05.021", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q9", "Deutz NE u. a. Protein intake and exercise for optimal muscle function with aging: recommendations from the ESPEN Expert Group. Clin Nutr 2014;33:929–936.", "https://doi.org/10.1016/j.clnu.2014.04.007", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q10", "Di Vincenzo O u. a. EASO Position Statement on the Diagnosis and Management of Obesity in Older Adults. Obes Facts 2026;19:422–437.", "https://doi.org/10.1159/000549751", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q11", "Nunes EA u. a. Systematic review and meta-analysis of protein intake to support muscle mass and function in healthy adults. J Cachexia Sarcopenia Muscle 2022;13:795–810.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978023", "PMC"], ["Altersstufe ab 65, Eiweiß und Training", "Q12", "Momma H u. a. Muscle-strengthening activities are associated with lower risk and mortality in major non-communicable diseases. Br J Sports Med 2022;56:755–763.", "https://bjsm.bmj.com/content/56/13/755", "BJSM"], ["Altersstufe ab 65, Eiweiß und Training", "Q13", "Fernandes-Alves D u. a. Time-restricted eating with and without caloric restriction for weight loss: systematic review and meta-analysis of randomized clinical trials. Nutr Rev 2026;84:463–486 (online 2025).", "https://doi.org/10.1093/nutrit/nuaf053", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q14", "Tasali E u. a. Effect of sleep extension on objectively assessed energy intake among adults with overweight in real-life settings. JAMA Intern Med 2022;182:365–374.", "https://doi.org/10.1001/jamainternmed.2021.8098", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q15", "Deutsche Gesellschaft für Ernährung. Lebensmittelbezogene Ernährungsempfehlungen (März 2024).", "https://www.dge.de/gesunde-ernaehrung/gut-essen-und-trinken/dge-empfehlungen/", "DGE"], ["Medikationsliste", "Q16", "Wiesner A, Gajewska D, Paśko P. Levothyroxine interactions with food and dietary supplements — a systematic review. Pharmaceuticals 2021;14:206.", "https://doi.org/10.3390/ph14030206", "DOI"], ["Medikationsliste", "Q17", "Lam JR u. a. Proton pump inhibitor and histamine 2 receptor antagonist use and vitamin B12 deficiency. JAMA 2013;310:2435–2442.", "https://pubmed.ncbi.nlm.nih.gov/24327038/", "PubMed"], ["Medikationsliste", "Q18", "Wadden TA u. a. (Look AHEAD). The Look AHEAD study: a description of the lifestyle intervention and the evidence supporting it. Obesity 2006;14:737–752.", "https://pubmed.ncbi.nlm.nih.gov/16855180/", "PubMed"], ["Medikationsliste", "Q43", "Fachinformation Lithium (Natriumzufuhr, Dehydratation); Deutsche Herzstiftung zu Vitamin-K-Antagonisten. (aus dem Konzept übernommen, nicht erneut geprüft)", "", ""], ["Ernährungsschritte", "Q19", "Malik VS, Pan A, Willett WC, Hu FB. Sugar-sweetened beverages and weight gain in children and adults: a systematic review and meta-analysis. Am J Clin Nutr 2013;98:1084–1102.", "https://pubmed.ncbi.nlm.nih.gov/23966427/", "PubMed"], ["Ernährungsschritte", "Q20", "Sievert K u. a. Effect of breakfast on weight and energy intake: systematic review and meta-analysis of randomised controlled trials. BMJ 2019;364:l42.", "https://www.bmj.com/content/364/bmj.l42", "BMJ"], ["Ernährungsschritte", "Q21", "Dalgaard LB u. a. No effects of high- v. low-protein breakfast on body composition and cardiometabolic health in young women with overweight: the NewStart randomised trial. Br J Nutr 2025;133:126–135.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11793950", "PMC"], ["Ernährungsschritte", "Q22", "Klos B u. a. Impact of energy density on energy intake in children and adults: a systematic review and meta-analysis of randomized controlled trials. Eur J Nutr 2023;62:1059–1076.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10030411", "PMC"], ["Ernährungsschritte", "Q23", "Kaiser KA u. a. Increased fruit and vegetable intake has no discernible effect on weight loss: a systematic review and meta-analysis. Am J Clin Nutr 2014;100:567–576.", "https://doi.org/10.3945/ajcn.114.090548", "DOI"], ["Ernährungsschritte", "Q24", "Roe LS, Meengs JS, Rolls BJ. Salad and satiety: the effect of timing of salad consumption on meal energy intake. Appetite 2012;58:242–248.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3264798", "PMC"], ["Ernährungsschritte", "Q25", "Reynolds A u. a. Carbohydrate quality and human health: a series of systematic reviews and meta-analyses. Lancet 2019;393:434–445.", "https://doi.org/10.1016/S0140-6736(18)31809-9", "DOI"], ["Ernährungsschritte", "Q26", "Brown RC u. a. Comparing the effects of consuming almonds or biscuits on body weight in habitual snackers: a 1-year randomized controlled trial. Am J Clin Nutr 2023;118:228–240.", "https://doi.org/10.1016/j.ajcnut.2023.05.015", "DOI"], ["Ernährungsschritte", "Q27", "Guarneiri LL, Cooper JA. Intake of nuts or nut products does not lead to weight gain, independent of dietary substitution instructions. Adv Nutr 2021;12:384–401.", "https://doi.org/10.1093/advances/nmaa113", "DOI"], ["Ernährungsschritte", "Q28", "Kwok A u. a. Effect of alcohol consumption on food energy intake: a systematic review and meta-analysis. Br J Nutr 2019;121:481–495.", "https://pubmed.ncbi.nlm.nih.gov/30630543/", "PubMed"], ["Ernährungsschritte", "Q29", "Golzarand M u. a. Association between alcohol intake and overweight and obesity: a systematic review and dose-response meta-analysis of 127 observational studies. Crit Rev Food Sci Nutr 2022;62:8078–8098.", "https://pubmed.ncbi.nlm.nih.gov/33998940/", "PubMed"], ["Ernährungsschritte", "Q30", "Anderson BO u. a. Health and cancer risks associated with low levels of alcohol consumption. Lancet Public Health 2023;8:e6–e7; dazu WHO Europa, 04.01.2023.", "https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health", "WHO"], ["Ernährungsschritte", "Q31", "Richter M u. a. (DGE). Alkohol — Zufuhr in Deutschland, gesundheitliche sowie soziale Folgen und Ableitung von Handlungsempfehlungen. Ernährungs Umschau 2024;71(10).", "https://ernaehrungs-umschau.de/fileadmin/Ernaehrungs-Umschau/pdfs/pdf_2024/10_24/Sonderdruck_DGE_2_gesamt.pdf", "PDF"], ["Ernährungsschritte", "Q32", "Mertens S u. a. The effectiveness of nudging: a meta-analysis of choice architecture interventions across behavioral domains. PNAS 2022;119:e2107346118.", "https://doi.org/10.1073/pnas.2107346118", "DOI"], ["Ernährungsschritte", "Q33", "Maier M u. a. No evidence for nudging after adjusting for publication bias. PNAS 2022;119:e2200300119.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC9351501", "PMC"], ["Ernährungsschritte", "Q34", "Hollands GJ u. a. Portion, package or tableware size for changing selection and consumption of food, alcohol and tobacco. Cochrane Database Syst Rev 2015;(9):CD011045.", "https://www.cochrane.org/CD011045/", "Cochrane"], ["Ernährungsschritte", "Q35", "Kosīte D u. a. Plate size and food consumption: a pre-registered experimental study in a general population sample. Int J Behav Nutr Phys Act 2019;16:75.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-019-0826-1", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q36", "Gollwitzer PM, Sheeran P. Implementation intentions and goal achievement: a meta-analysis of effects and processes. Adv Exp Soc Psychol 2006;38:69–119.", "", ""], ["Ablauf, Gesprächsform und Erhalt", "Q37", "Sheeran P, Listrom O, Gollwitzer PM. The when and how of planning: meta-analysis of the scope and components of implementation intentions in 642 tests. Eur Rev Soc Psychol 2025;36:162–194.", "https://doi.org/10.1080/10463283.2024.2334563", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q38", "Madigan CD u. a. Is self-weighing an effective tool for weight loss: a systematic literature review and meta-analysis. Int J Behav Nutr Phys Act 2015;12:104.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-015-0267-4", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q39", "Dombrowski SU u. a. Long term maintenance of weight loss with non-surgical interventions in obese adults. BMJ 2014;348:g2646.", "https://doi.org/10.1136/bmj.g2646", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q40", "Svetkey LP u. a. Comparison of strategies for sustaining weight loss: the Weight Loss Maintenance randomized controlled trial. JAMA 2008;299:1139–1148.", "https://doi.org/10.1001/jama.299.10.1139", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q41", "Hartmann-Boyce J u. a. Weight regain after behavioural weight management programmes and its impact on quality of life and cost effectiveness. Diabetes Obes Metab 2023;25:526–535.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10092406/", "PMC"], ["Ablauf, Gesprächsform und Erhalt", "Q42", "Al-Abdullah L, Ahern A, Welsh P, Logue J. A predictive model for medium-term weight loss response in people with type 2 diabetes engaging in behavioural weight management interventions. Diabetes Obes Metab 2024;26:3653–3662.", "https://doi.org/10.1111/dom.15706", "DOI"]];
+  const WN_SOURCES = [["Eingangsschwelle", "Q1", "Morgan JF, Reid F, Lacey JH. The SCOFF questionnaire: assessment of a new screening tool for eating disorders. BMJ 1999;319:1467.", "https://pubmed.ncbi.nlm.nih.gov/10582927/", "PubMed"], ["Eingangsschwelle", "Q2", "Lähteenmäki S u. a. Validation of the Finnish version of the SCOFF questionnaire among young adults aged 20 to 35 years. BMC Psychiatry 2009;9:5.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2656502/", "PMC"], ["Eingangsschwelle", "Q3", "Berger U u. a. Screening riskanten Essverhaltens bei 12-jährigen Mädchen und Jungen: psychometrischer Vergleich der deutschsprachigen Versionen von SCOFF und EAT-26. Psychother Psychosom Med Psychol 2011;61:311–318.", "https://thieme-connect.de/products/all/doi/10.1055/s-0031-1271786", "Thieme"], ["Eingangsschwelle", "Q4", "Richter F, Strauss B, Braehler E, Adametz L, Berger U. Screening disordered eating in a representative sample of the German population: usefulness and psychometric properties of the German SCOFF questionnaire. Eating Behaviors 2017;25:81–88. (nur Katalogeintrag gesehen)", "", ""], ["Eingangsschwelle", "Q5", "Kyle UG u. a. (ESPEN). Bioelectrical impedance analysis — part II: utilization in clinical practice. Clin Nutr 2004;23:1430–1453.", "https://espen.org/documents/BIA2.pdf", "PDF"], ["Eingangsschwelle", "Q6", "Cruz-Jentoft AJ u. a. Sarcopenia: revised European consensus on definition and diagnosis (EWGSOP2). Age Ageing 2019;48:16–31.", "https://doi.org/10.1093/ageing/afy169", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q7", "Villareal DT u. a. Aerobic or resistance exercise, or both, in dieting obese older adults. N Engl J Med 2017;376:1943–1955.", "https://doi.org/10.1056/NEJMoa1616338", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q8", "Bauer J u. a. Evidence-based recommendations for optimal dietary protein intake in older people: PROT-AGE Study Group. J Am Med Dir Assoc 2013;14:542–559.", "https://doi.org/10.1016/j.jamda.2013.05.021", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q9", "Deutz NE u. a. Protein intake and exercise for optimal muscle function with aging: recommendations from the ESPEN Expert Group. Clin Nutr 2014;33:929–936.", "https://doi.org/10.1016/j.clnu.2014.04.007", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q10", "Di Vincenzo O u. a. EASO Position Statement on the Diagnosis and Management of Obesity in Older Adults. Obes Facts 2026;19:422–437.", "https://doi.org/10.1159/000549751", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q11", "Nunes EA u. a. Systematic review and meta-analysis of protein intake to support muscle mass and function in healthy adults. J Cachexia Sarcopenia Muscle 2022;13:795–810.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC8978023", "PMC"], ["Altersstufe ab 65, Eiweiß und Training", "Q12", "Momma H u. a. Muscle-strengthening activities are associated with lower risk and mortality in major non-communicable diseases. Br J Sports Med 2022;56:755–763.", "https://bjsm.bmj.com/content/56/13/755", "BJSM"], ["Altersstufe ab 65, Eiweiß und Training", "Q13", "Fernandes-Alves D u. a. Time-restricted eating with and without caloric restriction for weight loss: systematic review and meta-analysis of randomized clinical trials. Nutr Rev 2026;84:463–486 (online 2025).", "https://doi.org/10.1093/nutrit/nuaf053", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q14", "Tasali E u. a. Effect of sleep extension on objectively assessed energy intake among adults with overweight in real-life settings. JAMA Intern Med 2022;182:365–374.", "https://doi.org/10.1001/jamainternmed.2021.8098", "DOI"], ["Altersstufe ab 65, Eiweiß und Training", "Q15", "Deutsche Gesellschaft für Ernährung. Lebensmittelbezogene Ernährungsempfehlungen (März 2024).", "https://www.dge.de/gesunde-ernaehrung/gut-essen-und-trinken/dge-empfehlungen/", "DGE"], ["Medikationsliste", "Q16", "Wiesner A, Gajewska D, Paśko P. Levothyroxine interactions with food and dietary supplements — a systematic review. Pharmaceuticals 2021;14:206.", "https://doi.org/10.3390/ph14030206", "DOI"], ["Medikationsliste", "Q17", "Lam JR u. a. Proton pump inhibitor and histamine 2 receptor antagonist use and vitamin B12 deficiency. JAMA 2013;310:2435–2442.", "https://pubmed.ncbi.nlm.nih.gov/24327038/", "PubMed"], ["Medikationsliste", "Q18", "Wadden TA u. a. (Look AHEAD). The Look AHEAD study: a description of the lifestyle intervention and the evidence supporting it. Obesity 2006;14:737–752.", "https://pubmed.ncbi.nlm.nih.gov/16855180/", "PubMed"], ["Medikationsliste", "Q43", "Fachinformation Phenprocoumon acis® 3 mg Tabletten, Stand 04/2026, Abschnitt 4.2 und 4.5 (Vitamin-K-haltige Nahrung, abrupte Ernährungsumstellung). Geprüft 15.10.2026.", "https://www.fachinfo.de/fi/pdf/020021/phenprocoumon-acis-r-3-mg-tabletten", "fachinfo.de"], ["Medikationsliste", "Q44", "Gebrauchsinformation Quilonum® retard 450 mg (Lithiumcarbonat), Stand 08/2024, Abschnitt 2 (Kochsalz- und Flüssigkeitszufuhr, Abmagerungskuren, Diätformen).", "https://cdn.shop-apotheke.com/PDF/D02/524/807/D02524807-bp.pdf", "PDF"], ["Medikationsliste", "Q45", "Fachinformation Tranylcypromin neuraxpharm, Stand 12/2021, Abschnitt 4.4 und 4.5 (tyraminarme Diät).", "https://fachinfo.de/pdf/023858", "fachinfo.de"], ["Medikationsliste", "Q46", "Neter JE, Stam BE, Kok FJ, Grobbee DE, Geleijnse JM. Influence of weight reduction on blood pressure: a meta-analysis of randomized controlled trials. Hypertension 2003;42:878–884.", "https://doi.org/10.1161/01.HYP.0000094221.86888.AE", "DOI"], ["Medikationsliste", "Q47", "Gebrauchsinformation Spironolacton Aristo 100 mg, Stand 04/2025 (kaliumreiche Diät meiden, ausreichend trinken).", "https://www.patienteninfo-service.de/gi/22152/html", "PatientenInfo"], ["Medikationsliste", "Q48", "Steffel J u. a. 2021 European Heart Rhythm Association Practical Guide on the use of NOACs in patients with atrial fibrillation. Europace 2021 (Kapitel 3: keine relevante Nahrungswechselwirkung außer Rivaroxaban mit Mahlzeit); Gebrauchsinformation Eliquis® 2,5 mg, Stand 02/2026.", "https://openaccess.sgul.ac.uk/id/eprint/113215", "SGUL"], ["Medikationsliste", "Q49", "Gebrauchsinformation Olanzapin Aurobindo, Stand 12/2022 (Gewichtszunahme sehr häufig, Blutzucker); Gebrauchsinformation Mirtazapin – 1 A Pharma, Stand 04/2025 (Appetit und Gewichtszunahme sehr häufig).", "https://www.patienteninfo-service.de/gi/20845/pdf", "PatientenInfo"], ["Medikationsliste", "Q50", "Fachinformation Prednisolon „Nycomed“ 5 mg (Österreich), Stand 04/2026, Abschnitt 4.4 (Blutzucker, Osteoporose, empfohlene Kost).", "https://medikamente.basg.gv.at/documents/11046__DOTC_FACH_INFO.pdf", "BASG"], ["Medikationsliste", "Q51", "Gebrauchsinformation L-Thyroxin Henning, Stand 05/2025 (nüchtern ½ Stunde vor dem Frühstück, Kaffee, Soja).", "https://patienteninfo-service.de/gi/17481/pdf", "PatientenInfo"], ["Medikationsliste", "Q52", "Fachinformation Alendronsäure-CT 70 mg, Stand 11/2015, Abschnitt 4.2 und 4.5 (30 Minuten vor dem ersten Essen oder Getränk, nur Leitungswasser).", "https://fachinfo.de/fi/pdf/009241/alendronsaeure-ct-70-mg-tabletten", "fachinfo.de"], ["Medikationsliste", "Q53", "Gebrauchsinformation Simvastatin – 1 A Pharma 80 mg, Stand 09/2015 (Grapefruitsaft meiden); Fachinformation Pantoprazol dura 20 mg, Stand 05/2026, Abschnitt 4.4 (Vitamin B12 bei Langzeittherapie).", "https://www.fachinfo.de/fi/pdf/022788/pantoprazol-dura-20-mg-magensaftresistente-tabletten", "fachinfo.de"], ["Ernährungsschritte", "Q19", "Malik VS, Pan A, Willett WC, Hu FB. Sugar-sweetened beverages and weight gain in children and adults: a systematic review and meta-analysis. Am J Clin Nutr 2013;98:1084–1102.", "https://pubmed.ncbi.nlm.nih.gov/23966427/", "PubMed"], ["Ernährungsschritte", "Q20", "Sievert K u. a. Effect of breakfast on weight and energy intake: systematic review and meta-analysis of randomised controlled trials. BMJ 2019;364:l42.", "https://www.bmj.com/content/364/bmj.l42", "BMJ"], ["Ernährungsschritte", "Q21", "Dalgaard LB u. a. No effects of high- v. low-protein breakfast on body composition and cardiometabolic health in young women with overweight: the NewStart randomised trial. Br J Nutr 2025;133:126–135.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11793950", "PMC"], ["Ernährungsschritte", "Q22", "Klos B u. a. Impact of energy density on energy intake in children and adults: a systematic review and meta-analysis of randomized controlled trials. Eur J Nutr 2023;62:1059–1076.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC10030411", "PMC"], ["Ernährungsschritte", "Q23", "Kaiser KA u. a. Increased fruit and vegetable intake has no discernible effect on weight loss: a systematic review and meta-analysis. Am J Clin Nutr 2014;100:567–576.", "https://doi.org/10.3945/ajcn.114.090548", "DOI"], ["Ernährungsschritte", "Q24", "Roe LS, Meengs JS, Rolls BJ. Salad and satiety: the effect of timing of salad consumption on meal energy intake. Appetite 2012;58:242–248.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC3264798", "PMC"], ["Ernährungsschritte", "Q25", "Reynolds A u. a. Carbohydrate quality and human health: a series of systematic reviews and meta-analyses. Lancet 2019;393:434–445.", "https://doi.org/10.1016/S0140-6736(18)31809-9", "DOI"], ["Ernährungsschritte", "Q26", "Brown RC u. a. Comparing the effects of consuming almonds or biscuits on body weight in habitual snackers: a 1-year randomized controlled trial. Am J Clin Nutr 2023;118:228–240.", "https://doi.org/10.1016/j.ajcnut.2023.05.015", "DOI"], ["Ernährungsschritte", "Q27", "Guarneiri LL, Cooper JA. Intake of nuts or nut products does not lead to weight gain, independent of dietary substitution instructions. Adv Nutr 2021;12:384–401.", "https://doi.org/10.1093/advances/nmaa113", "DOI"], ["Ernährungsschritte", "Q28", "Kwok A u. a. Effect of alcohol consumption on food energy intake: a systematic review and meta-analysis. Br J Nutr 2019;121:481–495.", "https://pubmed.ncbi.nlm.nih.gov/30630543/", "PubMed"], ["Ernährungsschritte", "Q29", "Golzarand M u. a. Association between alcohol intake and overweight and obesity: a systematic review and dose-response meta-analysis of 127 observational studies. Crit Rev Food Sci Nutr 2022;62:8078–8098.", "https://pubmed.ncbi.nlm.nih.gov/33998940/", "PubMed"], ["Ernährungsschritte", "Q30", "Anderson BO u. a. Health and cancer risks associated with low levels of alcohol consumption. Lancet Public Health 2023;8:e6–e7; dazu WHO Europa, 04.01.2023.", "https://www.who.int/europe/news/item/04-01-2023-no-level-of-alcohol-consumption-is-safe-for-our-health", "WHO"], ["Ernährungsschritte", "Q31", "Richter M u. a. (DGE). Alkohol — Zufuhr in Deutschland, gesundheitliche sowie soziale Folgen und Ableitung von Handlungsempfehlungen. Ernährungs Umschau 2024;71(10).", "https://ernaehrungs-umschau.de/fileadmin/Ernaehrungs-Umschau/pdfs/pdf_2024/10_24/Sonderdruck_DGE_2_gesamt.pdf", "PDF"], ["Ernährungsschritte", "Q32", "Mertens S u. a. The effectiveness of nudging: a meta-analysis of choice architecture interventions across behavioral domains. PNAS 2022;119:e2107346118.", "https://doi.org/10.1073/pnas.2107346118", "DOI"], ["Ernährungsschritte", "Q33", "Maier M u. a. No evidence for nudging after adjusting for publication bias. PNAS 2022;119:e2200300119.", "https://pmc.ncbi.nlm.nih.gov/articles/PMC9351501", "PMC"], ["Ernährungsschritte", "Q34", "Hollands GJ u. a. Portion, package or tableware size for changing selection and consumption of food, alcohol and tobacco. Cochrane Database Syst Rev 2015;(9):CD011045.", "https://www.cochrane.org/CD011045/", "Cochrane"], ["Ernährungsschritte", "Q35", "Kosīte D u. a. Plate size and food consumption: a pre-registered experimental study in a general population sample. Int J Behav Nutr Phys Act 2019;16:75.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-019-0826-1", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q36", "Gollwitzer PM, Sheeran P. Implementation intentions and goal achievement: a meta-analysis of effects and processes. Adv Exp Soc Psychol 2006;38:69–119.", "", ""], ["Ablauf, Gesprächsform und Erhalt", "Q37", "Sheeran P, Listrom O, Gollwitzer PM. The when and how of planning: meta-analysis of the scope and components of implementation intentions in 642 tests. Eur Rev Soc Psychol 2025;36:162–194.", "https://doi.org/10.1080/10463283.2024.2334563", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q38", "Madigan CD u. a. Is self-weighing an effective tool for weight loss: a systematic literature review and meta-analysis. Int J Behav Nutr Phys Act 2015;12:104.", "https://ijbnpa.biomedcentral.com/articles/10.1186/s12966-015-0267-4", "IJBNPA"], ["Ablauf, Gesprächsform und Erhalt", "Q39", "Dombrowski SU u. a. Long term maintenance of weight loss with non-surgical interventions in obese adults. BMJ 2014;348:g2646.", "https://doi.org/10.1136/bmj.g2646", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q40", "Svetkey LP u. a. Comparison of strategies for sustaining weight loss: the Weight Loss Maintenance randomized controlled trial. JAMA 2008;299:1139–1148.", "https://doi.org/10.1001/jama.299.10.1139", "DOI"], ["Ablauf, Gesprächsform und Erhalt", "Q41", "Hartmann-Boyce J u. a. Weight regain after behavioural weight management programmes and its impact on quality of life and cost effectiveness. Diabetes Obes Metab 2023;25:526–535.", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10092406/", "PMC"], ["Ablauf, Gesprächsform und Erhalt", "Q42", "Al-Abdullah L, Ahern A, Welsh P, Logue J. A predictive model for medium-term weight loss response in people with type 2 diabetes engaging in behavioural weight management interventions. Diabetes Obes Metab 2024;26:3653–3662.", "https://doi.org/10.1111/dom.15706", "DOI"]];
   const WN_GROUPS = { A: 'Wann gegessen wird', B: 'Was auf den Teller kommt', C: 'Tauschen statt verbieten', D: 'Umgebung', E: 'Wie gegessen wird', F: 'Schlaf' };
   const WN_STAGE = { '18-39': '18–39', '40-64': '40–64', '65-74': '65–74', '75+': 'ab 75' };
   const WN_SCREEN = {
